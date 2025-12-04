@@ -15,6 +15,7 @@ import {
   Zap,
   Check,
   Calendar as CalendarIcon,
+  Search,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { baseUrl } from '../lib/base-url';
@@ -162,6 +163,12 @@ const solutions = [
     title: "Lead Capture & Nurture",
     description: "Capture every lead and automatically follow up with emails and SMS. Never miss an opportunity",
     features: ["Smart forms", "Auto follow-ups", "Email & SMS sequences", "Lead scoring"]
+  },
+  {
+    icon: Search,
+    title: "SEO Automation",
+    description: "Get found on Google with automated SEO optimization. Higher rankings, more organic traffic, more customers",
+    features: ["Keyword optimization", "Meta tags automation", "Schema markup", "Local SEO boost"]
   }
 ];
 
