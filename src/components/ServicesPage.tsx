@@ -14,7 +14,11 @@ import {
   Wrench,
   Rocket,
   Sparkles,
-  Crown
+  Crown,
+  MessageSquare,
+  PenTool,
+  Code2,
+  FileCheck
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
@@ -24,12 +28,13 @@ const serviceTiers = [
   {
     name: "Starter Website",
     subtitle: "Package 1",
-    description: "A clean, modern site for small businesses",
+    description: "A clean, modern site for small businesses — fully customized to your brand",
     features: [
-      "1 page layout",
+      "1 page layout tailored to you",
       "Mobile-optimized design",
-      "Modern UI/UX",
-      "Basic edits included"
+      "Custom colors & fonts",
+      "Basic edits included",
+      "You own the code"
     ],
     icon: Globe,
     color: "text-primary",
@@ -39,14 +44,15 @@ const serviceTiers = [
   {
     name: "Smart Website + Automations",
     subtitle: "Package 2",
-    description: "A custom website connected to automation",
+    description: "Custom multi-page website with automation built for your workflow",
     features: [
-      "2–4 custom pages",
+      "2–4 custom pages designed for you",
       "Booking calendar embedded",
-      "SMS reminders",
-      "Google review reminders",
-      "Lead capture automations",
-      "Review automation"
+      "SMS reminders configured",
+      "Google review automation",
+      "Lead capture forms",
+      "Custom automation flows",
+      "You own everything"
     ],
     icon: Zap,
     color: "text-purple-600",
@@ -57,15 +63,16 @@ const serviceTiers = [
   {
     name: "Advanced Website + Automations",
     subtitle: "Package 3",
-    description: "Premium website with advanced integrations",
+    description: "Premium custom website with advanced integrations built around your needs",
     features: [
       "4+ custom pages",
       "Advanced booking system",
-      "AI chatbot on every page",
+      "AI chatbot trained for your business",
       "SMS updates & reminders",
-      "Lead capture & nurture",
+      "Lead capture & nurture flows",
       "Review automation",
-      "SEO optimization"
+      "SEO optimization",
+      "Full code ownership & maintenance options"
     ],
     icon: Building2,
     color: "text-primary",
@@ -77,30 +84,44 @@ const serviceTiers = [
 const processSteps = [
   {
     number: "01",
-    title: "Discovery & Onboarding",
-    description: "We learn about your business, goals, style, and brand. You fill out our quick onboarding form so we understand your vision.",
-    icon: ClipboardList,
+    title: "Discovery Call",
+    description: "We meet with you to discuss your pain points, goals, and vision. What problems do you need solved? What features matter most? We listen and take notes.",
+    icon: MessageSquare,
     gradient: "from-primary to-purple-600"
   },
   {
     number: "02",
-    title: "Design & Preview",
-    description: "We design a clean, modern layout inside Webflow. You receive a preview link to approve the look and feel.",
+    title: "Design Your Way",
+    description: "You share your color preferences, design style, and brand identity. We create a custom layout that matches your vision — no templates, no shortcuts.",
     icon: Palette,
     gradient: "from-primary to-purple-600"
   },
   {
     number: "03",
-    title: "Build & Automations",
-    description: "We build all pages, set up mobile layouts, and embed booking calendar, contact forms, AI chatbot, SMS reminders, and custom integrations. Everything works seamlessly together.",
-    icon: Wrench,
+    title: "Custom Development",
+    description: "We build every page, feature, and automation exactly as planned. Booking calendars, chatbots, SMS flows — all configured for your business model.",
+    icon: Code2,
     gradient: "from-primary to-purple-600"
   },
   {
     number: "04",
-    title: "Launch & Support",
-    description: "We connect your domain, publish your website, and test everything. You get full training, plus optional monthly support for updates and automation optimization.",
+    title: "Review & Refine",
+    description: "You review the site and we make adjustments until it's perfect. We iterate based on your feedback — this is your website, your way.",
+    icon: PenTool,
+    gradient: "from-primary to-purple-600"
+  },
+  {
+    number: "05",
+    title: "Launch & Handoff",
+    description: "We connect your domain and launch your site. You can take the code and host it yourself, or we can maintain and update it for you — your choice.",
     icon: Rocket,
+    gradient: "from-primary to-purple-600"
+  },
+  {
+    number: "06",
+    title: "Ongoing Support (Optional)",
+    description: "Need updates or want us to manage it? We offer monthly maintenance packages so you can focus on your business while we handle the tech.",
+    icon: FileCheck,
     gradient: "from-primary to-purple-600"
   }
 ];
@@ -219,13 +240,13 @@ function ServicesPageContent() {
             <div className="text-xl md:text-2xl font-light text-muted-foreground min-h-[2rem]">
               <TypeAnimation
                 sequence={[
-                  'Premium Service Packages',
+                  'Custom Service Packages',
                   2000,
-                  'Tailored Solutions for You',
+                  'Built Around Your Needs',
                   2000,
-                  'Choose Your Perfect Plan',
+                  'Your Vision, Our Expertise',
                   2000,
-                  'Elevate Your Business',
+                  'Flexible & Personalized',
                   2000,
                 ]}
                 wrapper="span"
@@ -250,7 +271,7 @@ function ServicesPageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            Choose the perfect package to elevate your business with cutting-edge automation
+            Every package is fully customized to your brand, goals, and workflow — with smart automation built your way
           </motion.p>
         </motion.div>
       </section>
@@ -278,13 +299,13 @@ function ServicesPageContent() {
               />
               <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                  Our Packages
+                  Fully Custom Packages
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Choose Your Path</h2>
-            <p className="text-muted-foreground text-2xl font-light">
-              Premium solutions designed for every stage of growth
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Choose Your Starting Point</h2>
+            <p className="text-muted-foreground text-2xl font-light max-w-4xl mx-auto">
+              Each package is a foundation — we customize everything to match your vision, brand, and business needs
             </p>
           </AnimatedSection>
 
@@ -433,18 +454,18 @@ function ServicesPageContent() {
               />
               <div className="relative bg-gradient-to-r from-primary/10 to-purple-500/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                  Our Process
+                  Our Custom Process
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Seamless Journey</h2>
-            <p className="text-muted-foreground text-2xl font-light">
-              From vision to reality in four refined steps
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">From Vision to Launch</h2>
+            <p className="text-muted-foreground text-2xl font-light max-w-4xl mx-auto">
+              A transparent, collaborative process where your input guides every decision from discovery to final handoff
             </p>
           </AnimatedSection>
 
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             variants={staggerContainer}
             initial="hidden"
             animate={isProcessInView ? "visible" : "hidden"}
@@ -506,13 +527,13 @@ function ServicesPageContent() {
               />
               
               <div className="relative z-10">
-                <h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tighter text-foreground">Ready to Begin?</h2>
+                <h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tighter text-foreground">Let's Build It Together</h2>
                 <p className="text-muted-foreground text-2xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-                  Let's collaborate on creating your perfect digital solution
+                  Schedule a discovery call and tell us about your vision, pain points, and goals
                 </p>
                 <Button size="lg" asChild className="group rounded-2xl px-10 h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 text-primary-foreground hover:scale-110 transition-all">
                   <a href={`${baseUrl}/contact`}>
-                    Start Your Project
+                    Start Your Custom Project
                     <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
                   </a>
                 </Button>
@@ -536,7 +557,7 @@ function ServicesPageContent() {
             © {new Date().getFullYear()} Sitrixx. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground mt-3 font-light">
-            Premium websites with intelligent automation for forward-thinking businesses.
+            Custom websites with smart automation — built exactly how you want it.
           </p>
         </AnimatedSection>
       </footer>

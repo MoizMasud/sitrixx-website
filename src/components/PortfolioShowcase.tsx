@@ -16,6 +16,9 @@ import {
   Check,
   Calendar as CalendarIcon,
   Search,
+  Heart,
+  Users,
+  Palette,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { baseUrl } from '../lib/base-url';
@@ -57,28 +60,28 @@ const reviews = [
     name: "Marcus Williams",
     business: "Elite Cuts Barbershop",
     rating: 5,
-    text: "Sitrixx built us an amazing website with booking automations. We've doubled our appointments and reduced no-shows to almost zero!",
+    text: "The team took time to understand my vision and brand. They delivered a custom site that perfectly represents my shop with booking automations that work flawlessly!",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus"
   },
   {
     name: "Jennifer Rodriguez",
     business: "Rodriguez Realty Group",
     rating: 5,
-    text: "The IDX integration is seamless. Leads come in automatically and the AI chatbot handles basic questions 24/7. Game changer for our team.",
+    text: "From our first meeting to launch, everything was personalized to our needs. The IDX integration and lead automation they built is exactly what we asked for.",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jennifer"
   },
   {
     name: "Dr. Sarah Chen",
     business: "Bright Smile Dental",
     rating: 5,
-    text: "Our new website with automated reminders and review requests has transformed our practice. More patients, better reviews, less admin work.",
+    text: "They listened to every detail I wanted and created a website that matches my practice's personality. The automated reminders have reduced no-shows dramatically.",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
   },
   {
     name: "Mike Thompson",
     business: "Thompson Construction",
     rating: 5,
-    text: "Professional site that showcases our work perfectly. The lead capture system filters quality prospects and saves us hours every week.",
+    text: "Truly custom experience from start to finish. They asked about my pain points, understood my goals, and delivered beyond expectations. Plus I own all the code!",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike"
   }
 ];
@@ -109,7 +112,7 @@ const problems = [
 const solutions = [
   {
     icon: Bot,
-    title: "Chatbot",
+    title: "AI Chatbot",
     description: "Answer questions 24/7, qualify leads, and schedule appointments automatically while you sleep",
     features: ["24/7 availability", "Instant responses", "Lead qualification", "Appointment booking"]
   },
@@ -142,6 +145,24 @@ const solutions = [
     title: "SEO Automation",
     description: "Get found on Google with automated SEO optimization. Higher rankings, more organic traffic, more customers",
     features: ["Keyword optimization", "Meta tags automation", "Schema markup", "Local SEO boost"]
+  }
+];
+
+const customizationHighlights = [
+  {
+    icon: Heart,
+    title: "Your Vision, Your Brand",
+    description: "We start by understanding your pain points, goals, and what makes your business unique. Every color, font, and layout is tailored to you."
+  },
+  {
+    icon: Users,
+    title: "Collaborative Process",
+    description: "From the initial discovery call to final handoff, you're involved at every step. We listen, iterate, and refine until it's perfect."
+  },
+  {
+    icon: Palette,
+    title: "Fully Custom Design",
+    description: "No templates. No shortcuts. We design every element from scratch based on your preferences, brand identity, and target audience."
   }
 ];
 
@@ -233,6 +254,9 @@ function PortfolioShowcaseContent() {
   const solutionsRef = useRef(null);
   const isSolutionsInView = useInView(solutionsRef, { once: true, margin: "-100px" });
 
+  const customizationRef = useRef(null);
+  const isCustomizationInView = useInView(customizationRef, { once: true, margin: "-100px" });
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -289,13 +313,13 @@ function PortfolioShowcaseContent() {
             <div className="text-xl md:text-2xl font-light text-muted-foreground min-h-[2rem]">
               <TypeAnimation
                 sequence={[
-                  'Building Digital Legacies',
+                  'Custom Websites Built for You',
                   2000,
-                  'Modern Websites That Work',
+                  'Your Vision, Our Expertise',
                   2000,
-                  'Automated Booking Systems',
+                  'Tailored Design + Smart Automation',
                   2000,
-                  'Real Estate IDX Solutions',
+                  'From Discovery to Handoff',
                   2000,
                 ]}
                 wrapper="span"
@@ -311,7 +335,7 @@ function PortfolioShowcaseContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
           >
-            Premium Digital Solutions
+            Websites Designed Around You
           </motion.h1>
           
           <motion.p 
@@ -320,7 +344,7 @@ function PortfolioShowcaseContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            Elevate your brand with stunning, conversion-focused websites powered by intelligent automation
+            Every website we build is fully customized to your brand, goals, and vision — with powerful automation that works 24/7
           </motion.p>
           
           <motion.div 
@@ -388,9 +412,9 @@ function PortfolioShowcaseContent() {
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Trusted by Industry Leaders</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Trusted by Business Owners Like You</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              Real transformations from visionary business owners
+              Real transformations from clients who got exactly what they needed
             </p>
           </AnimatedSection>
 
@@ -472,9 +496,9 @@ function PortfolioShowcaseContent() {
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Does This Sound Familiar?</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">What's Holding You Back?</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              Obstacles that prevent businesses from reaching their full potential
+              We understand your pain points — and we build solutions around them
             </p>
           </motion.div>
 
@@ -522,8 +546,90 @@ function PortfolioShowcaseContent() {
         </div>
       </section>
 
+      {/* Customization Process Highlight Section - MOVED HERE */}
+      <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={customizationRef}>
+        <div className="max-w-6xl mx-auto">
+          <AnimatedSection className="text-center mb-20">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative inline-block mb-6"
+            >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-primary/20 via-purple-500/20 to-primary/20 rounded-full blur-xl"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 0.8, 0.5],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                }}
+              />
+              <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
+                <span className="text-sm font-black tracking-widest uppercase text-foreground">
+                  Fully Custom Process
+                </span>
+              </div>
+            </motion.div>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Built Exactly How You Want It</h2>
+            <p className="text-muted-foreground text-2xl font-light max-w-4xl mx-auto">
+              From the first conversation to the final handoff, everything is personalized to your needs. We start by understanding your pain points, your style preferences, and your business goals — then we build it your way.
+            </p>
+          </AnimatedSection>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+            variants={staggerContainer}
+            initial="hidden"
+            animate={isCustomizationInView ? "visible" : "hidden"}
+          >
+            {customizationHighlights.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={index}
+                  variants={scaleIn}
+                  whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.4 } }}
+                  className="relative bg-gradient-to-br from-card via-card to-primary/5 border-2 rounded-3xl p-10 shadow-xl hover:shadow-3xl transition-all overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                  <div className="relative z-10">
+                    <motion.div 
+                      className="w-16 h-16 bg-gradient-to-br from-primary to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-2xl"
+                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Icon className="text-primary-foreground" size={32} strokeWidth={2.5} />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold mb-4 tracking-tight text-foreground">{item.title}</h3>
+                    <p className="text-muted-foreground font-light leading-relaxed text-base">{item.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          <AnimatedSection className="text-center bg-gradient-to-br from-primary/5 to-purple-500/5 border-2 border-primary/20 rounded-3xl p-12" delay={0.3}>
+            <h3 className="text-3xl font-black mb-6 text-foreground">You Own Everything</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 font-light leading-relaxed">
+              After launch, you can take your code and host it anywhere — or we can maintain and update it for you. It's your choice, your way.
+            </p>
+            <Button size="lg" asChild className="group rounded-2xl px-10 h-14 font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all">
+              <a href={`${baseUrl}/about`}>
+                Learn About Our Process
+                <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
+              </a>
+            </Button>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* Solutions Section */}
-      <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={solutionsRef}>
+      <section className="py-32 px-4" ref={solutionsRef}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial="hidden"
@@ -550,13 +656,13 @@ function PortfolioShowcaseContent() {
               />
               <div className="relative bg-gradient-to-r from-green-500/10 to-emerald-500/10 backdrop-blur-sm border border-green-500/30 px-8 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                  Powerful Automation
+                  Custom Automation Solutions
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Transform Your Business</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Automation That Works for You</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              Cutting-edge automation that delivers measurable results
+              We build the tools you need — customized to your workflow and business model
             </p>
           </motion.div>
 
@@ -622,7 +728,7 @@ function PortfolioShowcaseContent() {
       </section>
 
       {/* Featured Projects Section - Only 3 projects */}
-      <section id="portfolio" className="py-32 px-4" ref={portfolioRef}>
+      <section id="portfolio" className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={portfolioRef}>
         <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
@@ -648,9 +754,9 @@ function PortfolioShowcaseContent() {
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Recent Success Stories</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Custom Solutions in Action</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              A glimpse into our portfolio of exceptional digital experiences
+              Every project tailored to the client's unique needs and vision
             </p>
           </AnimatedSection>
           
@@ -800,7 +906,7 @@ function PortfolioShowcaseContent() {
                   size="lg"
                 >
                   <a href={`${baseUrl}/contact`}>
-                    Start Your Project Today
+                    Start Your Custom Project
                     <ArrowRight className="ml-2" size={20} />
                   </a>
                 </Button>
@@ -839,7 +945,7 @@ function PortfolioShowcaseContent() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                 >
-                  Ready to Elevate Your Business?
+                  Ready to Build Your Custom Website?
                 </motion.h2>
                 <motion.p 
                   className="text-muted-foreground text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed"
@@ -848,7 +954,7 @@ function PortfolioShowcaseContent() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
                 >
-                  Partner with us to create a stunning digital presence powered by intelligent automation
+                  Let's talk about your vision, your pain points, and how we can create the perfect solution for your business
                 </motion.p>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -863,7 +969,7 @@ function PortfolioShowcaseContent() {
                     className="group rounded-2xl px-8 md:px-10 h-12 md:h-14 text-base md:text-lg font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all inline-flex items-center justify-center"
                   >
                     <a href={`${baseUrl}/contact`} className="inline-flex items-center justify-center gap-2">
-                      <span>Start Your Journey</span>
+                      <span>Get Started Today</span>
                       <ArrowRight className="group-hover:translate-x-2 transition-transform" size={20} />
                     </a>
                   </Button>
@@ -888,7 +994,7 @@ function PortfolioShowcaseContent() {
             © {new Date().getFullYear()} Sitrixx. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground mt-3 font-light">
-            Premium websites with intelligent automation for forward-thinking businesses.
+            Custom websites with smart automation — built exactly how you want it.
           </p>
         </AnimatedSection>
       </footer>

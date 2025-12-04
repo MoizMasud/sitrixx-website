@@ -13,7 +13,11 @@ import {
   TestTube,
   Rocket,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Heart,
+  Users,
+  FileKey,
+  Handshake
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
@@ -21,27 +25,27 @@ import { ThemeProvider } from './ThemeProvider';
 
 const whyChooseUsCards = [
   {
-    icon: Lightbulb,
-    title: "Expertise",
-    description: "We create clean, modern websites tailored to small businesses and local service industries.",
+    icon: Heart,
+    title: "Your Vision First",
+    description: "We start every project by listening to your pain points, understanding your goals, and learning what makes your business unique. Your vision guides every decision.",
     gradient: "from-primary to-purple-600"
   },
   {
-    icon: Eye,
-    title: "Attention to Detail",
-    description: "Every section is crafted carefully to ensure the final product is high-quality, responsive, and professional.",
+    icon: Users,
+    title: "Collaborative Process",
+    description: "From color palettes to page layouts, you're involved at every step. We iterate based on your feedback until it's exactly what you envisioned.",
     gradient: "from-primary to-purple-600"
   },
   {
-    icon: MessageCircle,
-    title: "Communication",
-    description: "We maintain clear communication throughout the entire process so you always know what's happening.",
+    icon: Palette,
+    title: "Fully Custom Design",
+    description: "No templates. No cookie-cutter solutions. Every element is designed from scratch to match your brand identity, preferences, and target audience.",
     gradient: "from-primary to-purple-600"
   },
   {
-    icon: Bot,
-    title: "Automation-Ready",
-    description: "We embed booking systems, SMS reminders, and AI chatbots so your website works 24/7 — even when you're offline.",
+    icon: FileKey,
+    title: "You Own Everything",
+    description: "After launch, you get the code and can host it anywhere — or we can maintain it for you. It's your project, your choice, your way.",
     gradient: "from-primary to-purple-600"
   }
 ];
@@ -49,44 +53,44 @@ const whyChooseUsCards = [
 const processSteps = [
   {
     number: "1",
-    title: "Discovery",
-    description: "We learn about your goals, brand, and what your business needs. You fill out our onboarding form so we understand your vision clearly.",
+    title: "Initial Meeting & Discovery",
+    description: "We meet with you (virtually or in-person) to understand your business, pain points, and goals. What problems do you need solved? What features matter most to you? This is where we listen and learn.",
     icon: ClipboardList,
     gradient: "from-primary to-purple-600"
   },
   {
     number: "2",
-    title: "Planning",
-    description: "We outline your pages, features, and tools. This includes booking forms, chatbots, SMS flows, or IDX if you're a realtor.",
+    title: "Design Preferences & Branding",
+    description: "You share your color palette preferences, design style, and brand identity. We create mood boards and discuss layouts that match your vision — everything is personalized to you.",
     icon: Palette,
     gradient: "from-primary to-purple-600"
   },
   {
     number: "3",
-    title: "Design",
-    description: "We design a clean, modern layout inside Webflow. You receive a preview link to approve the look and feel.",
-    icon: Palette,
-    gradient: "from-primary to-purple-600"
-  },
-  {
-    number: "4",
-    title: "Development",
-    description: "We build the final website, embed automations, optimize for mobile, and ensure everything loads fast and looks professional.",
+    title: "Custom Development",
+    description: "We build the website from scratch using modern technologies. Every page, feature, and automation is configured for your specific workflow and business model.",
     icon: Code,
     gradient: "from-primary to-purple-600"
   },
   {
-    number: "5",
-    title: "Testing",
-    description: "We test all pages, forms, automations, and chatbots. For realtor sites, we validate IDX and listing visibility.",
+    number: "4",
+    title: "Review & Iteration",
+    description: "You review the site at key milestones and provide feedback. We make adjustments and refinements based on your input — this is your website, so it needs to be perfect.",
     icon: TestTube,
     gradient: "from-primary to-purple-600"
   },
   {
-    number: "6",
-    title: "Launch",
-    description: "We connect your domain, publish the website, and make sure everything runs smoothly. You also receive training and optional monthly support.",
+    number: "5",
+    title: "Final Testing & Training",
+    description: "We test everything thoroughly — forms, automations, mobile responsiveness, speed. Then we train you on how to use and update the site (if needed).",
     icon: Rocket,
+    gradient: "from-primary to-purple-600"
+  },
+  {
+    number: "6",
+    title: "Launch & Handoff",
+    description: "We connect your domain, publish the website, and hand over all the code. You can take it and self-host, or we can maintain and update it for you — totally your choice.",
+    icon: Handshake,
     gradient: "from-primary to-purple-600"
   }
 ];
@@ -228,11 +232,11 @@ function AboutPageContent() {
                 sequence={[
                   'Meet the Sitrixx Team',
                   2000,
-                  'Discover Our Journey',
+                  'Custom Websites, Custom Process',
                   2000,
-                  'Learn Our Story',
+                  'Your Partner in Digital Success',
                   2000,
-                  'See What Drives Us',
+                  'From Discovery to Handoff',
                   2000,
                 ]}
                 wrapper="span"
@@ -248,7 +252,7 @@ function AboutPageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
           >
-            Who We Are
+            About Us
           </motion.h1>
           
           <motion.p 
@@ -257,7 +261,7 @@ function AboutPageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            Building exceptional digital experiences with purpose and precision
+            We build websites that are fully customized to your needs — from the first conversation to the final handoff
           </motion.p>
         </motion.div>
       </section>
@@ -323,7 +327,7 @@ function AboutPageContent() {
                       <Sparkles className="text-primary" size={18} />
                     </motion.div>
                     <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                      Our Story
+                      Our Mission
                     </span>
                   </motion.div>
                 </div>
@@ -335,7 +339,7 @@ function AboutPageContent() {
                 animate={isAboutInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 1, delay: 0.3 }}
               >
-                About Sitrixx
+                Built Around You
               </motion.h2>
               
               <motion.div 
@@ -349,25 +353,32 @@ function AboutPageContent() {
                   animate={isAboutInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  Sitrixx builds modern, high-performing websites using front-end technologies inside Webflow. We focus on clean UI, smooth layouts, and simple automated systems that help small businesses grow.
+                  Sitrixx creates custom websites using modern technologies. We don't use templates or shortcuts — every project starts with understanding <strong className="text-foreground">your</strong> pain points, <strong className="text-foreground">your</strong> goals, and <strong className="text-foreground">your</strong> vision.
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, x: -20 }}
                   animate={isAboutInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.8, delay: 0.8 }}
                 >
-                  We integrate practical tools like booking calendars, SMS reminders, AI chatbots, IDX for realtors, and lead management workflows — everything designed to make business easier for our clients.
+                  From color palettes to automation workflows, everything is designed around your business model and brand identity. We collaborate closely throughout the entire process — and at the end, you own all the code.
+                </motion.p>
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isAboutInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.8, delay: 1 }}
+                >
+                  Whether you want to host it yourself or have us maintain it, the choice is yours.
                 </motion.p>
               </motion.div>
               
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={isAboutInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 1 }}
+                transition={{ duration: 0.8, delay: 1.2 }}
               >
                 <Button size="lg" asChild className="group mt-6 rounded-2xl px-10 h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all">
                   <a href={`${baseUrl}/contact`}>
-                    Get in Touch
+                    Start Your Custom Project
                     <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
                   </a>
                 </Button>
@@ -404,9 +415,9 @@ function AboutPageContent() {
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">What Sets Us Apart</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">A Personalized Experience</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              Excellence, dedication, and innovation in every project
+              Every project is a partnership — we listen, collaborate, and build exactly what you need
             </p>
           </AnimatedSection>
 
@@ -484,9 +495,9 @@ function AboutPageContent() {
                   </div>
                 </motion.div>
 
-                <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground">From Vision to Reality</h2>
+                <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground">Your Journey With Us</h2>
                 <p className="text-2xl text-muted-foreground font-light leading-relaxed">
-                  Our workflow is clear, organized, and transparent. Here's how we transform your idea into a stunning digital experience.
+                  From the first meeting to the final handoff, you're involved at every step. Here's how we transform your vision into reality.
                 </p>
                 
                 <Button asChild variant="default" size="lg" className="group rounded-2xl px-8 h-12 font-bold shadow-xl hover:scale-105 transition-all bg-gradient-to-r from-primary to-purple-600">
@@ -539,10 +550,11 @@ function AboutPageContent() {
                         <Icon className="text-white" size={24} strokeWidth={2.5} />
                       </motion.div>
                       <div className="flex-1">
-                        <h3 className="text-2xl font-bold tracking-tight mb-3 text-foreground">
+                        <div className="text-xs font-black text-primary mb-2 tracking-wider">STEP {step.number}</div>
+                        <h3 className="text-xl font-black tracking-tight mb-3 text-foreground">
                           {step.title}
                         </h3>
-                        <p className="text-muted-foreground leading-relaxed font-light">
+                        <p className="text-muted-foreground leading-relaxed font-light text-sm">
                           {step.description}
                         </p>
                       </div>
@@ -578,14 +590,14 @@ function AboutPageContent() {
               
               <div className="relative z-10 space-y-8">
                 <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground">
-                  Let's Create Something Amazing
+                  Ready to Start Your Custom Project?
                 </h2>
                 <p className="text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
-                  We'd love to learn more about your business and how Sitrixx can help you grow online.
+                  Let's discuss your vision, pain points, and goals. We'll build exactly what you need — your way.
                 </p>
                 <Button size="lg" asChild className="group rounded-2xl px-10 h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all">
                   <a href={`${baseUrl}/contact`}>
-                    Start Your Journey
+                    Get in Touch
                     <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
                   </a>
                 </Button>
@@ -609,7 +621,7 @@ function AboutPageContent() {
             © {new Date().getFullYear()} Sitrixx. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground mt-3 font-light">
-            Premium websites with intelligent automation for forward-thinking businesses.
+            Custom websites with smart automation — built exactly how you want it.
           </p>
         </AnimatedSection>
       </footer>

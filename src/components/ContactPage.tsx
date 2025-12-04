@@ -441,6 +441,38 @@ function ContactPageContent() {
         </div>
       </section>
 
+      {/* Calendar Booking Section - TEMPORARY FOR TESTING */}
+      <section className="px-4 pb-32">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl overflow-hidden p-8"
+          >
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-black mb-3 tracking-tight text-foreground">
+                Schedule a Consultation
+              </h2>
+              <p className="text-muted-foreground font-light text-sm">
+                Pick a time that works best for you
+              </p>
+            </div>
+            
+            <div className="w-full" style={{ minHeight: '800px' }}>
+              <iframe 
+                src="https://api.leadconnectorhq.com/widget/group/uVEm6c7YjOtSWb58hc4u" 
+                style={{ width: '100%', height: '800px', border: 'none', overflow: 'hidden' }}
+                scrolling="no" 
+                id="uVEm6c7YjOtSWb58hc4u_1764878357865"
+                title="Schedule a Consultation"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-20 px-4">
         <motion.div 
