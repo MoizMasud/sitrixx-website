@@ -25,7 +25,7 @@ import { ThemeProvider } from './ThemeProvider';
 const portfolioItems = [
   {
     title: "Barber Shop",
-    category: "Real Estate",
+    category: "Hair & Beauty",
     description: "Modern booking site with automated reminders",
     image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Calendly API", "SMS Automation"],
@@ -43,7 +43,7 @@ const portfolioItems = [
   },
   {
     title: "Dental Practice",
-    category: "Real Estate",
+    category: "Healthcare",
     description: "Appointment booking with review automation",
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "TidyCal API", "Zapier"],

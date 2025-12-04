@@ -15,7 +15,7 @@ import { ThemeProvider } from './ThemeProvider';
 const portfolioItems = [
   {
     title: "Barber Shop",
-    category: "Real Estate",
+    category: "Hair & Beauty",
     description: "Modern booking site with automated reminders",
     image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Calendly API", "SMS Automation"],
@@ -33,7 +33,7 @@ const portfolioItems = [
   },
   {
     title: "Dental Practice",
-    category: "Real Estate",
+    category: "Healthcare",
     description: "Appointment booking with review automation",
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "TidyCal API", "Zapier"],
@@ -42,7 +42,7 @@ const portfolioItems = [
   },
   {
     title: "Fitness Studio",
-    category: "Real Estate",
+    category: "Health & Fitness",
     description: "Class booking and membership management",
     image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
     technologies: ["Astro", "React", "Calendly API", "SMS Integration"],
@@ -51,7 +51,7 @@ const portfolioItems = [
   },
   {
     title: "Contractor Portfolio",
-    category: "Real Estate",
+    category: "Home Services",
     description: "Project showcase with lead capture",
     image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Contact Forms", "Lead Automation"],
@@ -60,7 +60,7 @@ const portfolioItems = [
   },
   {
     title: "E-Commerce Store",
-    category: "Real Estate",
+    category: "E-Commerce",
     description: "Product showcase with simple checkout",
     image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Stripe API", "AI Chatbot"],
@@ -69,7 +69,7 @@ const portfolioItems = [
   },
   {
     title: "Restaurant",
-    category: "Real Estate",
+    category: "Food & Dining",
     description: "Online ordering with reservation system",
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80",
     technologies: ["Astro", "React", "Square API", "Reservation System"],
@@ -78,7 +78,7 @@ const portfolioItems = [
   },
   {
     title: "Law Firm",
-    category: "Real Estate",
+    category: "Professional Services",
     description: "Attorney profiles with case consultation booking",
     image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Calendly", "Contact Forms"],
