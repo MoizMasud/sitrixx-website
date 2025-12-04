@@ -367,7 +367,7 @@ function AutomationsShowcaseContent() {
                 <Button 
                   size="lg" 
                   asChild
-                  className="rounded-xl px-8"
+                  className="rounded-xl px-8 bg-gradient-to-r from-primary to-purple-600 text-primary-foreground hover:scale-105 transition-all"
                 >
                   <a href={`${baseUrl}/contact`}>
                     Get Started
@@ -378,7 +378,7 @@ function AutomationsShowcaseContent() {
                   size="lg" 
                   variant="outline"
                   asChild
-                  className="rounded-xl px-8"
+                  className="rounded-xl px-8 hover:scale-105 transition-all"
                 >
                   <a href={`${baseUrl}/services`}>
                     View Pricing
@@ -393,9 +393,18 @@ function AutomationsShowcaseContent() {
       {/* Footer */}
       <footer className="py-16 px-6 border-t">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="text-2xl font-black mb-2">Sitrixx</div>
+          <motion.div 
+            className="text-2xl font-black mb-2 text-foreground"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          >
+            Sitrixx
+          </motion.div>
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Sitrixx. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Premium websites with intelligent automation for forward-thinking businesses.
           </p>
         </div>
       </footer>

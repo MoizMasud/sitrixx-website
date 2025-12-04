@@ -28,13 +28,12 @@ const serviceTiers = [
     features: [
       "1 page layout",
       "Mobile-optimized design",
-      "Contact form",
       "Modern UI/UX",
       "Basic edits included"
     ],
     icon: Globe,
-    color: "text-blue-500",
-    gradient: "from-blue-500 to-cyan-500",
+    color: "text-primary",
+    gradient: "from-primary to-purple-600",
     bestFor: "Perfect for barbers, salons, contractors, freelancers, and small shops"
   },
   {
@@ -42,7 +41,7 @@ const serviceTiers = [
     subtitle: "Package 2",
     description: "A custom website connected to automation",
     features: [
-      "2–5 custom pages",
+      "2–4 custom pages",
       "Booking calendar embedded",
       "SMS reminders",
       "Google review reminders",
@@ -50,28 +49,28 @@ const serviceTiers = [
       "Review automation"
     ],
     icon: Zap,
-    color: "text-purple-500",
-    gradient: "from-purple-500 to-pink-500",
+    color: "text-purple-600",
+    gradient: "from-primary to-purple-600",
     popular: true,
-    bestFor: "Great for businesses that want more bookings and automated follow-ups"
+    bestFor: "Ideal for service businesses wanting more bookings and automated client follow-ups"
   },
   {
     name: "Advanced Website + Automations",
     subtitle: "Package 3",
     description: "Premium website with advanced integrations",
     features: [
-      "5+ custom pages",
+      "4+ custom pages",
       "Advanced booking system",
       "AI chatbot on every page",
       "SMS updates & reminders",
       "Lead capture & nurture",
       "Review automation",
-      "Custom integrations"
+      "SEO optimization"
     ],
     icon: Building2,
-    color: "text-orange-500",
-    gradient: "from-orange-500 to-red-500",
-    bestFor: "Best for established businesses, agencies, and enterprises needing advanced automation"
+    color: "text-primary",
+    gradient: "from-primary to-purple-600",
+    bestFor: "Best for established businesses, agencies, and enterprises needing complete automation"
   }
 ];
 
@@ -81,28 +80,28 @@ const processSteps = [
     title: "Discovery & Onboarding",
     description: "We learn about your business, goals, style, and brand. You fill out our quick onboarding form so we understand your vision.",
     icon: ClipboardList,
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "02",
     title: "Design & Preview",
     description: "We design a clean, modern layout inside Webflow. You receive a preview link to approve the look and feel.",
     icon: Palette,
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "03",
     title: "Build & Automations",
     description: "We build all pages, set up mobile layouts, and embed booking calendar, contact forms, AI chatbot, SMS reminders, and custom integrations. Everything works seamlessly together.",
     icon: Wrench,
-    gradient: "from-orange-500 to-red-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "04",
     title: "Launch & Support",
     description: "We connect your domain, publish your website, and test everything. You get full training, plus optional monthly support for updates and automation optimization.",
     icon: Rocket,
-    gradient: "from-green-500 to-emerald-500"
+    gradient: "from-primary to-purple-600"
   }
 ];
 
@@ -171,10 +170,10 @@ function ServicesPageContent() {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero Section - Updated to match About page style */}
+      {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-blue-500/10"
+          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-primary/10"
           animate={{
             backgroundPosition: ['0% 0%', '100% 100%'],
           }}
@@ -211,7 +210,6 @@ function ServicesPageContent() {
           transition={{ duration: 1.2 }}
           className="max-w-6xl mx-auto text-center relative z-10"
         >
-          {/* Typing Animation */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -259,7 +257,7 @@ function ServicesPageContent() {
 
       {/* Service Packages Section */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={servicesRef}>
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -291,7 +289,7 @@ function ServicesPageContent() {
           </AnimatedSection>
 
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
             variants={staggerContainer}
             initial="hidden"
             animate={isServicesInView ? "visible" : "hidden"}
@@ -302,29 +300,38 @@ function ServicesPageContent() {
                 <motion.div
                   key={index}
                   variants={scaleIn}
-                  whileHover={{ y: -16, scale: 1.03, transition: { duration: 0.4 } }}
+                  whileHover={{ y: -16, scale: 1.02, transition: { duration: 0.4 } }}
                   className="h-full"
                 >
-                  <div className={`relative h-full bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl hover:shadow-3xl transition-all overflow-hidden ${tier.popular ? 'ring-4 ring-primary/20' : ''}`}>
+                  <div className={`relative h-full bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl hover:shadow-3xl transition-all overflow-hidden ${tier.popular ? 'ring-4 ring-primary/30 scale-105' : ''}`}>
                     {tier.popular && (
-                      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center">
+                      <motion.div 
+                        className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center"
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                      >
                         <motion.span 
                           className="text-primary-foreground text-sm font-black tracking-wider flex items-center gap-2"
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 }}
+                          animate={{ 
+                            scale: [1, 1.05, 1],
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                          }}
                         >
                           <Crown size={18} />
                           MOST POPULAR
                         </motion.span>
-                      </div>
+                      </motion.div>
                     )}
 
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-br ${tier.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
                     />
 
-                    <div className={`relative p-10 ${tier.popular ? 'pt-24' : ''}`}>
+                    <div className={`relative p-8 ${tier.popular ? 'pt-24' : ''}`}>
                       <motion.div 
                         className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${tier.gradient} flex items-center justify-center shadow-2xl`}
                         whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
@@ -334,12 +341,12 @@ function ServicesPageContent() {
                       </motion.div>
                       
                       <div className="text-center mb-8">
-                        <div className="text-sm text-muted-foreground mb-2 font-bold tracking-wide uppercase">{tier.subtitle}</div>
-                        <h3 className="text-3xl font-black mb-3 tracking-tight text-foreground">{tier.name}</h3>
-                        <p className="text-muted-foreground font-light text-base leading-relaxed">{tier.description}</p>
+                        <div className="text-xs text-muted-foreground mb-2 font-bold tracking-wider uppercase">{tier.subtitle}</div>
+                        <h3 className="text-2xl md:text-3xl font-black mb-3 tracking-tight text-foreground">{tier.name}</h3>
+                        <p className="text-muted-foreground font-light text-sm leading-relaxed">{tier.description}</p>
                       </div>
 
-                      <ul className="space-y-4 mb-8">
+                      <ul className="space-y-3 mb-8">
                         {tier.features.map((feature, i) => (
                           <motion.li 
                             key={i} 
@@ -348,21 +355,44 @@ function ServicesPageContent() {
                             animate={isServicesInView ? { opacity: 1, x: 0 } : {}}
                             transition={{ delay: i * 0.1 }}
                           >
-                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <Check className="text-primary" size={16} strokeWidth={3} />
+                            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Check className="text-primary" size={12} strokeWidth={3} />
                             </div>
                             <span className="text-sm font-medium text-foreground">{feature}</span>
                           </motion.li>
                         ))}
                       </ul>
 
-                      <div className="bg-gradient-to-br from-primary/5 to-purple-500/5 border-2 border-primary/10 p-5 rounded-2xl mb-6">
-                        <p className="text-xs text-muted-foreground font-medium leading-relaxed">{tier.bestFor}</p>
-                      </div>
+                      <motion.div 
+                        className="bg-gradient-to-br from-primary/5 to-purple-500/5 border border-primary/20 p-4 rounded-2xl mb-6 relative overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-600/5"
+                          animate={{
+                            x: ['-100%', '100%'],
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "linear"
+                          }}
+                        />
+                        <p className="text-xs text-muted-foreground font-semibold leading-relaxed text-center relative z-10">
+                          <span className="block mb-1 text-primary font-bold uppercase tracking-wide" style={{ fontSize: '10px' }}>
+                            Perfect For
+                          </span>
+                          {tier.bestFor}
+                        </p>
+                      </motion.div>
 
                       <Button 
-                        className={`w-full group rounded-2xl h-12 font-bold shadow-xl hover:scale-105 transition-all ${tier.popular ? 'bg-gradient-to-r from-primary to-purple-600' : ''}`}
-                        variant={tier.popular ? "default" : "outline"}
+                        className={`w-full group rounded-2xl h-12 font-bold shadow-xl hover:scale-105 transition-all ${
+                          tier.popular 
+                            ? 'bg-gradient-to-r from-primary to-purple-600 text-primary-foreground' 
+                            : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        }`}
                         size="lg"
                         asChild
                       >
@@ -391,7 +421,7 @@ function ServicesPageContent() {
               className="relative inline-block mb-6"
             >
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full blur-xl"
+                className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-xl"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.5, 0.8, 0.5],
@@ -401,7 +431,7 @@ function ServicesPageContent() {
                   repeat: Infinity,
                 }}
               />
-              <div className="relative bg-gradient-to-r from-green-500/10 to-emerald-500/10 backdrop-blur-sm border border-green-500/30 px-8 py-3 rounded-full shadow-lg">
+              <div className="relative bg-gradient-to-r from-primary/10 to-purple-500/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-black tracking-widest uppercase text-foreground">
                   Our Process
                 </span>
@@ -459,7 +489,7 @@ function ServicesPageContent() {
         <div className="max-w-5xl mx-auto">
           <AnimatedSection>
             <motion.div 
-              className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/10 border-2 rounded-3xl p-20 text-center shadow-3xl overflow-hidden"
+              className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-primary/10 border-2 rounded-3xl p-20 text-center shadow-3xl overflow-hidden"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.4 }}
             >
@@ -480,7 +510,7 @@ function ServicesPageContent() {
                 <p className="text-muted-foreground text-2xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
                   Let's collaborate on creating your perfect digital solution
                 </p>
-                <Button size="lg" asChild className="group rounded-2xl px-10 h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all">
+                <Button size="lg" asChild className="group rounded-2xl px-10 h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 text-primary-foreground hover:scale-110 transition-all">
                   <a href={`${baseUrl}/contact`}>
                     Start Your Project
                     <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />

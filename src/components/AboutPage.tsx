@@ -24,25 +24,25 @@ const whyChooseUsCards = [
     icon: Lightbulb,
     title: "Expertise",
     description: "We create clean, modern websites tailored to small businesses and local service industries.",
-    gradient: "from-yellow-500 to-orange-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     icon: Eye,
     title: "Attention to Detail",
     description: "Every section is crafted carefully to ensure the final product is high-quality, responsive, and professional.",
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     icon: MessageCircle,
     title: "Communication",
     description: "We maintain clear communication throughout the entire process so you always know what's happening.",
-    gradient: "from-green-500 to-emerald-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     icon: Bot,
     title: "Automation-Ready",
     description: "We embed booking systems, SMS reminders, and AI chatbots so your website works 24/7 — even when you're offline.",
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-primary to-purple-600"
   }
 ];
 
@@ -52,42 +52,42 @@ const processSteps = [
     title: "Discovery",
     description: "We learn about your goals, brand, and what your business needs. You fill out our onboarding form so we understand your vision clearly.",
     icon: ClipboardList,
-    gradient: "from-blue-500 to-cyan-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "2",
     title: "Planning",
     description: "We outline your pages, features, and tools. This includes booking forms, chatbots, SMS flows, or IDX if you're a realtor.",
     icon: Palette,
-    gradient: "from-purple-500 to-pink-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "3",
     title: "Design",
     description: "We design a clean, modern layout inside Webflow. You receive a preview link to approve the look and feel.",
     icon: Palette,
-    gradient: "from-orange-500 to-red-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "4",
     title: "Development",
     description: "We build the final website, embed automations, optimize for mobile, and ensure everything loads fast and looks professional.",
     icon: Code,
-    gradient: "from-green-500 to-emerald-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "5",
     title: "Testing",
     description: "We test all pages, forms, automations, and chatbots. For realtor sites, we validate IDX and listing visibility.",
     icon: TestTube,
-    gradient: "from-yellow-500 to-orange-500"
+    gradient: "from-primary to-purple-600"
   },
   {
     number: "6",
     title: "Launch",
     description: "We connect your domain, publish the website, and make sure everything runs smoothly. You also receive training and optional monthly support.",
     icon: Rocket,
-    gradient: "from-purple-500 to-indigo-500"
+    gradient: "from-primary to-purple-600"
   }
 ];
 
@@ -177,10 +177,10 @@ function AboutPageContent() {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero Section - Reduced Height */}
+      {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-blue-500/10"
+          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-primary/10"
           animate={{
             backgroundPosition: ['0% 0%', '100% 100%'],
           }}
@@ -217,7 +217,6 @@ function AboutPageContent() {
           transition={{ duration: 1.2 }}
           className="max-w-6xl mx-auto text-center relative z-10"
         >
-          {/* Typing Animation */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -267,7 +266,6 @@ function AboutPageContent() {
       <section className="py-20 px-4" ref={aboutRef}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            {/* Image with padding */}
             <motion.div
               initial="hidden"
               animate={isAboutInView ? "visible" : "hidden"}
@@ -288,7 +286,6 @@ function AboutPageContent() {
               </motion.div>
             </motion.div>
 
-            {/* Text Content with better spacing */}
             <motion.div
               initial="hidden"
               animate={isAboutInView ? "visible" : "hidden"}
@@ -456,7 +453,6 @@ function AboutPageContent() {
       <section className="py-32 px-4" ref={processRef}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            {/* Left Column */}
             <motion.div
               initial="hidden"
               animate={isProcessInView ? "visible" : "hidden"}
@@ -471,7 +467,7 @@ function AboutPageContent() {
                   className="relative inline-block"
                 >
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full blur-xl"
+                    className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-xl"
                     animate={{
                       scale: [1, 1.2, 1],
                       opacity: [0.5, 0.8, 0.5],
@@ -481,7 +477,7 @@ function AboutPageContent() {
                       repeat: Infinity,
                     }}
                   />
-                  <div className="relative bg-gradient-to-r from-green-500/10 to-emerald-500/10 backdrop-blur-sm border border-green-500/30 px-8 py-3 rounded-full shadow-lg">
+                  <div className="relative bg-gradient-to-r from-primary/10 to-purple-500/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
                     <span className="text-sm font-black tracking-widest uppercase text-foreground">
                       Our Process
                     </span>
@@ -493,7 +489,7 @@ function AboutPageContent() {
                   Our workflow is clear, organized, and transparent. Here's how we transform your idea into a stunning digital experience.
                 </p>
                 
-                <Button asChild variant="default" size="lg" className="group rounded-2xl px-8 h-12 font-bold shadow-xl hover:scale-105 transition-all">
+                <Button asChild variant="default" size="lg" className="group rounded-2xl px-8 h-12 font-bold shadow-xl hover:scale-105 transition-all bg-gradient-to-r from-primary to-purple-600">
                   <a href={`${baseUrl}/#portfolio`}>
                     View Our Work
                     <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
@@ -515,7 +511,6 @@ function AboutPageContent() {
               </motion.div>
             </motion.div>
 
-            {/* Right Column - Process Steps */}
             <motion.div
               initial="hidden"
               animate={isProcessInView ? "visible" : "hidden"}
@@ -565,7 +560,7 @@ function AboutPageContent() {
         <div className="max-w-5xl mx-auto">
           <AnimatedSection>
             <motion.div 
-              className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/10 border-2 rounded-3xl p-20 text-center shadow-3xl overflow-hidden"
+              className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-primary/10 border-2 rounded-3xl p-20 text-center shadow-3xl overflow-hidden"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.4 }}
             >
