@@ -833,7 +833,7 @@ function PortfolioShowcaseContent() {
         <div className="max-w-6xl mx-auto">
           <AnimatedSection>
             <motion.div 
-              className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/10 border-2 rounded-3xl p-20 text-center shadow-3xl overflow-hidden"
+              className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-blue-500/10 border-2 rounded-3xl p-12 md:p-20 text-center shadow-3xl overflow-hidden"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.4 }}
             >
@@ -852,7 +852,7 @@ function PortfolioShowcaseContent() {
               
               <div className="relative z-10">
                 <motion.h2 
-                  className="text-5xl md:text-6xl font-black mb-8 tracking-tighter text-foreground"
+                  className="text-4xl md:text-6xl font-black mb-8 tracking-tighter text-foreground"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -860,7 +860,7 @@ function PortfolioShowcaseContent() {
                   Ready to Elevate Your Business?
                 </motion.h2>
                 <motion.p 
-                  className="text-muted-foreground text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed"
+                  className="text-muted-foreground text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -873,11 +873,16 @@ function PortfolioShowcaseContent() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.4 }}
+                  className="flex justify-center"
                 >
-                  <Button size="lg" asChild className="group rounded-2xl px-10 h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all">
-                    <a href={`${baseUrl}/contact`}>
-                      Start Your Journey
-                      <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
+                  <Button 
+                    size="lg" 
+                    asChild 
+                    className="group rounded-2xl px-8 md:px-10 h-12 md:h-14 text-base md:text-lg font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all inline-flex items-center justify-center"
+                  >
+                    <a href={`${baseUrl}/contact`} className="inline-flex items-center justify-center gap-2">
+                      <span>Start Your Journey</span>
+                      <ArrowRight className="group-hover:translate-x-2 transition-transform" size={20} />
                     </a>
                   </Button>
                 </motion.div>
