@@ -1,0 +1,11 @@
+---
+import MainLayout from '../layouts/main.astro';
+import PortfolioPage from '../components/PortfolioPage';
+---
+
+<MainLayout 
+  title="Portfolio - Sitrixx | Featured Projects & Client Success Stories"
+  description="Explore our portfolio of premium websites with smart automation. Real estate IDX sites, business websites with booking systems, and conversion-focused designs."
+>
+  <PortfolioPage client:only="react" />
+</MainLayout>

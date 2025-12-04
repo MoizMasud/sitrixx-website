@@ -1,0 +1,8 @@
+---
+import MainLayout from '../layouts/main.astro';
+import AboutPage from '../components/AboutPage';
+---
+
+<MainLayout title="About Us - Sitrixx">
+  <AboutPage client:only="react" />
+</MainLayout>
