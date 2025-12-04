@@ -1,0 +1,2 @@
+# Ignore _worker.js directory from being uploaded as an asset
+_worker.js

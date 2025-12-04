@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "sitrixx",
+	"name": "sitrixx-website",
 	"main": "./dist/_worker.js/index.js",
 	"compatibility_date": "2025-04-15",
 	"compatibility_flags": [
@@ -20,7 +20,7 @@
 	/**
 	 * Custom Routes for sitrixx.com
 	 * After deployment, add a custom domain in Cloudflare Dashboard:
-	 * Workers & Pages > sitrixx > Settings > Domains & Routes
+	 * Workers & Pages > sitrixx-website > Settings > Domains & Routes
 	 * Add: sitrixx.com and www.sitrixx.com
 	 */
 	
