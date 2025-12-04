@@ -1,0 +1,8 @@
+---
+import MainLayout from '../layouts/main.astro';
+import ContactPage from '../components/ContactPage';
+---
+
+<MainLayout>
+  <ContactPage client:only="react" />
+</MainLayout>

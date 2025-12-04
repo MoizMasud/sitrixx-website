@@ -1,0 +1,8 @@
+---
+import MainLayout from '../layouts/main.astro';
+import PortfolioShowcase from '../components/PortfolioShowcase';
+---
+
+<MainLayout>
+  <PortfolioShowcase client:only="react" />
+</MainLayout>

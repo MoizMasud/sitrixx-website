@@ -26,8 +26,8 @@ const serviceTiers = [
     subtitle: "Package 1",
     description: "A clean, modern site for small businesses",
     features: [
-      "Up to 5 pages layout",
-      "Mobile-optimized layout",
+      "1 page layout",
+      "Mobile-optimized design",
       "Contact form",
       "Modern UI/UX",
       "Basic edits included"
@@ -44,11 +44,10 @@ const serviceTiers = [
     features: [
       "2–5 custom pages",
       "Booking calendar embedded",
-      "AI chatbot embedded",
       "SMS reminders",
+      "Google review reminders",
       "Lead capture automations",
-      "Review automation",
-      "New client pipeline"
+      "Review automation"
     ],
     icon: Zap,
     color: "text-purple-500",
@@ -57,22 +56,22 @@ const serviceTiers = [
     bestFor: "Great for businesses that want more bookings and automated follow-ups"
   },
   {
-    name: "Advanced Website + IDX + Automations",
-    subtitle: "Package 3 (Realtors)",
-    description: "Full Webflow website with IDX listing integration",
+    name: "Advanced Website + Automations",
+    subtitle: "Package 3",
+    description: "Premium website with advanced integrations",
     features: [
-      "Real estate pages",
-      "Automatic listing updates via IDX",
-      "Book-a-Showing calendar",
-      "Buyer/seller lead forms",
-      "SMS updates",
+      "5+ custom pages",
+      "Advanced booking system",
       "AI chatbot on every page",
-      "Full CRM connection"
+      "SMS updates & reminders",
+      "Lead capture & nurture",
+      "Review automation",
+      "Custom integrations"
     ],
     icon: Building2,
     color: "text-orange-500",
     gradient: "from-orange-500 to-red-500",
-    bestFor: "Best for realtors, brokers, teams, and agencies"
+    bestFor: "Best for established businesses, agencies, and enterprises needing advanced automation"
   }
 ];
 
@@ -94,7 +93,7 @@ const processSteps = [
   {
     number: "03",
     title: "Build & Automations",
-    description: "We build all pages, set up mobile layouts, and embed booking calendar, contact forms, AI chatbot, SMS reminders, and IDX (for realtors). Everything is connected to your CRM.",
+    description: "We build all pages, set up mobile layouts, and embed booking calendar, contact forms, AI chatbot, SMS reminders, and custom integrations. Everything works seamlessly together.",
     icon: Wrench,
     gradient: "from-orange-500 to-red-500"
   },
