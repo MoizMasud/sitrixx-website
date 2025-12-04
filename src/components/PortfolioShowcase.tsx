@@ -819,12 +819,16 @@ function PortfolioShowcaseContent() {
             ))}
           </motion.div>
 
-          {/* View All Projects Button */}
+          {/* View All Projects Button - Updated styling for dark mode */}
           <AnimatedSection className="text-center mt-16" delay={0.3}>
-            <Button size="lg" variant="outline" asChild className="group rounded-2xl px-10 h-14 font-bold border-2 hover:border-primary transition-all">
-              <a href={`${baseUrl}/portfolio`}>
-                View All Projects
-                <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
+            <Button 
+              size="lg" 
+              asChild 
+              className="group rounded-2xl px-10 h-14 text-lg font-bold shadow-2xl hover:shadow-3xl transition-all bg-gradient-to-r from-primary to-purple-600 hover:scale-105"
+            >
+              <a href={`${baseUrl}/portfolio`} className="inline-flex items-center justify-center gap-2">
+                <span>View All Projects</span>
+                <ArrowRight className="group-hover:translate-x-2 transition-transform" size={20} />
               </a>
             </Button>
           </AnimatedSection>
