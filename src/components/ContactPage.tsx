@@ -258,7 +258,7 @@ function ContactPageContent() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             >
-              <div className="bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl overflow-hidden">
+              <div className="bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl overflow-hidden" style={{ marginTop: '7.2rem' }}>
                 <div className="p-8">
                   {submitted ? (
                     <motion.div 
