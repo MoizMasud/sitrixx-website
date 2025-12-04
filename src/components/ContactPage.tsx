@@ -167,7 +167,7 @@ function ContactPageContent() {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-1"
             >
-              <div className="space-y-8">
+              <div className="space-y-8 mb-1">
                 <div>
                   <h2 className="text-3xl font-black mb-4 tracking-tight text-foreground">Connect With Us</h2>
                   <p className="text-muted-foreground font-light text-lg leading-relaxed">
