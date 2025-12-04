@@ -12,6 +12,7 @@ export default function Navigation() {
     { name: 'Home', href: `${baseUrl}/` },
     { name: 'About', href: `${baseUrl}/about` },
     { name: 'Services', href: `${baseUrl}/services` },
+    { name: 'Portfolio', href: `${baseUrl}/portfolio` },
     { name: 'Automations', href: `${baseUrl}/automations` },
   ];
 

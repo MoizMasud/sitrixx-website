@@ -50,33 +50,6 @@ const portfolioItems = [
     details: "Professional dental practice website with embedded booking calendar, automated patient reminders, review collection system, and new patient pipeline automation.",
     results: ["40% increase in appointments", "5-star review growth", "Automated follow-ups"]
   },
-  {
-    title: "Fitness Studio Website",
-    category: "Business Website",
-    description: "Class booking and membership management",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
-    technologies: ["Astro", "React", "Calendly API", "SMS Integration"],
-    details: "Dynamic fitness studio site with class scheduling, membership sign-ups, automated class reminders, and instructor profiles with a bold, energetic design.",
-    results: ["100+ class bookings/month", "Reduced no-shows by 60%", "Streamlined check-ins"]
-  },
-  {
-    title: "Contractor Portfolio",
-    category: "Portfolio Site",
-    description: "Project showcase with lead capture",
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80",
-    technologies: ["Astro", "TypeScript", "Contact Forms", "Lead Automation"],
-    details: "Eye-catching contractor portfolio showcasing completed projects with before/after galleries, service area maps, automated quote requests, and client testimonials.",
-    results: ["Professional brand presence", "Quality lead filtering", "Instant quote requests"]
-  },
-  {
-    title: "E-Commerce Landing Page",
-    category: "E-Commerce",
-    description: "Product showcase with simple checkout",
-    image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?w=1200&q=80",
-    technologies: ["Astro", "TypeScript", "Stripe API", "AI Chatbot"],
-    details: "Clean e-commerce site for small product catalogs with integrated payment processing, AI-powered product recommendations, and abandoned cart recovery.",
-    results: ["Simple product management", "Secure checkout", "AI product assistance"]
-  }
 ];
 
 const reviews = [
@@ -143,7 +116,7 @@ const solutions = [
   {
     icon: CalendarIcon,
     title: "Smart Booking Calendar",
-    description: "Let customers book appointments instantly. Syncs with your schedule and sends confirmations automatically",
+    description: "Customers book instantly online 24/7 without calling you",
     features: ["Real-time availability", "Auto confirmations", "Calendar sync", "No double bookings"]
   },
   {
@@ -264,7 +237,7 @@ function PortfolioShowcaseContent() {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero Section - Updated to match About/Services style */}
+      {/* Hero Section */}
       <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         {/* Animated background gradient */}
         <motion.div 
@@ -549,7 +522,7 @@ function PortfolioShowcaseContent() {
         </div>
       </section>
 
-      {/* Solutions Section with luxury styling */}
+      {/* Solutions Section */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={solutionsRef}>
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -648,7 +621,7 @@ function PortfolioShowcaseContent() {
         </div>
       </section>
 
-      {/* Portfolio Section with enhanced visuals */}
+      {/* Featured Projects Section - Only 3 projects */}
       <section id="portfolio" className="py-32 px-4" ref={portfolioRef}>
         <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
@@ -671,18 +644,18 @@ function PortfolioShowcaseContent() {
               />
               <div className="relative bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/30 px-8 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                  Our Work
+                  Featured Work
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Featured Projects</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Recent Success Stories</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              Exceptional digital experiences crafted for ambitious brands
+              A glimpse into our portfolio of exceptional digital experiences
             </p>
           </AnimatedSection>
           
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 gap-10"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
             variants={staggerContainer}
             initial="hidden"
             animate={isPortfolioInView ? "visible" : "hidden"}
@@ -691,12 +664,12 @@ function PortfolioShowcaseContent() {
               <motion.div
                 key={index}
                 variants={scaleIn}
-                whileHover={{ y: -16, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }}
+                whileHover={{ y: -12, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }}
                 className="cursor-pointer group"
                 onClick={() => setSelectedProject(item)}
               >
                 <div className="bg-card border-2 rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all">
-                  <div className="relative h-96 overflow-hidden">
+                  <div className="relative h-72 overflow-hidden">
                     <motion.img 
                       src={item.image} 
                       alt={item.title}
@@ -711,22 +684,22 @@ function PortfolioShowcaseContent() {
                       transition={{ duration: 0.3 }}
                     />
                     <motion.div 
-                      className="absolute top-8 left-8 bg-gradient-to-r from-primary to-purple-600 text-primary-foreground px-6 py-3 rounded-2xl text-sm font-black shadow-2xl"
+                      className="absolute top-6 left-6 bg-gradient-to-r from-primary to-purple-600 text-primary-foreground px-5 py-2 rounded-xl text-xs font-black shadow-2xl"
                       whileHover={{ scale: 1.05 }}
                     >
                       {item.category}
                     </motion.div>
                   </div>
-                  <div className="p-10">
-                    <h3 className="text-3xl font-black mb-3 tracking-tight text-foreground group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-purple-600 group-hover:bg-clip-text transition-all">
+                  <div className="p-8">
+                    <h3 className="text-2xl font-black mb-3 tracking-tight text-foreground group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-purple-600 group-hover:bg-clip-text transition-all">
                       {item.title}
                     </h3>
-                    <p className="text-muted-foreground mb-8 font-light text-lg leading-relaxed">{item.description}</p>
-                    <div className="flex flex-wrap gap-3">
-                      {item.technologies.slice(0, 3).map((tech, i) => (
+                    <p className="text-muted-foreground mb-6 font-light leading-relaxed">{item.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {item.technologies.slice(0, 2).map((tech, i) => (
                         <motion.span 
                           key={i} 
-                          className="bg-gradient-to-r from-muted to-muted/50 border-2 px-5 py-2 rounded-xl text-xs font-bold shadow-md"
+                          className="bg-gradient-to-r from-muted to-muted/50 border px-4 py-2 rounded-xl text-xs font-bold shadow-md"
                           whileHover={{ scale: 1.05, y: -2 }}
                           transition={{ duration: 0.2 }}
                         >
@@ -739,6 +712,16 @@ function PortfolioShowcaseContent() {
               </motion.div>
             ))}
           </motion.div>
+
+          {/* View All Projects Button */}
+          <AnimatedSection className="text-center mt-16" delay={0.3}>
+            <Button size="lg" variant="outline" asChild className="group rounded-2xl px-10 h-14 font-bold border-2 hover:border-primary transition-all">
+              <a href={`${baseUrl}/portfolio`}>
+                View All Projects
+                <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
+              </a>
+            </Button>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -827,7 +810,7 @@ function PortfolioShowcaseContent() {
         </DialogContent>
       </Dialog>
 
-      {/* CTA Section with luxury gradient */}
+      {/* CTA Section */}
       <section className="py-32 px-4">
         <div className="max-w-6xl mx-auto">
           <AnimatedSection>
