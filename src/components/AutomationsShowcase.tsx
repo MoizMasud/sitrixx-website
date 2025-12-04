@@ -66,7 +66,15 @@ function AutomationsShowcaseContent() {
   const [isTyping, setIsTyping] = useState(false);
 
   const chatRef = useRef(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const isChatInView = useInView(chatRef, { once: false });
+
+  // Auto-scroll to bottom within the chat container only
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [visibleMessages, isTyping]);
 
   useEffect(() => {
     if (isChatInView) {
@@ -220,7 +228,10 @@ function AutomationsShowcaseContent() {
               </div>
 
               {/* Chat Messages */}
-              <div className="h-[500px] overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-background via-muted/20 to-background">
+              <div 
+                ref={chatContainerRef}
+                className="h-[500px] overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-background via-muted/20 to-background scroll-smooth"
+              >
                 {visibleMessages.map((message, index) => (
                   <motion.div
                     key={index}
