@@ -2,6 +2,8 @@ import {defineConfig} from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import fs from 'fs';
+import path from 'path';
 
 // Patches node_modules/vite/dist/client/client.mjs
 function patchViteErrorOverlay() {
@@ -43,6 +45,28 @@ function injectDevScript(options = {}) {
   };
 }
 
+/**
+ * Create .assetsignore file in dist directory after build
+ */
+function createAssetsIgnore() {
+  return {
+    name: 'create-assets-ignore',
+    hooks: {
+      'astro:build:done': ({dir, logger}) => {
+        const assetsIgnorePath = path.join(dir.pathname, '.assetsignore');
+        const content = '# Ignore _worker.js directory from being uploaded as an asset\n_worker.js\n';
+        
+        try {
+          fs.writeFileSync(assetsIgnorePath, content);
+          logger.info('Created .assetsignore file in dist directory');
+        } catch (error) {
+          logger.error('Failed to create .assetsignore file:', error);
+        }
+      },
+    },
+  };
+}
+
 // https://astro.build/config
 export default defineConfig({
   base: '',
@@ -63,6 +87,7 @@ export default defineConfig({
   integrations: [
     react(),
     injectDevScript({scriptPath: '/generated/dev-only.js'}),
+    createAssetsIgnore(),
   ],
   vite: {
     plugins: [tailwindcss(), patchViteErrorOverlay()],
