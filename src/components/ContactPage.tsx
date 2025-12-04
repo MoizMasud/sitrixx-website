@@ -124,7 +124,7 @@ function ContactPageContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="max-w-7xl mx-auto text-center relative z-10"
+          className="max-w-5xl mx-auto text-center relative z-10"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -137,7 +137,7 @@ function ContactPageContent() {
           </motion.div>
 
           <motion.h1 
-            className="text-6xl md:text-7xl font-black mb-8 tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+            className="text-5xl md:text-6xl font-black mb-6 tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -146,7 +146,7 @@ function ContactPageContent() {
           </motion.h1>
           
           <motion.p 
-            className="text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto font-light leading-relaxed"
+            className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto font-light leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -158,19 +158,19 @@ function ContactPageContent() {
 
       {/* Contact Form Section */}
       <section className="px-4 pb-32">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10" style={{ marginTop: '6.8rem' }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Contact Information */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:col-span-1"
+              className="lg:col-span-2"
             >
-              <div className="space-y-8 mb-1">
+              <div className="space-y-6">
                 <div>
                   <h2 className="text-3xl font-black mb-4 tracking-tight text-foreground">Connect With Us</h2>
-                  <p className="text-muted-foreground font-light text-lg leading-relaxed">
+                  <p className="text-muted-foreground font-light text-base leading-relaxed">
                     Fill out the form and we'll get back to you within 24 hours.
                   </p>
                 </div>
@@ -180,60 +180,60 @@ function ContactPageContent() {
                   whileHover={{ scale: 1.02, y: -4 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="p-8">
-                    <div className="space-y-6">
+                  <div className="p-6">
+                    <div className="space-y-5">
                       <motion.div 
-                        className="flex items-start gap-4"
+                        className="flex items-start gap-3"
                         whileHover={{ x: 4 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <Mail className="text-white" size={20} />
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                          <Mail className="text-white" size={18} />
                         </div>
                         <div>
-                          <div className="font-bold text-base text-foreground">Email</div>
+                          <div className="font-bold text-sm text-foreground">Email</div>
                           <div className="text-sm text-muted-foreground font-light">sitrixx1@gmail.com</div>
                         </div>
                       </motion.div>
 
                       <motion.div 
-                        className="flex items-start gap-4"
+                        className="flex items-start gap-3"
                         whileHover={{ x: 4 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <Phone className="text-white" size={20} />
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                          <Phone className="text-white" size={18} />
                         </div>
                         <div>
-                          <div className="font-bold text-base text-foreground">Phone</div>
-                          <div className="text-sm text-muted-foreground font-light">+1 (555) 123-4567</div>
+                          <div className="font-bold text-sm text-foreground">Phone</div>
+                          <div className="text-sm text-muted-foreground font-light">+1 519-212-2962</div>
                         </div>
                       </motion.div>
 
                       <motion.div 
-                        className="flex items-start gap-4"
+                        className="flex items-start gap-3"
                         whileHover={{ x: 4 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <Clock className="text-white" size={20} />
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                          <Clock className="text-white" size={18} />
                         </div>
                         <div>
-                          <div className="font-bold text-base text-foreground">Business Hours</div>
+                          <div className="font-bold text-sm text-foreground">Business Hours</div>
                           <div className="text-sm text-muted-foreground font-light">Mon-Fri: 9am-6pm EST</div>
                         </div>
                       </motion.div>
 
                       <motion.div 
-                        className="flex items-start gap-4"
+                        className="flex items-start gap-3"
                         whileHover={{ x: 4 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <MapPin className="text-white" size={20} />
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                          <MapPin className="text-white" size={18} />
                         </div>
                         <div>
-                          <div className="font-bold text-base text-foreground">Location</div>
+                          <div className="font-bold text-sm text-foreground">Location</div>
                           <div className="text-sm text-muted-foreground font-light">Remote - Serving Nationwide</div>
                         </div>
                       </motion.div>
@@ -242,11 +242,11 @@ function ContactPageContent() {
                 </motion.div>
 
                 <motion.div 
-                  className="bg-gradient-to-br from-primary/10 to-purple-500/10 border-2 rounded-3xl shadow-xl p-8"
+                  className="bg-gradient-to-br from-primary/10 to-purple-500/10 border-2 rounded-3xl shadow-xl p-6"
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <h3 className="font-bold text-lg mb-3 text-foreground">Quick Response</h3>
+                  <h3 className="font-bold text-base mb-2 text-foreground">Quick Response</h3>
                   <p className="text-sm text-muted-foreground font-light leading-relaxed">
                     We typically respond within 2-4 hours during business hours. For urgent inquiries, please call us directly.
                   </p>
@@ -259,13 +259,13 @@ function ContactPageContent() {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-              className="lg:col-span-2" style={{ marginTop: '6.8rem' }}
+              className="lg:col-span-3"
             >
               <div className="bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl overflow-hidden">
-                <div className="p-10">
+                <div className="p-8">
                   {submitted ? (
                     <motion.div 
-                      className="text-center py-20"
+                      className="text-center py-16"
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: "spring", duration: 0.6 }}
@@ -283,29 +283,29 @@ function ContactPageContent() {
                       </p>
                     </motion.div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-3">
-                          <Label htmlFor="name" className="text-base font-bold text-foreground">Full Name *</Label>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-bold text-foreground">Full Name *</Label>
                           <div className="relative">
-                            <User className="absolute left-4 top-4 text-muted-foreground" size={20} />
+                            <User className="absolute left-3 top-3 text-muted-foreground" size={18} />
                             <Input
                               id="name"
                               name="name"
                               placeholder="John Doe"
                               value={formData.name}
                               onChange={handleInputChange}
-                              className="pl-12 h-14 rounded-2xl border-2 text-base shadow-md focus:shadow-xl transition-all"
+                              className="pl-10 h-12 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
                               required
                               disabled={isSubmitting}
                             />
                           </div>
                         </div>
 
-                        <div className="space-y-3">
-                          <Label htmlFor="email" className="text-base font-bold text-foreground">Email Address *</Label>
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-sm font-bold text-foreground">Email Address *</Label>
                           <div className="relative">
-                            <Mail className="absolute left-4 top-4 text-muted-foreground" size={20} />
+                            <Mail className="absolute left-3 top-3 text-muted-foreground" size={18} />
                             <Input
                               id="email"
                               name="email"
@@ -313,17 +313,17 @@ function ContactPageContent() {
                               placeholder="john@example.com"
                               value={formData.email}
                               onChange={handleInputChange}
-                              className="pl-12 h-14 rounded-2xl border-2 text-base shadow-md focus:shadow-xl transition-all"
+                              className="pl-10 h-12 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
                               required
                               disabled={isSubmitting}
                             />
                           </div>
                         </div>
 
-                        <div className="space-y-3">
-                          <Label htmlFor="phone" className="text-base font-bold text-foreground">Phone Number</Label>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone" className="text-sm font-bold text-foreground">Phone Number</Label>
                           <div className="relative">
-                            <Phone className="absolute left-4 top-4 text-muted-foreground" size={20} />
+                            <Phone className="absolute left-3 top-3 text-muted-foreground" size={18} />
                             <Input
                               id="phone"
                               name="phone"
@@ -331,20 +331,20 @@ function ContactPageContent() {
                               placeholder="+1 (555) 000-0000"
                               value={formData.phone}
                               onChange={handleInputChange}
-                              className="pl-12 h-14 rounded-2xl border-2 text-base shadow-md focus:shadow-xl transition-all"
+                              className="pl-10 h-12 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
                               disabled={isSubmitting}
                             />
                           </div>
                         </div>
 
-                        <div className="space-y-3">
-                          <Label htmlFor="service" className="text-base font-bold text-foreground">Package *</Label>
+                        <div className="space-y-2">
+                          <Label htmlFor="service" className="text-sm font-bold text-foreground">Package *</Label>
                           <select
                             id="service"
                             name="service"
                             value={formData.service}
                             onChange={handleInputChange as any}
-                            className="w-full h-14 px-4 rounded-2xl border-2 border-input bg-background text-foreground text-base shadow-md focus:shadow-xl transition-all"
+                            className="w-full h-12 px-4 rounded-2xl border-2 border-input bg-background text-foreground text-sm shadow-md focus:shadow-xl transition-all"
                             required
                             disabled={isSubmitting}
                           >
@@ -357,32 +357,32 @@ function ContactPageContent() {
                         </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <Label htmlFor="message" className="text-base font-bold text-foreground">Tell Us About Your Project *</Label>
+                      <div className="space-y-2">
+                        <Label htmlFor="message" className="text-sm font-bold text-foreground">Tell Us About Your Project *</Label>
                         <Textarea
                           id="message"
                           name="message"
                           placeholder="What kind of website do you need? What features are most important?"
                           value={formData.message}
                           onChange={handleInputChange}
-                          rows={6}
-                          className="rounded-2xl border-2 text-base shadow-md focus:shadow-xl transition-all resize-none"
+                          rows={5}
+                          className="rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all resize-none"
                           required
                           disabled={isSubmitting}
                         />
                       </div>
 
-                      <div className="flex justify-end">
+                      <div className="flex justify-end pt-2">
                         <Button 
                           type="submit" 
                           size="lg" 
-                          className="min-w-[240px] group rounded-2xl h-14 font-bold shadow-2xl text-lg bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="min-w-[200px] group rounded-2xl h-12 font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? (
                             <>
                               <motion.div
-                                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                                className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                               />
@@ -391,7 +391,7 @@ function ContactPageContent() {
                           ) : (
                             <>
                               Submit Request
-                              <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
+                              <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
                             </>
                           )}
                         </Button>
@@ -412,7 +412,7 @@ function ContactPageContent() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="max-w-7xl mx-auto text-center"
+          className="max-w-6xl mx-auto text-center"
         >
           <motion.div 
             className="text-3xl font-black mb-4 text-foreground"
