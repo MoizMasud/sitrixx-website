@@ -1,0 +1,38 @@
+/**
+ * Cloudflare Workers configuration for Sitrixx
+ * For more details: https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sitrixx",
+	"main": "./dist/_worker.js/index.js",
+	"compatibility_date": "2025-04-15",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./dist"
+	},
+	"observability": {
+		"enabled": true
+	}
+	/**
+	 * Custom Routes for sitrixx.com
+	 * After deployment, add a custom domain in Cloudflare Dashboard:
+	 * Workers & Pages > sitrixx > Settings > Domains & Routes
+	 * Add: sitrixx.com and www.sitrixx.com
+	 */
+	
+	/**
+	 * Environment Variables
+	 * Add via: wrangler secret put VARIABLE_NAME
+	 */
+	// "vars": { "MY_VARIABLE": "production_value" },
+
+	/**
+	 * Smart Placement (optional optimization)
+	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/
+	 */
+	// "placement": { "mode": "smart" },
+}
