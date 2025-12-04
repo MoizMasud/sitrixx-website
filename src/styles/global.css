@@ -159,6 +159,17 @@ letter-spacing: -0.022em;
 button {
 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
+
+/* Force input and textarea text to always be visible */
+input, textarea, select {
+color: var(--foreground) !important;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+color: #ededed !important;
+}
 }
 
 /* Custom font utility classes */

@@ -20,21 +20,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return (hour >= 18 || hour < 6) ? 'dark' : 'light';
     };
 
-    // Check for saved theme preference, otherwise use time-based theme
+    // Check for saved theme preference first
     const savedTheme = localStorage.getItem('theme') as Theme | null;
+    
+    // If user has set a preference, use it and don't auto-switch
+    // Otherwise use time-based theme
     const initialTheme = savedTheme || getThemeByTime();
     
     setTheme(initialTheme);
     document.documentElement.classList.toggle('dark', initialTheme === 'dark');
 
-    // Update theme every minute to check if time has changed
-    const interval = setInterval(() => {
-      const timeBasedTheme = getThemeByTime();
-      setTheme(timeBasedTheme);
-      document.documentElement.classList.toggle('dark', timeBasedTheme === 'dark');
-    }, 60000); // Check every minute
+    // Only auto-update theme if user hasn't set a preference
+    if (!savedTheme) {
+      const interval = setInterval(() => {
+        const timeBasedTheme = getThemeByTime();
+        setTheme(timeBasedTheme);
+        document.documentElement.classList.toggle('dark', timeBasedTheme === 'dark');
+      }, 60000); // Check every minute
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }
   }, []);
 
   const handleSetTheme = (newTheme: Theme) => {
