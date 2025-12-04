@@ -210,7 +210,7 @@ function ServicesPageContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
-          className="max-w-7xl mx-auto text-center relative z-10"
+          className="max-w-6xl mx-auto text-center relative z-10"
         >
           {/* Typing Animation */}
           <motion.div
@@ -260,7 +260,7 @@ function ServicesPageContent() {
 
       {/* Service Packages Section */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={servicesRef}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -383,7 +383,7 @@ function ServicesPageContent() {
 
       {/* Process Section */}
       <section className="py-32 px-4" ref={processRef}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -495,7 +495,7 @@ function ServicesPageContent() {
 
       {/* Footer */}
       <footer className="py-20 px-4">
-        <AnimatedSection className="max-w-7xl mx-auto text-center">
+        <AnimatedSection className="max-w-6xl mx-auto text-center">
           <motion.div 
             className="text-3xl font-black mb-4 text-foreground"
             whileHover={{ scale: 1.05 }}

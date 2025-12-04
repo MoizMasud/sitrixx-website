@@ -305,7 +305,7 @@ function PortfolioShowcaseContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
-          className="max-w-7xl mx-auto text-center relative z-10"
+          className="max-w-6xl mx-auto text-center relative z-10"
         >
           {/* Typing Animation Above Main Title */}
           <motion.div
@@ -391,7 +391,7 @@ function PortfolioShowcaseContent() {
 
       {/* Reviews Section */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={reviewsRef}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -469,7 +469,7 @@ function PortfolioShowcaseContent() {
 
       {/* Problems Section */}
       <section className="py-32 px-4" ref={problemsRef}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             ref={problemsRef}
             initial="hidden"
@@ -552,7 +552,7 @@ function PortfolioShowcaseContent() {
 
       {/* Solutions Section with luxury styling */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={solutionsRef}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial="hidden"
             animate={isSolutionsInView ? "visible" : "hidden"}
@@ -651,7 +651,7 @@ function PortfolioShowcaseContent() {
 
       {/* Portfolio Section with enhanced visuals */}
       <section id="portfolio" className="py-32 px-4" ref={portfolioRef}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -889,7 +889,7 @@ function PortfolioShowcaseContent() {
 
       {/* Footer */}
       <footer className="py-20 px-4">
-        <AnimatedSection className="max-w-7xl mx-auto text-center">
+        <AnimatedSection className="max-w-6xl mx-auto text-center">
           <motion.div 
             className="text-3xl font-black mb-4 text-foreground"
             whileHover={{ scale: 1.05 }}
