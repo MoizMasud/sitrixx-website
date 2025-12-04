@@ -124,7 +124,7 @@ function ContactPageContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="max-w-5xl mx-auto text-center relative z-10"
+          className="max-w-4xl mx-auto text-center relative z-10"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -137,7 +137,7 @@ function ContactPageContent() {
           </motion.div>
 
           <motion.h1 
-            className="text-5xl md:text-6xl font-black mb-6 tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+            className="text-4xl md:text-5xl font-black mb-6 tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -146,7 +146,7 @@ function ContactPageContent() {
           </motion.h1>
           
           <motion.p 
-            className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto font-light leading-relaxed"
+            className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto font-light leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -158,100 +158,98 @@ function ContactPageContent() {
 
       {/* Contact Form Section */}
       <section className="px-4 pb-32">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Contact Information */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:col-span-2"
+              className="space-y-6"
             >
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-3xl font-black mb-4 tracking-tight text-foreground">Connect With Us</h2>
-                  <p className="text-muted-foreground font-light text-base leading-relaxed">
-                    Fill out the form and we'll get back to you within 24 hours.
-                  </p>
-                </div>
-
-                <motion.div 
-                  className="bg-gradient-to-br from-card via-card to-primary/5 border-2 rounded-3xl shadow-2xl overflow-hidden"
-                  whileHover={{ scale: 1.02, y: -4 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="p-6">
-                    <div className="space-y-5">
-                      <motion.div 
-                        className="flex items-start gap-3"
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <Mail className="text-white" size={18} />
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm text-foreground">Email</div>
-                          <div className="text-sm text-muted-foreground font-light">sitrixx1@gmail.com</div>
-                        </div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="flex items-start gap-3"
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <Phone className="text-white" size={18} />
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm text-foreground">Phone</div>
-                          <div className="text-sm text-muted-foreground font-light">+1 519-212-2962</div>
-                        </div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="flex items-start gap-3"
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <Clock className="text-white" size={18} />
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm text-foreground">Business Hours</div>
-                          <div className="text-sm text-muted-foreground font-light">Mon-Fri: 9am-6pm EST</div>
-                        </div>
-                      </motion.div>
-
-                      <motion.div 
-                        className="flex items-start gap-3"
-                        whileHover={{ x: 4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-xl">
-                          <MapPin className="text-white" size={18} />
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm text-foreground">Location</div>
-                          <div className="text-sm text-muted-foreground font-light">Remote - Serving Nationwide</div>
-                        </div>
-                      </motion.div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  className="bg-gradient-to-br from-primary/10 to-purple-500/10 border-2 rounded-3xl shadow-xl p-6"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h3 className="font-bold text-base mb-2 text-foreground">Quick Response</h3>
-                  <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                    We typically respond within 2-4 hours during business hours. For urgent inquiries, please call us directly.
-                  </p>
-                </motion.div>
+              <div>
+                <h2 className="text-3xl font-black mb-4 tracking-tight text-foreground">Connect With Us</h2>
+                <p className="text-muted-foreground font-light text-base leading-relaxed">
+                  Fill out the form and we'll get back to you within 24 hours.
+                </p>
               </div>
+
+              <motion.div 
+                className="bg-gradient-to-br from-card via-card to-primary/5 border-2 rounded-3xl shadow-2xl overflow-hidden"
+                whileHover={{ scale: 1.02, y: -4 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="p-6">
+                  <div className="space-y-5">
+                    <motion.div 
+                      className="flex items-start gap-3"
+                      whileHover={{ x: 4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <Mail className="text-white" size={18} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-foreground">Email</div>
+                        <div className="text-sm text-muted-foreground font-light">sitrixx1@gmail.com</div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      className="flex items-start gap-3"
+                      whileHover={{ x: 4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <Phone className="text-white" size={18} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-foreground">Phone</div>
+                        <div className="text-sm text-muted-foreground font-light">+1 519-212-2962</div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      className="flex items-start gap-3"
+                      whileHover={{ x: 4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <Clock className="text-white" size={18} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-foreground">Business Hours</div>
+                        <div className="text-sm text-muted-foreground font-light">Mon-Fri: 9am-6pm EST</div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      className="flex items-start gap-3"
+                      whileHover={{ x: 4 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 shadow-xl">
+                        <MapPin className="text-white" size={18} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-foreground">Location</div>
+                        <div className="text-sm text-muted-foreground font-light">Remote - Serving Nationwide</div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="bg-gradient-to-br from-primary/10 to-purple-500/10 border-2 rounded-3xl shadow-xl p-6"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h3 className="font-bold text-base mb-2 text-foreground">Quick Response</h3>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed">
+                  We typically respond within 2-4 hours during business hours. For urgent inquiries, please call us directly.
+                </p>
+              </motion.div>
             </motion.div>
 
             {/* Contact Form */}
@@ -259,7 +257,6 @@ function ContactPageContent() {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-              className="lg:col-span-3"
             >
               <div className="bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl overflow-hidden">
                 <div className="p-8">
@@ -278,83 +275,81 @@ function ContactPageContent() {
                         <Check className="text-white" size={40} strokeWidth={3} />
                       </motion.div>
                       <h3 className="text-3xl font-black mb-3 tracking-tight text-foreground">Thank You!</h3>
-                      <p className="text-muted-foreground text-lg font-light">
+                      <p className="text-muted-foreground text-base font-light">
                         We've received your message and will get back to you at <strong>{formData.email}</strong> within 24 hours.
                       </p>
                     </motion.div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="name" className="text-sm font-bold text-foreground">Full Name *</Label>
-                          <div className="relative">
-                            <User className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                            <Input
-                              id="name"
-                              name="name"
-                              placeholder="John Doe"
-                              value={formData.name}
-                              onChange={handleInputChange}
-                              className="pl-10 h-12 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
-                              required
-                              disabled={isSubmitting}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="text-sm font-bold text-foreground">Email Address *</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                            <Input
-                              id="email"
-                              name="email"
-                              type="email"
-                              placeholder="john@example.com"
-                              value={formData.email}
-                              onChange={handleInputChange}
-                              className="pl-10 h-12 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
-                              required
-                              disabled={isSubmitting}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-sm font-bold text-foreground">Phone Number</Label>
-                          <div className="relative">
-                            <Phone className="absolute left-3 top-3 text-muted-foreground" size={18} />
-                            <Input
-                              id="phone"
-                              name="phone"
-                              type="tel"
-                              placeholder="+1 (555) 000-0000"
-                              value={formData.phone}
-                              onChange={handleInputChange}
-                              className="pl-10 h-12 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
-                              disabled={isSubmitting}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="service" className="text-sm font-bold text-foreground">Package *</Label>
-                          <select
-                            id="service"
-                            name="service"
-                            value={formData.service}
-                            onChange={handleInputChange as any}
-                            className="w-full h-12 px-4 rounded-2xl border-2 border-input bg-background text-foreground text-sm shadow-md focus:shadow-xl transition-all"
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className="text-sm font-bold text-foreground">Full Name *</Label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                          <Input
+                            id="name"
+                            name="name"
+                            placeholder="John Doe"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            className="pl-10 h-11 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
                             required
                             disabled={isSubmitting}
-                          >
-                            <option value="">Select a package</option>
-                            <option value="starter">Package 1 - Starter Website</option>
-                            <option value="smart">Package 2 - Smart Website + Automations</option>
-                            <option value="advanced">Package 3 - Advanced + IDX (Realtors)</option>
-                            <option value="not-sure">Not sure yet</option>
-                          </select>
+                          />
                         </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-sm font-bold text-foreground">Email Address *</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                          <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="john@example.com"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="pl-10 h-11 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
+                            required
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone" className="text-sm font-bold text-foreground">Phone Number</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-3 text-muted-foreground" size={18} />
+                          <Input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            placeholder="+1 (555) 000-0000"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            className="pl-10 h-11 rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="service" className="text-sm font-bold text-foreground">Package *</Label>
+                        <select
+                          id="service"
+                          name="service"
+                          value={formData.service}
+                          onChange={handleInputChange as any}
+                          className="w-full h-11 px-4 rounded-2xl border-2 border-input bg-background text-foreground text-sm shadow-md focus:shadow-xl transition-all"
+                          required
+                          disabled={isSubmitting}
+                        >
+                          <option value="">Select a package</option>
+                          <option value="starter">Package 1 - Starter Website</option>
+                          <option value="smart">Package 2 - Smart Website + Automations</option>
+                          <option value="advanced">Package 3 - Advanced + IDX (Realtors)</option>
+                          <option value="not-sure">Not sure yet</option>
+                        </select>
                       </div>
 
                       <div className="space-y-2">
@@ -365,18 +360,18 @@ function ContactPageContent() {
                           placeholder="What kind of website do you need? What features are most important?"
                           value={formData.message}
                           onChange={handleInputChange}
-                          rows={5}
+                          rows={4}
                           className="rounded-2xl border-2 text-sm shadow-md focus:shadow-xl transition-all resize-none"
                           required
                           disabled={isSubmitting}
                         />
                       </div>
 
-                      <div className="flex justify-end pt-2">
+                      <div className="pt-2">
                         <Button 
                           type="submit" 
                           size="lg" 
-                          className="min-w-[200px] group rounded-2xl h-12 font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full group rounded-2xl h-11 font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={isSubmitting}
                         >
                           {isSubmitting ? (
