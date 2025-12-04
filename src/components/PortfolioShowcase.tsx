@@ -29,7 +29,7 @@ const portfolioItems = [
     category: "Business Website",
     description: "Modern booking site with automated reminders",
     image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80",
-    technologies: ["Webflow", "Calendly", "SMS Automation", "Contact Forms"],
+    technologies: ["Astro", "TypeScript", "Calendly API", "SMS Automation"],
     details: "A sleek, mobile-optimized barbershop website featuring integrated booking calendar, automated SMS appointment reminders, and a modern UI that converts visitors into customers.",
     results: ["50% more online bookings", "Zero missed appointments", "Mobile-first design"]
   },
@@ -38,7 +38,7 @@ const portfolioItems = [
     category: "Real Estate Website",
     description: "Full IDX integration with lead automation",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
-    technologies: ["Webflow", "IDX", "AI Chatbot", "CRM Integration"],
+    technologies: ["Astro", "TypeScript", "Tailwind CSS", "Framer Motion"],
     details: "Complete realtor website with automatic MLS listing updates, book-a-showing calendar, AI chatbot for 24/7 lead engagement, and full CRM pipeline connection.",
     results: ["Live listing updates", "3x more qualified leads", "24/7 AI assistance"]
   },
@@ -47,7 +47,7 @@ const portfolioItems = [
     category: "Business Website",
     description: "Appointment booking with review automation",
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80",
-    technologies: ["Webflow", "TidyCal", "Zapier", "Review Automation"],
+    technologies: ["Astro", "TypeScript", "TidyCal API", "Zapier"],
     details: "Professional dental practice website with embedded booking calendar, automated patient reminders, review collection system, and new patient pipeline automation.",
     results: ["40% increase in appointments", "5-star review growth", "Automated follow-ups"]
   },
@@ -56,7 +56,7 @@ const portfolioItems = [
     category: "Business Website",
     description: "Class booking and membership management",
     image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
-    technologies: ["Webflow", "Calendly", "SMS Reminders", "Lead Capture"],
+    technologies: ["Astro", "React", "Calendly API", "SMS Integration"],
     details: "Dynamic fitness studio site with class scheduling, membership sign-ups, automated class reminders, and instructor profiles with a bold, energetic design.",
     results: ["100+ class bookings/month", "Reduced no-shows by 60%", "Streamlined check-ins"]
   },
@@ -65,7 +65,7 @@ const portfolioItems = [
     category: "Portfolio Site",
     description: "Project showcase with lead capture",
     image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80",
-    technologies: ["Webflow", "Contact Forms", "Lead Automation", "Gallery"],
+    technologies: ["Astro", "TypeScript", "Contact Forms", "Lead Automation"],
     details: "Eye-catching contractor portfolio showcasing completed projects with before/after galleries, service area maps, automated quote requests, and client testimonials.",
     results: ["Professional brand presence", "Quality lead filtering", "Instant quote requests"]
   },
@@ -74,7 +74,7 @@ const portfolioItems = [
     category: "E-Commerce",
     description: "Product showcase with simple checkout",
     image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?w=1200&q=80",
-    technologies: ["Webflow", "E-Commerce", "Payment Integration", "AI Chatbot"],
+    technologies: ["Astro", "TypeScript", "Stripe API", "AI Chatbot"],
     details: "Clean e-commerce site for small product catalogs with integrated payment processing, AI-powered product recommendations, and abandoned cart recovery.",
     results: ["Simple product management", "Secure checkout", "AI product assistance"]
   }
@@ -163,13 +163,13 @@ const solutions = [
     icon: Zap,
     title: "Lead Capture & Nurture",
     description: "Capture every lead and automatically follow up with emails and SMS. Never miss an opportunity",
-    features: ["Smart forms", "Auto follow-ups", "CRM integration", "Lead scoring"]
+    features: ["Smart forms", "Auto follow-ups", "Email & SMS sequences", "Lead scoring"]
   },
   {
     icon: MessageSquare,
-    title: "Complete Automations",
-    description: "Connect everything together. From first visit to loyal customer, all on autopilot",
-    features: ["Full automation", "Custom workflows", "Multi-channel", "Zapier/Make ready"]
+    title: "Chatbot",
+    description: "AI-powered chatbot engages visitors, answers questions, and books appointments 24/7",
+    features: ["Instant responses", "Natural conversations", "Lead qualification", "Appointment scheduling"]
   }
 ];
 
