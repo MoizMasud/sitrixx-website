@@ -23,7 +23,7 @@ const portfolioItems = [
     results: ["50% more online bookings", "Zero missed appointments", "Mobile-first design"]
   },
   {
-    title: "Real Estate IDX",
+    title: "Real Estate",
     category: "Real Estate",
     description: "Full IDX integration with lead automation",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
@@ -87,8 +87,6 @@ const portfolioItems = [
   }
 ];
 
-const categories = ["All", "Real Estate"];
-
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
   visible: { 
@@ -121,14 +119,9 @@ const scaleIn = {
 
 function PortfolioPageContent() {
   const [selectedProject, setSelectedProject] = useState<typeof portfolioItems[0] | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const portfolioRef = useRef(null);
   const isPortfolioInView = useInView(portfolioRef, { once: true, margin: "-100px" });
-
-  const filteredProjects = selectedCategory === "All" 
-    ? portfolioItems 
-    : portfolioItems.filter(item => item.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-background">
@@ -219,34 +212,6 @@ function PortfolioPageContent() {
         </motion.div>
       </section>
 
-      {/* Filter Categories */}
-      <section className="py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.div 
-            className="flex flex-wrap justify-center gap-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            {categories.map((category) => (
-              <motion.button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-2xl font-bold text-sm transition-all ${
-                  selectedCategory === category
-                    ? 'bg-gradient-to-r from-primary to-purple-600 text-primary-foreground shadow-xl'
-                    : 'bg-muted hover:bg-muted/80 text-foreground border-2 border-transparent hover:border-primary/30'
-                }`}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {category}
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* Portfolio Grid */}
       <section className="py-20 px-4" ref={portfolioRef}>
         <div className="max-w-6xl mx-auto">
@@ -255,11 +220,10 @@ function PortfolioPageContent() {
             variants={staggerContainer}
             initial="hidden"
             animate={isPortfolioInView ? "visible" : "hidden"}
-            key={selectedCategory}
           >
-            {filteredProjects.map((item, index) => (
+            {portfolioItems.map((item, index) => (
               <motion.div
-                key={`${selectedCategory}-${index}`}
+                key={index}
                 variants={scaleIn}
                 whileHover={{ y: -16, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }}
                 className="cursor-pointer group"
@@ -309,16 +273,6 @@ function PortfolioPageContent() {
               </motion.div>
             ))}
           </motion.div>
-
-          {filteredProjects.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <p className="text-2xl text-muted-foreground font-light">No projects found in this category</p>
-            </motion.div>
-          )}
         </div>
       </section>
 

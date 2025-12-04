@@ -33,7 +33,7 @@ const portfolioItems = [
     results: ["50% more online bookings", "Zero missed appointments", "Mobile-first design"]
   },
   {
-    title: "Real Estate IDX",
+    title: "Real Estate",
     category: "Real Estate",
     description: "Full IDX integration with lead automation",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
