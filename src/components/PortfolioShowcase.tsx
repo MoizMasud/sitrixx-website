@@ -24,8 +24,8 @@ import { ThemeProvider } from './ThemeProvider';
 
 const portfolioItems = [
   {
-    title: "Barber Shop Website",
-    category: "Business Website",
+    title: "Barber Shop",
+    category: "Real Estate",
     description: "Modern booking site with automated reminders",
     image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Calendly API", "SMS Automation"],
@@ -33,8 +33,8 @@ const portfolioItems = [
     results: ["50% more online bookings", "Zero missed appointments", "Mobile-first design"]
   },
   {
-    title: "Real Estate IDX Site",
-    category: "Real Estate Website",
+    title: "Real Estate IDX",
+    category: "Real Estate",
     description: "Full IDX integration with lead automation",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Tailwind CSS", "Framer Motion"],
@@ -42,8 +42,8 @@ const portfolioItems = [
     results: ["Live listing updates", "3x more qualified leads", "24/7 AI assistance"]
   },
   {
-    title: "Dental Practice Site",
-    category: "Business Website",
+    title: "Dental Practice",
+    category: "Real Estate",
     description: "Appointment booking with review automation",
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "TidyCal API", "Zapier"],

@@ -14,8 +14,8 @@ import { ThemeProvider } from './ThemeProvider';
 
 const portfolioItems = [
   {
-    title: "Barber Shop Website",
-    category: "Business Website",
+    title: "Barber Shop",
+    category: "Real Estate",
     description: "Modern booking site with automated reminders",
     image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Calendly API", "SMS Automation"],
@@ -23,8 +23,8 @@ const portfolioItems = [
     results: ["50% more online bookings", "Zero missed appointments", "Mobile-first design"]
   },
   {
-    title: "Real Estate IDX Site",
-    category: "Real Estate Website",
+    title: "Real Estate IDX",
+    category: "Real Estate",
     description: "Full IDX integration with lead automation",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Tailwind CSS", "Framer Motion"],
@@ -32,8 +32,8 @@ const portfolioItems = [
     results: ["Live listing updates", "3x more qualified leads", "24/7 AI assistance"]
   },
   {
-    title: "Dental Practice Site",
-    category: "Business Website",
+    title: "Dental Practice",
+    category: "Real Estate",
     description: "Appointment booking with review automation",
     image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "TidyCal API", "Zapier"],
@@ -41,8 +41,8 @@ const portfolioItems = [
     results: ["40% increase in appointments", "5-star review growth", "Automated follow-ups"]
   },
   {
-    title: "Fitness Studio Website",
-    category: "Business Website",
+    title: "Fitness Studio",
+    category: "Real Estate",
     description: "Class booking and membership management",
     image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
     technologies: ["Astro", "React", "Calendly API", "SMS Integration"],
@@ -51,7 +51,7 @@ const portfolioItems = [
   },
   {
     title: "Contractor Portfolio",
-    category: "Portfolio Site",
+    category: "Real Estate",
     description: "Project showcase with lead capture",
     image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Contact Forms", "Lead Automation"],
@@ -59,8 +59,8 @@ const portfolioItems = [
     results: ["Professional brand presence", "Quality lead filtering", "Instant quote requests"]
   },
   {
-    title: "E-Commerce Landing Page",
-    category: "E-Commerce",
+    title: "E-Commerce Store",
+    category: "Real Estate",
     description: "Product showcase with simple checkout",
     image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Stripe API", "AI Chatbot"],
@@ -68,8 +68,8 @@ const portfolioItems = [
     results: ["Simple product management", "Secure checkout", "AI product assistance"]
   },
   {
-    title: "Restaurant Website",
-    category: "Business Website",
+    title: "Restaurant",
+    category: "Real Estate",
     description: "Online ordering with reservation system",
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80",
     technologies: ["Astro", "React", "Square API", "Reservation System"],
@@ -77,8 +77,8 @@ const portfolioItems = [
     results: ["30% increase in online orders", "Reduced phone orders", "Automated confirmations"]
   },
   {
-    title: "Law Firm Website",
-    category: "Professional Services",
+    title: "Law Firm",
+    category: "Real Estate",
     description: "Attorney profiles with case consultation booking",
     image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&q=80",
     technologies: ["Astro", "TypeScript", "Calendly", "Contact Forms"],
@@ -87,7 +87,7 @@ const portfolioItems = [
   }
 ];
 
-const categories = ["All", "Business Website", "Real Estate Website", "Portfolio Site", "E-Commerce", "Professional Services"];
+const categories = ["All", "Real Estate"];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
