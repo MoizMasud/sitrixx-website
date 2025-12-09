@@ -1,11 +1,11 @@
 /**
 GENERATED FILE
 
-webflow.css is generated automatically by webflow and is used to expose variables from your webflow design system in your app. 
+webflow.css is generated automatically by webflow and is used to expose variables from your webflow design system in your app.
+
 Any changes to this file will be overwritten the next time your app is loaded in the workbench.
 
-In order to override any of these variables you can redefine them in a
-css file that is imported globally after the webflow.css on your page.
+In order to override any of these variables, you can redefine them in a CSS file that is imported globally after the webflow.css on your page.
 
 Font imports and @font-face declarations are in fonts.css, which should be imported before this file.
 

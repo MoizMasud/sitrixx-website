@@ -18,66 +18,73 @@ import {
   MessageSquare,
   PenTool,
   Code2,
-  FileCheck
+  FileCheck,
+  RefreshCw,
+  Repeat,
+  DollarSign
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
 import { ThemeProvider } from './ThemeProvider';
 
-const serviceTiers = [
+const pricingPlans = [
   {
-    name: "Starter Website",
-    subtitle: "Package 1",
-    description: "A clean, modern site for small businesses — fully customized to your brand",
+    name: "Monthly Subscription",
+    subtitle: "Plan A",
+    price: "$297/month",
+    description: "Best for clients who want low upfront cost and a fully managed website",
     features: [
-      "1 page layout tailored to you",
-      "Mobile-optimized design",
-      "Custom colors & fonts",
-      "Basic edits included",
-      "You own the code"
+      "Custom website build included",
+      "Unlimited edits & updates",
+      "Hosting, security & backups",
+      "Google review automation (email & SMS)"
     ],
-    icon: Globe,
+    icon: RefreshCw,
     color: "text-primary",
     gradient: "from-primary to-purple-600",
-    bestFor: "Perfect for barbers, salons, contractors, freelancers, and small shops"
+    bestFor: "Ideal for businesses that want zero upfront costs and prefer monthly payments",
+    terms: "Minimum Term: 5 months (total $1,485). After 5 months: month-to-month."
   },
   {
-    name: "Smart Website + Automations",
-    subtitle: "Package 2",
-    description: "Custom multi-page website with automation built for your workflow",
+    name: "One-Time Build + Maintenance",
+    subtitle: "Plan B",
+    price: "$1,250 + $100/mo",
+    description: "Complete custom website with ongoing support",
     features: [
-      "2–4 custom pages designed for you",
-      "Booking calendar embedded",
-      "SMS reminders configured",
-      "Google review automation",
-      "Lead capture forms",
-      "Custom automation flows",
-      "You own everything"
+      "One-time build fee: $1,250",
+      "Monthly maintenance: $100/month",
+      "Website updates",
+      "Security monitoring",
+      "Hosting & backups",
+      "Minor content changes"
     ],
-    icon: Zap,
+    icon: Building2,
     color: "text-purple-600",
     gradient: "from-primary to-purple-600",
     popular: true,
-    bestFor: "Ideal for service businesses wanting more bookings and automated client follow-ups"
+    bestFor: "Best for businesses that want to own the site outright with optional ongoing support",
+    terms: "Payment: 50% deposit, 40% on structure completion, 10% before launch"
+  }
+];
+
+const addOns = [
+  {
+    name: "Extra Website Page",
+    price: "$150",
+    description: "Add another custom page to your website",
+    icon: Globe
   },
   {
-    name: "Advanced Website + Automations",
-    subtitle: "Package 3",
-    description: "Premium custom website with advanced integrations built around your needs",
-    features: [
-      "4+ custom pages",
-      "Advanced booking system",
-      "AI chatbot trained for your business",
-      "SMS updates & reminders",
-      "Lead capture & nurture flows",
-      "Review automation",
-      "SEO optimization",
-      "Full code ownership & maintenance options"
-    ],
-    icon: Building2,
-    color: "text-primary",
-    gradient: "from-primary to-purple-600",
-    bestFor: "Best for established businesses, agencies, and enterprises needing complete automation"
+    name: "Additional Automation Workflow",
+    price: "$150–$400",
+    description: "Custom automation tailored to your business needs",
+    icon: Zap
+  },
+  {
+    name: "Branding Palette",
+    price: "$80",
+    description: "Professional color scheme and brand identity design",
+    icon: Palette
   }
 ];
 
@@ -184,6 +191,9 @@ function ServicesPageContent() {
   const servicesRef = useRef(null);
   const isServicesInView = useInView(servicesRef, { once: true, margin: "-100px" });
 
+  const addOnsRef = useRef(null);
+  const isAddOnsInView = useInView(addOnsRef, { once: true, margin: "-100px" });
+
   const processRef = useRef(null);
   const isProcessInView = useInView(processRef, { once: true, margin: "-100px" });
 
@@ -240,13 +250,13 @@ function ServicesPageContent() {
             <div className="text-xl md:text-2xl font-light text-muted-foreground min-h-[2rem]">
               <TypeAnimation
                 sequence={[
-                  'Custom Service Packages',
+                  'Flexible Pricing Plans',
                   2000,
                   'Built Around Your Needs',
                   2000,
                   'Your Vision, Our Expertise',
                   2000,
-                  'Flexible & Personalized',
+                  'Custom Websites, Smart Pricing',
                   2000,
                 ]}
                 wrapper="span"
@@ -262,7 +272,7 @@ function ServicesPageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
           >
-            Our Services
+            Packages & Pricing
           </motion.h1>
           
           <motion.p 
@@ -271,12 +281,12 @@ function ServicesPageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            Every package is fully customized to your brand, goals, and workflow — with smart automation built your way
+            Choose the plan that fits your budget — every website is fully customized to your brand and goals
           </motion.p>
         </motion.div>
       </section>
 
-      {/* Service Packages Section */}
+      {/* Pricing Plans Section */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={servicesRef}>
         <div className="max-w-7xl mx-auto">
           <AnimatedSection className="text-center mb-20">
@@ -299,24 +309,24 @@ function ServicesPageContent() {
               />
               <div className="relative bg-gradient-to-r from-primary/10 via-purple-500/10 to-primary/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                  Fully Custom Packages
+                  Flexible Plans
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Choose Your Starting Point</h2>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Choose Your Plan</h2>
             <p className="text-muted-foreground text-2xl font-light max-w-4xl mx-auto">
-              Each package is a foundation — we customize everything to match your vision, brand, and business needs
+              Every website is fully customized — pick the payment structure that works best for you
             </p>
           </AnimatedSection>
 
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-5xl mx-auto"
             variants={staggerContainer}
             initial="hidden"
             animate={isServicesInView ? "visible" : "hidden"}
           >
-            {serviceTiers.map((tier, index) => {
-              const Icon = tier.icon;
+            {pricingPlans.map((plan, index) => {
+              const Icon = plan.icon;
               return (
                 <motion.div
                   key={index}
@@ -324,8 +334,8 @@ function ServicesPageContent() {
                   whileHover={{ y: -16, scale: 1.02, transition: { duration: 0.4 } }}
                   className="h-full"
                 >
-                  <div className={`relative h-full bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl hover:shadow-3xl transition-all overflow-hidden ${tier.popular ? 'ring-4 ring-primary/30 scale-105' : ''}`}>
-                    {tier.popular && (
+                  <div className={`relative h-full bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl shadow-2xl hover:shadow-3xl transition-all overflow-hidden ${plan.popular ? 'ring-4 ring-primary/30 scale-105' : ''}`}>
+                    {plan.popular && (
                       <motion.div 
                         className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center"
                         initial={{ y: -20, opacity: 0 }}
@@ -349,12 +359,12 @@ function ServicesPageContent() {
                     )}
 
                     <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${tier.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                      className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
                     />
 
-                    <div className={`relative p-8 ${tier.popular ? 'pt-24' : ''}`}>
+                    <div className={`relative p-8 ${plan.popular ? 'pt-24' : ''}`}>
                       <motion.div 
-                        className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${tier.gradient} flex items-center justify-center shadow-2xl`}
+                        className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center shadow-2xl`}
                         whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                         transition={{ duration: 0.5 }}
                       >
@@ -362,13 +372,14 @@ function ServicesPageContent() {
                       </motion.div>
                       
                       <div className="text-center mb-8">
-                        <div className="text-xs text-muted-foreground mb-2 font-bold tracking-wider uppercase">{tier.subtitle}</div>
-                        <h3 className="text-2xl md:text-3xl font-black mb-3 tracking-tight text-foreground">{tier.name}</h3>
-                        <p className="text-muted-foreground font-light text-sm leading-relaxed">{tier.description}</p>
+                        <div className="text-xs text-muted-foreground mb-2 font-bold tracking-wider uppercase">{plan.subtitle}</div>
+                        <h3 className="text-2xl md:text-3xl font-black mb-2 tracking-tight text-foreground">{plan.name}</h3>
+                        <div className="text-4xl font-black text-primary mb-3">{plan.price}</div>
+                        <p className="text-muted-foreground font-light text-sm leading-relaxed">{plan.description}</p>
                       </div>
 
-                      <ul className="space-y-3 mb-8">
-                        {tier.features.map((feature, i) => (
+                      <ul className="space-y-3 mb-6">
+                        {plan.features.map((feature, i) => (
                           <motion.li 
                             key={i} 
                             className="flex items-start gap-3"
@@ -385,32 +396,32 @@ function ServicesPageContent() {
                       </ul>
 
                       <motion.div 
-                        className="bg-gradient-to-br from-primary/5 to-purple-500/5 border border-primary/20 p-4 rounded-2xl mb-6 relative overflow-hidden"
+                        className="bg-gradient-to-br from-primary/5 to-purple-500/5 border border-primary/20 p-4 rounded-2xl mb-4"
                         whileHover={{ scale: 1.02 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-600/5"
-                          animate={{
-                            x: ['-100%', '100%'],
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            ease: "linear"
-                          }}
-                        />
-                        <p className="text-xs text-muted-foreground font-semibold leading-relaxed text-center relative z-10">
+                        <p className="text-xs text-muted-foreground font-semibold leading-relaxed text-center">
                           <span className="block mb-1 text-primary font-bold uppercase tracking-wide" style={{ fontSize: '10px' }}>
                             Perfect For
                           </span>
-                          {tier.bestFor}
+                          {plan.bestFor}
                         </p>
                       </motion.div>
 
+                      {plan.terms && (
+                        <motion.div 
+                          className="bg-muted/30 border border-border p-3 rounded-xl mb-6"
+                          whileHover={{ scale: 1.01 }}
+                        >
+                          <p className="text-xs text-muted-foreground font-medium text-center leading-relaxed">
+                            {plan.terms}
+                          </p>
+                        </motion.div>
+                      )}
+
                       <Button 
                         className={`w-full group rounded-2xl h-12 font-bold shadow-xl hover:scale-105 transition-all ${
-                          tier.popular 
+                          plan.popular 
                             ? 'bg-gradient-to-r from-primary to-purple-600 text-primary-foreground' 
                             : 'bg-primary text-primary-foreground hover:bg-primary/90'
                         }`}
@@ -431,8 +442,78 @@ function ServicesPageContent() {
         </div>
       </section>
 
+      {/* Add-Ons Section */}
+      <section className="py-32 px-4" ref={addOnsRef}>
+        <div className="max-w-6xl mx-auto">
+          <AnimatedSection className="text-center mb-20">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative inline-block mb-6"
+            >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-xl"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 0.8, 0.5],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                }}
+              />
+              <div className="relative bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/30 px-8 py-3 rounded-full shadow-lg">
+                <span className="text-sm font-black tracking-widest uppercase text-foreground">
+                  Optional Add-Ons
+                </span>
+              </div>
+            </motion.div>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">Enhance Your Website</h2>
+            <p className="text-muted-foreground text-2xl font-light max-w-4xl mx-auto">
+              Customize your website even further with these optional extras
+            </p>
+          </AnimatedSection>
+
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            animate={isAddOnsInView ? "visible" : "hidden"}
+          >
+            {addOns.map((addon, index) => {
+              const Icon = addon.icon;
+              return (
+                <motion.div
+                  key={index}
+                  variants={scaleIn}
+                  whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.4 } }}
+                  className="relative bg-gradient-to-br from-card via-card to-muted/20 border-2 rounded-3xl p-10 shadow-xl hover:shadow-3xl transition-all overflow-hidden group"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                  <div className="relative z-10">
+                    <motion.div 
+                      className="w-16 h-16 bg-gradient-to-br from-primary to-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-2xl"
+                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Icon className="text-white" size={32} strokeWidth={2.5} />
+                    </motion.div>
+                    <div className="text-3xl font-black text-primary mb-3">{addon.price}</div>
+                    <h3 className="text-xl font-bold mb-4 tracking-tight text-foreground">{addon.name}</h3>
+                    <p className="text-sm text-muted-foreground font-light leading-relaxed">{addon.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
       {/* Process Section */}
-      <section className="py-32 px-4" ref={processRef}>
+      <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={processRef}>
         <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
             <motion.div
@@ -506,7 +587,7 @@ function ServicesPageContent() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent">
+      <section className="py-32 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection>
             <motion.div 
@@ -527,7 +608,7 @@ function ServicesPageContent() {
               />
               
               <div className="relative z-10">
-                <h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tighter text-foreground">Let's Build It Together</h2>
+                <h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tighter text-foreground">Ready to Get Started?</h2>
                 <p className="text-muted-foreground text-2xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
                   Schedule a discovery call and tell us about your vision, pain points, and goals
                 </p>

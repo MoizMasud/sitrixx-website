@@ -34,9 +34,9 @@ function setupLinkClickInterception() {
       // Get the href attribute
       const href = link.getAttribute('href');
 
-      // Skip hash links and javascript: links
+      // Skip hash links, javascript: links, and links that open in new tabs
       // eslint-disable-next-line no-script-url
-      if (!href || href.startsWith('#') || href.startsWith('javascript:')) {
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.target === '_blank') {
         return;
       }
 
