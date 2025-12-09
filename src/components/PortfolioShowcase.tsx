@@ -10,7 +10,7 @@ import {
   Bot,
   BellRing,
   Clock,
-  Phone,
+  Globe2,
   TrendingUp,
   Zap,
   Check,
@@ -19,6 +19,10 @@ import {
   Heart,
   Users,
   Palette,
+  Laptop,
+  MousePointerClick,
+  Handshake,
+  Compass,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { baseUrl } from '../lib/base-url';
@@ -39,7 +43,7 @@ const portfolioItems = [
     title: "Real Estate",
     category: "Real Estate",
     description: "Full IDX integration with lead automation",
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=3840photo-1560518883-ce09059eeffa?w=1200&q=80q=90",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=3840&q=90",
     technologies: ["Astro", "TypeScript", "Tailwind CSS", "Framer Motion"],
     details: "Complete realtor website with automatic MLS listing updates, book-a-showing calendar, AI chatbot for 24/7 lead engagement, and full CRM pipeline connection.",
     results: ["Live listing updates", "3x more qualified leads", "24/7 AI assistance"]
@@ -88,24 +92,24 @@ const reviews = [
 
 const problems = [
   {
-    icon: Clock,
-    title: "Missing Appointments",
-    description: "No-shows cost you time and money every single day"
+    icon: Laptop,
+    title: "Not Online",
+    description: "You don't have a website or online presence yet"
   },
   {
-    icon: Phone,
-    title: "Constant Phone Tag",
-    description: "Chasing missed calls wastes time and drives customers away."
+    icon: Globe2,
+    title: "No Digital Brand",
+    description: "Your business lacks a professional online identity"
   },
   {
-    icon: TrendingUp,
-    title: "Not Enough Leads",
-    description: "Your website isn't converting visitors into customers"
+    icon: Compass,
+    title: "Don't Know Where to Start",
+    description: "Building a website feels overwhelming and confusing"
   },
   {
-    icon: Star,
-    title: "Need More Reviews",
-    description: "Struggling to get reviews from happy customers"
+    icon: Handshake,
+    title: "No Digital Handshake",
+    description: "You're missing that crucial first impression online"
   }
 ];
 
@@ -498,7 +502,7 @@ function PortfolioShowcaseContent() {
             </motion.div>
             <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">What's Holding You Back?</h2>
             <p className="text-muted-foreground text-2xl font-light">
-              We understand your pain points — and we build solutions around them
+              We help you establish your online presence from the ground up
             </p>
           </motion.div>
 
@@ -546,7 +550,7 @@ function PortfolioShowcaseContent() {
         </div>
       </section>
 
-      {/* Customization Process Highlight Section - MOVED HERE */}
+      {/* Customization Process Highlight Section */}
       <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent" ref={customizationRef}>
         <div className="max-w-6xl mx-auto">
           <AnimatedSection className="text-center mb-20">
@@ -819,7 +823,7 @@ function PortfolioShowcaseContent() {
             ))}
           </motion.div>
 
-          {/* View All Projects Button - Updated styling for dark mode */}
+          {/* View All Projects Button */}
           <AnimatedSection className="text-center mt-16" delay={0.3}>
             <Button 
               size="lg" 
