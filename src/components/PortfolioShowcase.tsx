@@ -39,7 +39,7 @@ const portfolioItems = [
     title: "Real Estate",
     category: "Real Estate",
     description: "Full IDX integration with lead automation",
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=3840photo-1560518883-ce09059eeffa?w=1200&q=80q=90",
     technologies: ["Astro", "TypeScript", "Tailwind CSS", "Framer Motion"],
     details: "Complete realtor website with automatic MLS listing updates, book-a-showing calendar, AI chatbot for 24/7 lead engagement, and full CRM pipeline connection.",
     results: ["Live listing updates", "3x more qualified leads", "24/7 AI assistance"]

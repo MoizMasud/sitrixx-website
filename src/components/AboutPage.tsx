@@ -3,27 +3,25 @@ import { motion, useInView, type Variants } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { Button } from './ui/button';
 import { 
-  Lightbulb,
-  Eye,
-  MessageCircle,
-  Bot,
-  ClipboardList,
-  Palette,
-  Code,
-  TestTube,
-  Rocket,
   ArrowRight,
   Sparkles,
   Heart,
   Users,
   FileKey,
-  Handshake
+  Award,
+  Briefcase
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
 import { ThemeProvider } from './ThemeProvider';
 
 const whyChooseUsCards = [
+  {
+    icon: Briefcase,
+    title: "Enterprise-Level Experience",
+    description: "With over 10+ years of enterprise-level experience, we bring professional expertise to every project. We've built websites from front to back for businesses of all sizes.",
+    gradient: "from-primary to-purple-600"
+  },
   {
     icon: Heart,
     title: "Your Vision First",
@@ -37,60 +35,9 @@ const whyChooseUsCards = [
     gradient: "from-primary to-purple-600"
   },
   {
-    icon: Palette,
-    title: "Fully Custom Design",
-    description: "No templates. No cookie-cutter solutions. Every element is designed from scratch to match your brand identity, preferences, and target audience.",
-    gradient: "from-primary to-purple-600"
-  },
-  {
     icon: FileKey,
     title: "You Own Everything",
     description: "After launch, you get the code and can host it anywhere — or we can maintain it for you. It's your project, your choice, your way.",
-    gradient: "from-primary to-purple-600"
-  }
-];
-
-const processSteps = [
-  {
-    number: "1",
-    title: "Initial Meeting & Discovery",
-    description: "We meet with you (virtually or in-person) to understand your business, pain points, and goals. What problems do you need solved? What features matter most to you? This is where we listen and learn.",
-    icon: ClipboardList,
-    gradient: "from-primary to-purple-600"
-  },
-  {
-    number: "2",
-    title: "Design Preferences & Branding",
-    description: "You share your color palette preferences, design style, and brand identity. We create mood boards and discuss layouts that match your vision — everything is personalized to you.",
-    icon: Palette,
-    gradient: "from-primary to-purple-600"
-  },
-  {
-    number: "3",
-    title: "Custom Development",
-    description: "We build the website from scratch using modern technologies. Every page, feature, and automation is configured for your specific workflow and business model.",
-    icon: Code,
-    gradient: "from-primary to-purple-600"
-  },
-  {
-    number: "4",
-    title: "Review & Iteration",
-    description: "You review the site at key milestones and provide feedback. We make adjustments and refinements based on your input — this is your website, so it needs to be perfect.",
-    icon: TestTube,
-    gradient: "from-primary to-purple-600"
-  },
-  {
-    number: "5",
-    title: "Final Testing & Training",
-    description: "We test everything thoroughly — forms, automations, mobile responsiveness, speed. Then we train you on how to use and update the site (if needed).",
-    icon: Rocket,
-    gradient: "from-primary to-purple-600"
-  },
-  {
-    number: "6",
-    title: "Launch & Handoff",
-    description: "We connect your domain, publish the website, and hand over all the code. You can take it and self-host, or we can maintain and update it for you — totally your choice.",
-    icon: Handshake,
     gradient: "from-primary to-purple-600"
   }
 ];
@@ -174,9 +121,6 @@ function AboutPageContent() {
   const whyChooseRef = useRef(null);
   const isWhyChooseInView = useInView(whyChooseRef, { once: true, margin: "-100px" });
 
-  const processRef = useRef(null);
-  const isProcessInView = useInView(processRef, { once: true, margin: "-100px" });
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -232,7 +176,7 @@ function AboutPageContent() {
                 sequence={[
                   'Meet the Sitrixx Team',
                   2000,
-                  'Custom Websites, Custom Process',
+                  '10+ Years of Experience',
                   2000,
                   'Your Partner in Digital Success',
                   2000,
@@ -353,21 +297,21 @@ function AboutPageContent() {
                   animate={isAboutInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  Sitrixx creates custom websites using modern technologies. We don't use templates or shortcuts — every project starts with understanding <strong className="text-foreground">your</strong> pain points, <strong className="text-foreground">your</strong> goals, and <strong className="text-foreground">your</strong> vision.
+                  Sitrixx creates custom websites using modern technologies. We bring <strong className="text-foreground">10+ years of enterprise-level experience</strong> building websites from front to back — but we make it personal and accessible for every client.
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, x: -20 }}
                   animate={isAboutInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.8, delay: 0.8 }}
                 >
-                  From color palettes to automation workflows, everything is designed around your business model and brand identity. We collaborate closely throughout the entire process — and at the end, you own all the code.
+                  We don't use templates or shortcuts. Every project starts with understanding <strong className="text-foreground">your</strong> pain points, <strong className="text-foreground">your</strong> goals, and <strong className="text-foreground">your</strong> vision. From color palettes to automation workflows, everything is designed around your business model and brand identity.
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, x: -20 }}
                   animate={isAboutInView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.8, delay: 1 }}
                 >
-                  Whether you want to host it yourself or have us maintain it, the choice is yours.
+                  We collaborate closely throughout the entire process — and at the end, you own all the code. Whether you want to host it yourself or have us maintain it, the choice is yours.
                 </motion.p>
               </motion.div>
               
@@ -460,115 +404,8 @@ function AboutPageContent() {
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="py-32 px-4" ref={processRef}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <motion.div
-              initial="hidden"
-              animate={isProcessInView ? "visible" : "hidden"}
-              variants={fadeInLeft}
-              className="space-y-10"
-            >
-              <div className="space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8 }}
-                  className="relative inline-block"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-full blur-xl"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.5, 0.8, 0.5],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                    }}
-                  />
-                  <div className="relative bg-gradient-to-r from-primary/10 to-purple-500/10 backdrop-blur-sm border border-primary/30 px-8 py-3 rounded-full shadow-lg">
-                    <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                      Our Process
-                    </span>
-                  </div>
-                </motion.div>
-
-                <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground">Your Journey With Us</h2>
-                <p className="text-2xl text-muted-foreground font-light leading-relaxed">
-                  From the first meeting to the final handoff, you're involved at every step. Here's how we transform your vision into reality.
-                </p>
-                
-                <Button asChild variant="default" size="lg" className="group rounded-2xl px-8 h-12 font-bold shadow-xl hover:scale-105 transition-all bg-gradient-to-r from-primary to-purple-600">
-                  <a href={`${baseUrl}/#portfolio`}>
-                    View Our Work
-                    <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
-                  </a>
-                </Button>
-              </div>
-
-              <motion.div 
-                className="relative rounded-3xl overflow-hidden border-2 shadow-3xl p-6 mt-16"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.4 }}
-              >
-                <div className="absolute inset-6 bg-gradient-to-br from-primary/20 to-transparent z-10 rounded-2xl" />
-                <img 
-                  src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80"
-                  alt="Our process"
-                  className="w-full h-[500px] object-cover rounded-2xl"
-                />
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              animate={isProcessInView ? "visible" : "hidden"}
-              variants={fadeInRight}
-              className="space-y-8 pt-20"
-            >
-              {processSteps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <motion.div
-                    key={index}
-                    variants={scaleIn}
-                    whileHover={{ x: 8, transition: { duration: 0.3 } }}
-                    className="relative bg-gradient-to-br from-card to-muted/20 border-2 rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all"
-                  >
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${step.gradient} opacity-0 hover:opacity-5 transition-opacity duration-500 rounded-3xl`}
-                    />
-                    
-                    <div className="relative z-10 flex items-start gap-6">
-                      <motion.div 
-                        className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center flex-shrink-0 shadow-xl`}
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <Icon className="text-white" size={24} strokeWidth={2.5} />
-                      </motion.div>
-                      <div className="flex-1">
-                        <div className="text-xs font-black text-primary mb-2 tracking-wider">STEP {step.number}</div>
-                        <h3 className="text-xl font-black tracking-tight mb-3 text-foreground">
-                          {step.title}
-                        </h3>
-                        <p className="text-muted-foreground leading-relaxed font-light text-sm">
-                          {step.description}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* Final CTA Section */}
-      <section className="py-32 px-4 bg-gradient-to-b from-muted/30 to-transparent">
+      <section className="py-32 px-4">
         <div className="max-w-5xl mx-auto">
           <AnimatedSection>
             <motion.div 
