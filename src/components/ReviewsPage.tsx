@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Star, Search } from 'lucide-react';
-
-const API_BASE = 'https://sitrixx-website-backend.vercel.app';
 
 type Review = {
   id: string;
   created_at: string;
   client_id: string;
+  client_name?: string;
   name: string;
   rating: number;
   comments: string;
@@ -17,69 +16,38 @@ type Client = {
   business_name: string;
 };
 
-export default function ReviewsPage() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState('');
-  const [reviews, setReviews] = useState<Review[]>([]);
+type ReviewsPageProps = {
+  initialData?: {
+    clients: Client[];
+    reviews: Review[];
+    error: string | null;
+  };
+};
+
+export default function ReviewsPage({ initialData }: ReviewsPageProps) {
+  const [clients] = useState<Client[]>(initialData?.clients || []);
+  const [selectedClient, setSelectedClient] = useState('all');
+  const [allReviews] = useState<Review[]>(initialData?.reviews || []);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
 
-  useEffect(() => {
-    loadClients();
-  }, []);
+  const filteredReviews = allReviews
+    .filter(review => selectedClient === 'all' || review.client_id === selectedClient)
+    .filter(review => {
+      const search = searchTerm.toLowerCase();
+      return (
+        review.name.toLowerCase().includes(search) ||
+        review.comments.toLowerCase().includes(search)
+      );
+    });
 
-  useEffect(() => {
-    if (selectedClient) {
-      loadReviews(selectedClient);
-    }
-  }, [selectedClient]);
-
-  const loadClients = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/api/clients`);
-      if (!res.ok) throw new Error('Failed to fetch clients');
-      const data = await res.json();
-      const clientList = data.clients || [];
-      setClients(clientList);
-      
-      // Auto-select first client
-      if (clientList.length > 0) {
-        setSelectedClient(clientList[0].id);
-      }
-      setLoading(false);
-    } catch (err) {
-      console.error('Error loading clients:', err);
-      setLoading(false);
-    }
-  };
-
-  const loadReviews = async (clientId: string) => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API_BASE}/api/reviews?clientId=${encodeURIComponent(clientId)}`);
-      if (!res.ok) throw new Error('Failed to fetch reviews');
-      const data = await res.json();
-      setReviews(data.reviews || []);
-    } catch (err) {
-      console.error('Error loading reviews:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredReviews = reviews.filter(review => {
-    const search = searchTerm.toLowerCase();
-    return (
-      review.name.toLowerCase().includes(search) ||
-      review.comments.toLowerCase().includes(search)
-    );
-  });
-
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+  const averageRating = filteredReviews.length > 0 
+    ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
     : '0';
 
-  const currentClientName = clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
+  const currentClientName = selectedClient === 'all'
+    ? 'All Clients'
+    : clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
 
   const renderStars = (rating: number) => {
     return (
@@ -97,13 +65,19 @@ export default function ReviewsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header - Made Bigger and More Prominent */}
+      {/* Header */}
       <div className="mb-10">
         <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
           Reviews
         </h1>
         <p className="text-lg text-muted-foreground">Monitor and manage customer reviews across all clients</p>
       </div>
+
+      {initialData?.error && (
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
+          {initialData.error}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -143,6 +117,9 @@ export default function ReviewsPage() {
                   backgroundImage: 'none',
                 }}
               >
+                <option value="all" className="py-3 bg-background text-foreground">
+                  All Clients
+                </option>
                 {clients.map(client => (
                   <option key={client.id} value={client.id} className="py-3 bg-background text-foreground">
                     {client.business_name}
@@ -240,9 +217,9 @@ export default function ReviewsPage() {
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
-                          {currentClientName.charAt(0)}
+                          {(review.client_name || currentClientName).charAt(0)}
                         </div>
-                        <span className="font-semibold text-foreground text-[15px]">{currentClientName}</span>
+                        <span className="font-semibold text-foreground text-[15px]">{review.client_name || currentClientName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">

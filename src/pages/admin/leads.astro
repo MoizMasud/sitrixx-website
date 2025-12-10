@@ -3,6 +3,47 @@ import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
 import LeadsPage from '../../components/LeadsPage';
 import { baseUrl } from '../../lib/base-url';
+
+const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+// Fetch data server-side
+let leadsData = {
+  clients: [],
+  leads: [],
+  error: null as string | null
+};
+
+try {
+  // Fetch clients first
+  const clientsRes = await fetch(`${API_BASE}/api/clients`);
+  if (clientsRes.ok) {
+    const data = await clientsRes.json();
+    leadsData.clients = Array.isArray(data) ? data : (data.clients || []);
+  }
+
+  // Fetch leads for each client
+  if (Array.isArray(leadsData.clients)) {
+    for (const client of leadsData.clients) {
+      try {
+        const leadsRes = await fetch(`${API_BASE}/api/leads?clientId=${encodeURIComponent(client.id)}`);
+        if (leadsRes.ok) {
+          const data = await leadsRes.json();
+          const clientLeads = (data.leads || []).map((lead: any) => ({
+            ...lead,
+            client_name: client.business_name,
+            client_id: client.id
+          }));
+          leadsData.leads.push(...clientLeads);
+        }
+      } catch (err) {
+        console.error(`Error fetching leads for client ${client.id}:`, err);
+      }
+    }
+  }
+} catch (err) {
+  console.error('Error fetching leads data:', err);
+  leadsData.error = err instanceof Error ? err.message : 'Failed to load leads data';
+}
 ---
 
 <MainLayout 
@@ -10,16 +51,14 @@ import { baseUrl } from '../../lib/base-url';
   description="Manage incoming leads"
 >
   <AdminLayout client:only="react" activePage="leads">
-    <LeadsPage />
+    <LeadsPage client:only="react" initialData={leadsData} />
   </AdminLayout>
 
   <!-- Authentication Guard Script -->
   <script define:vars={{ baseUrl }}>
-    document.addEventListener('DOMContentLoaded', function () {
-      const token = localStorage.getItem('sitrixx_token');
-      if (!token) {
-        window.location.href = baseUrl + '/admin/login';
-      }
-    });
+    const token = localStorage.getItem('sitrixx_token');
+    if (!token) {
+      window.location.href = baseUrl + '/admin/login';
+    }
   </script>
 </MainLayout>

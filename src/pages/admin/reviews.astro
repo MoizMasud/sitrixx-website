@@ -3,6 +3,47 @@ import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
 import ReviewsPage from '../../components/ReviewsPage';
 import { baseUrl } from '../../lib/base-url';
+
+const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+// Fetch data server-side
+let reviewsData = {
+  clients: [],
+  reviews: [],
+  error: null as string | null
+};
+
+try {
+  // Fetch clients first
+  const clientsRes = await fetch(`${API_BASE}/api/clients`);
+  if (clientsRes.ok) {
+    const data = await clientsRes.json();
+    reviewsData.clients = Array.isArray(data) ? data : (data.clients || []);
+  }
+
+  // Fetch reviews for each client
+  if (Array.isArray(reviewsData.clients)) {
+    for (const client of reviewsData.clients) {
+      try {
+        const reviewsRes = await fetch(`${API_BASE}/api/reviews?clientId=${encodeURIComponent(client.id)}`);
+        if (reviewsRes.ok) {
+          const data = await reviewsRes.json();
+          const clientReviews = (data.reviews || []).map((review: any) => ({
+            ...review,
+            client_name: client.business_name,
+            client_id: client.id
+          }));
+          reviewsData.reviews.push(...clientReviews);
+        }
+      } catch (err) {
+        console.error(`Error fetching reviews for client ${client.id}:`, err);
+      }
+    }
+  }
+} catch (err) {
+  console.error('Error fetching reviews data:', err);
+  reviewsData.error = err instanceof Error ? err.message : 'Failed to load reviews data';
+}
 ---
 
 <MainLayout 
@@ -10,16 +51,14 @@ import { baseUrl } from '../../lib/base-url';
   description="Monitor customer reviews and ratings"
 >
   <AdminLayout client:only="react" activePage="reviews">
-    <ReviewsPage />
+    <ReviewsPage client:only="react" initialData={reviewsData} />
   </AdminLayout>
 
   <!-- Authentication Guard Script -->
   <script define:vars={{ baseUrl }}>
-    document.addEventListener('DOMContentLoaded', function () {
-      const token = localStorage.getItem('sitrixx_token');
-      if (!token) {
-        window.location.href = baseUrl + '/admin/login';
-      }
-    });
+    const token = localStorage.getItem('sitrixx_token');
+    if (!token) {
+      window.location.href = baseUrl + '/admin/login';
+    }
   </script>
 </MainLayout>

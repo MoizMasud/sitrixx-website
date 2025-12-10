@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Search, Phone, Mail } from 'lucide-react';
 
-const API_BASE = 'https://sitrixx-website-backend.vercel.app';
-
 type Lead = {
   id: string;
   created_at: string;
   client_id: string;
+  client_name?: string;
   source: string;
   name: string;
   phone: string;
@@ -19,77 +18,59 @@ type Client = {
   business_name: string;
 };
 
-export default function LeadsPage() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState('');
-  const [leads, setLeads] = useState<Lead[]>([]);
+type LeadsPageProps = {
+  initialData?: {
+    clients: Client[];
+    leads: Lead[];
+    error: string | null;
+  };
+};
+
+export default function LeadsPage({ initialData }: LeadsPageProps) {
+  const [clients, setClients] = useState<Client[]>(initialData?.clients || []);
+  const [selectedClient, setSelectedClient] = useState('all');
+  const [allLeads, setAllLeads] = useState<Lead[]>(initialData?.leads || []);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   
   useEffect(() => {
-    loadClients();
-  }, []);
-
-  useEffect(() => {
-    if (selectedClient) {
-      loadLeads(selectedClient);
+    if (initialData?.clients && initialData.clients.length > 0 && selectedClient === 'all') {
+      // Auto-select first client if we have data
+      setSelectedClient(initialData.clients[0].id);
     }
-  }, [selectedClient]);
+  }, [initialData]);
 
-  const loadClients = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/api/clients`);
-      if (!res.ok) throw new Error('Failed to fetch clients');
-      const data = await res.json();
-      const clientList = data.clients || [];
-      setClients(clientList);
-      
-      // Auto-select first client
-      if (clientList.length > 0) {
-        setSelectedClient(clientList[0].id);
-      }
-      setLoading(false);
-    } catch (err) {
-      console.error('Error loading clients:', err);
-      setLoading(false);
-    }
-  };
+  const filteredLeads = allLeads
+    .filter(lead => selectedClient === 'all' || lead.client_id === selectedClient)
+    .filter(lead => {
+      const search = searchTerm.toLowerCase();
+      return (
+        lead.name.toLowerCase().includes(search) ||
+        lead.phone.includes(search) ||
+        (lead.email && lead.email.toLowerCase().includes(search)) ||
+        lead.message.toLowerCase().includes(search)
+      );
+    });
 
-  const loadLeads = async (clientId: string) => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API_BASE}/api/leads?clientId=${encodeURIComponent(clientId)}`);
-      if (!res.ok) throw new Error('Failed to fetch leads');
-      const data = await res.json();
-      setLeads(data.leads || []);
-    } catch (err) {
-      console.error('Error loading leads:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const filteredLeads = leads.filter(lead => {
-    const search = searchTerm.toLowerCase();
-    return (
-      lead.name.toLowerCase().includes(search) ||
-      lead.phone.includes(search) ||
-      lead.email.toLowerCase().includes(search) ||
-      lead.message.toLowerCase().includes(search)
-    );
-  });
-
-  const currentClientName = clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
+  const currentClientName = selectedClient === 'all' 
+    ? 'All Clients'
+    : clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header - Made Bigger and More Prominent */}
+      {/* Header */}
       <div className="mb-10">
         <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
           Leads
         </h1>
         <p className="text-lg text-muted-foreground">Track and manage incoming leads from all clients</p>
       </div>
+
+      {initialData?.error && (
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
+          {initialData.error}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -128,6 +109,9 @@ export default function LeadsPage() {
                   backgroundImage: 'none',
                 }}
               >
+                <option value="all" className="py-3 bg-background text-foreground">
+                  All Clients
+                </option>
                 {clients.map(client => (
                   <option key={client.id} value={client.id} className="py-3 bg-background text-foreground">
                     {client.business_name}
@@ -224,9 +208,9 @@ export default function LeadsPage() {
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
-                          {currentClientName.charAt(0)}
+                          {(lead.client_name || currentClientName).charAt(0)}
                         </div>
-                        <span className="font-semibold text-foreground text-[15px]">{currentClientName}</span>
+                        <span className="font-semibold text-foreground text-[15px]">{lead.client_name || currentClientName}</span>
                       </div>
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
