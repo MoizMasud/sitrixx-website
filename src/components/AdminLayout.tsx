@@ -58,7 +58,7 @@ function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutP
     <div className="min-h-screen bg-background">
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           Sitrixx Admin
         </h1>
         <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutP
         } lg:translate-x-0`}
       >
         <div className="p-6 border-b hidden lg:flex items-center justify-between">
-          <h1 className="text-2xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             Sitrixx
           </h1>
           <ThemeToggle />
