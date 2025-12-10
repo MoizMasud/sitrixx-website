@@ -30,7 +30,7 @@ function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayout
       try {
         const { createClient } = (window as any).supabase;
         const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtdnltY25jbW14dGdmaGtvc21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0NjU2NjksImV4cCI6MjA1MjA0MTY2OX0.Bl5_yeiYWuyhjZBBoSPcFRRKowcYscq5858efMlK';
+        const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
         
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const { data: { session } } = await supabase.auth.getSession();
@@ -66,7 +66,7 @@ function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayout
     try {
       const { createClient } = (window as any).supabase;
       const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtdnltY25jbW14dGdmaGtvc21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0NjU2NjksImV4cCI6MjA1MjA0MTY2OX0.Bl5_yeiYWuyhjZBBoSPcFRRKowcYscq5858efMlK';
+      const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
       
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       await supabase.auth.signOut();

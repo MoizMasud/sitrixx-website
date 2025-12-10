@@ -2,6 +2,7 @@
 import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
 import LeadsPage from '../../components/LeadsPage';
+import { baseUrl } from '../../lib/base-url';
 ---
 
 <MainLayout 
@@ -11,4 +12,14 @@ import LeadsPage from '../../components/LeadsPage';
   <AdminLayout client:load activePage="leads">
     <LeadsPage client:load />
   </AdminLayout>
+
+  <!-- Authentication Guard Script -->
+  <script define:vars={{ baseUrl }}>
+    document.addEventListener('DOMContentLoaded', function () {
+      const token = localStorage.getItem('sitrixx_token');
+      if (!token) {
+        window.location.href = baseUrl + '/admin/login';
+      }
+    });
+  </script>
 </MainLayout>

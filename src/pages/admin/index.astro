@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
+import { baseUrl } from '../../lib/base-url';
 ---
 
 <MainLayout 
@@ -112,4 +113,20 @@ import AdminLayout from '../../components/AdminLayout';
       </div>
     </div>
   </AdminLayout>
+
+  <!-- Authentication Guard Script -->
+  <script define:vars={{ baseUrl }}>
+    // Quick auth guard - prevents casual access
+    document.addEventListener('DOMContentLoaded', function () {
+      const token = localStorage.getItem('sitrixx_token');
+
+      if (!token) {
+        // No token → redirect to login immediately
+        window.location.href = baseUrl + '/admin/login';
+      }
+      
+      // The AdminLayout component will do the full Supabase verification
+      // This script just provides immediate protection before React loads
+    });
+  </script>
 </MainLayout>
