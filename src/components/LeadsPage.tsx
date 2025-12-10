@@ -1,88 +1,85 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Phone, Mail } from 'lucide-react';
 
-// Dummy data
-const dummyLeads = [
-  {
-    id: '1',
-    createdAt: '2025-01-10 14:32:15',
-    clientId: 'galt-hair-studio',
-    clientName: 'Galt Hair Studio',
-    source: 'website_form',
-    leadName: 'John Smith',
-    phone: '+16475551111',
-    email: 'john.smith@email.com',
-    message: 'Looking to book a haircut for next week. Do you have any availability?',
-  },
-  {
-    id: '2',
-    createdAt: '2025-01-10 11:15:42',
-    clientId: 'truetone-painting',
-    clientName: 'TrueTone Painting',
-    source: 'missed_call',
-    leadName: '',
-    phone: '+14165552222',
-    email: '',
-    message: 'Missed call - no voicemail',
-  },
-  {
-    id: '3',
-    createdAt: '2025-01-09 16:48:23',
-    clientId: 'apex-fitness',
-    clientName: 'Apex Fitness',
-    source: 'website_form',
-    leadName: 'Sarah Johnson',
-    phone: '+19055553333',
-    email: 'sarah.j@email.com',
-    message: 'Interested in personal training packages. What are your rates?',
-  },
-  {
-    id: '4',
-    createdAt: '2025-01-09 09:21:07',
-    clientId: 'galt-hair-studio',
-    clientName: 'Galt Hair Studio',
-    source: 'missed_call',
-    leadName: '',
-    phone: '+16475554444',
-    email: '',
-    message: 'Missed call - no voicemail',
-  },
-  {
-    id: '5',
-    createdAt: '2025-01-08 13:55:31',
-    clientId: 'truetone-painting',
-    clientName: 'TrueTone Painting',
-    source: 'website_form',
-    leadName: 'Mike Davis',
-    phone: '+14165555555',
-    email: 'mike.davis@email.com',
-    message: 'Need a quote for interior painting of a 3-bedroom house.',
-  },
-];
+const API_BASE = 'https://sitrixx-website-backend.vercel.app';
 
-const dummyClients = [
-  { id: 'all', name: 'All Clients' },
-  { id: 'galt-hair-studio', name: 'Galt Hair Studio' },
-  { id: 'truetone-painting', name: 'TrueTone Painting' },
-  { id: 'apex-fitness', name: 'Apex Fitness' },
-];
+type Lead = {
+  id: string;
+  created_at: string;
+  client_id: string;
+  source: string;
+  name: string;
+  phone: string;
+  email: string;
+  message: string;
+};
+
+type Client = {
+  id: string;
+  business_name: string;
+};
 
 export default function LeadsPage() {
-  const [selectedClient, setSelectedClient] = useState('all');
+  const [clients, setClients] = useState<Client[]>([]);
+  const [selectedClient, setSelectedClient] = useState('');
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   
-  const filteredLeads = dummyLeads.filter(lead => {
-    const matchesClient = selectedClient === 'all' || lead.clientId === selectedClient;
+  useEffect(() => {
+    loadClients();
+  }, []);
+
+  useEffect(() => {
+    if (selectedClient) {
+      loadLeads(selectedClient);
+    }
+  }, [selectedClient]);
+
+  const loadClients = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/clients`);
+      if (!res.ok) throw new Error('Failed to fetch clients');
+      const data = await res.json();
+      const clientList = data.clients || [];
+      setClients(clientList);
+      
+      // Auto-select first client
+      if (clientList.length > 0) {
+        setSelectedClient(clientList[0].id);
+      }
+      setLoading(false);
+    } catch (err) {
+      console.error('Error loading clients:', err);
+      setLoading(false);
+    }
+  };
+
+  const loadLeads = async (clientId: string) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE}/api/leads?clientId=${encodeURIComponent(clientId)}`);
+      if (!res.ok) throw new Error('Failed to fetch leads');
+      const data = await res.json();
+      setLeads(data.leads || []);
+    } catch (err) {
+      console.error('Error loading leads:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const filteredLeads = leads.filter(lead => {
     const search = searchTerm.toLowerCase();
-    const matchesSearch = 
-      lead.leadName.toLowerCase().includes(search) ||
+    return (
+      lead.name.toLowerCase().includes(search) ||
       lead.phone.includes(search) ||
       lead.email.toLowerCase().includes(search) ||
-      lead.message.toLowerCase().includes(search) ||
-      lead.clientName.toLowerCase().includes(search);
-    
-    return matchesClient && matchesSearch;
+      lead.message.toLowerCase().includes(search)
+    );
   });
+
+  const currentClientName = clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -118,12 +115,12 @@ export default function LeadsPage() {
       <div className="bg-card border rounded-xl p-6 mb-6 shadow-xl">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label htmlFor="client-filter" className="block text-sm font-semibold mb-3 text-foreground">
+            <label htmlFor="client-select" className="block text-sm font-semibold mb-3 text-foreground">
               Client
             </label>
             <div className="relative">
               <select
-                id="client-filter"
+                id="client-select"
                 value={selectedClient}
                 onChange={(e) => setSelectedClient(e.target.value)}
                 className="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
@@ -131,9 +128,9 @@ export default function LeadsPage() {
                   backgroundImage: 'none',
                 }}
               >
-                {dummyClients.map(client => (
+                {clients.map(client => (
                   <option key={client.id} value={client.id} className="py-3 bg-background text-foreground">
-                    {client.name}
+                    {client.business_name}
                   </option>
                 ))}
               </select>
@@ -181,7 +178,7 @@ export default function LeadsPage() {
                 id="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Name, client, phone, email..."
+                placeholder="Name, phone, email..."
                 className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 bg-background text-foreground font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm hover:shadow-md"
               />
             </div>
@@ -203,84 +200,86 @@ export default function LeadsPage() {
                 <th className="pl-6 pr-10 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Message</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
-              {filteredLeads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="pl-10 pr-6 py-5 whitespace-nowrap">
-                    <span className="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
-                      {lead.createdAt}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
-                        {lead.clientName.charAt(0)}
-                      </div>
-                      <span className="font-semibold text-foreground text-[15px]">{lead.clientName}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                      lead.source === 'website_form' 
-                        ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-                        : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20'
-                    }`}>
-                      {lead.source === 'website_form' ? '📝 Website Form' : '📞 Missed Call'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    {lead.leadName ? (
-                      <span className="font-semibold text-foreground text-[15px]">{lead.leadName}</span>
-                    ) : (
-                      <span className="text-muted-foreground text-sm italic">No name provided</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <Phone size={14} className="text-green-600 dark:text-green-400" />
-                        <a 
-                          href={`tel:${lead.phone}`}
-                          className="text-sm font-mono text-foreground hover:text-primary hover:underline"
-                        >
-                          {lead.phone}
-                        </a>
-                      </div>
-                      {lead.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail size={14} className="text-blue-600 dark:text-blue-400" />
-                          <a 
-                            href={`mailto:${lead.email}`}
-                            className="text-sm text-foreground hover:text-primary hover:underline"
-                          >
-                            {lead.email}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="pl-6 pr-10 py-5 text-sm max-w-md">
-                    <p className="text-foreground line-clamp-2 text-[15px]">
-                      {lead.message}
-                    </p>
+            <tbody id="leads-table-body" className="divide-y divide-border">
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                    Loading leads...
                   </td>
                 </tr>
-              ))}
+              ) : filteredLeads.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                    No leads found matching your filters.
+                  </td>
+                </tr>
+              ) : (
+                filteredLeads.map((lead) => (
+                  <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="pl-10 pr-6 py-5 whitespace-nowrap">
+                      <span className="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
+                        {new Date(lead.created_at).toLocaleString()}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
+                          {currentClientName.charAt(0)}
+                        </div>
+                        <span className="font-semibold text-foreground text-[15px]">{currentClientName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                        lead.source === 'website_form' 
+                          ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
+                          : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20'
+                      }`}>
+                        {lead.source === 'website_form' ? '📝 Website Form' : '📞 Missed Call'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      {lead.name ? (
+                        <span className="font-semibold text-foreground text-[15px]">{lead.name}</span>
+                      ) : (
+                        <span className="text-muted-foreground text-sm italic">No name provided</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <Phone size={14} className="text-green-600 dark:text-green-400" />
+                          <a 
+                            href={`tel:${lead.phone}`}
+                            className="text-sm font-mono text-foreground hover:text-primary hover:underline"
+                          >
+                            {lead.phone}
+                          </a>
+                        </div>
+                        {lead.email && (
+                          <div className="flex items-center gap-2">
+                            <Mail size={14} className="text-blue-600 dark:text-blue-400" />
+                            <a 
+                              href={`mailto:${lead.email}`}
+                              className="text-sm text-foreground hover:text-primary hover:underline"
+                            >
+                              {lead.email}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="pl-6 pr-10 py-5 text-sm max-w-md">
+                      <p className="text-foreground line-clamp-2 text-[15px]">
+                        {lead.message}
+                      </p>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-
-        {filteredLeads.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No leads found matching your filters.</p>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-6 p-4 bg-muted/30 rounded-lg border">
-        <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> This page will be connected to GET /api/leads?clientId=... to fetch real-time lead data.
-        </p>
       </div>
     </div>
   );

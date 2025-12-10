@@ -1,148 +1,137 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit, UserPlus, Star, ExternalLink, Search } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { baseUrl } from '../lib/base-url';
 
-// Dummy data
-const dummyClients = [
-  {
-    id: 'galt-hair-studio',
-    businessName: 'Galt Hair Studio',
-    ownerEmail: 'owner@galthair.com',
-    twilioNumber: '+16475551234',
-    forwardingPhone: '+15195559876',
-    bookingLink: 'https://calendly.com/galthair',
-    googleReviewLink: 'https://g.page/r/galthair/review',
-    websiteUrl: 'https://galthair.com',
-    customSmsTemplate: '',
-  },
-  {
-    id: 'truetone-painting',
-    businessName: 'TrueTone Painting',
-    ownerEmail: 'info@truetone.com',
-    twilioNumber: '+16475552345',
-    forwardingPhone: '+14165558765',
-    bookingLink: 'https://calendly.com/truetone',
-    googleReviewLink: 'https://g.page/r/truetone/review',
-    websiteUrl: 'https://truetone.com',
-    customSmsTemplate: '',
-  },
-  {
-    id: 'apex-fitness',
-    businessName: 'Apex Fitness',
-    ownerEmail: 'contact@apexfit.com',
-    twilioNumber: '+16475553456',
-    forwardingPhone: '+19055557654',
-    bookingLink: 'https://calendly.com/apexfit',
-    googleReviewLink: 'https://g.page/r/apexfit/review',
-    websiteUrl: 'https://apexfit.com',
-    customSmsTemplate: '',
-  },
-];
+const API_BASE = 'https://sitrixx-website-backend.vercel.app';
 
 type ClientData = {
   id: string;
-  businessName: string;
-  ownerEmail: string;
-  websiteUrl: string;
-  bookingLink: string;
-  googleReviewLink: string;
-  twilioNumber: string;
-  forwardingPhone: string;
-  customSmsTemplate: string;
+  business_name: string;
+  owner_email: string;
+  website_url: string;
+  booking_link: string;
+  google_review_link: string;
+  twilio_number: string;
+  forwarding_phone: string;
+  custom_sms_template: string;
 };
 
 export default function ClientsPage() {
   const [showNewClientForm, setShowNewClientForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingClient, setEditingClient] = useState<ClientData | null>(null);
-  const [clients, setClients] = useState(dummyClients);
+  const [clients, setClients] = useState<ClientData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<ClientData>({
     id: '',
-    businessName: '',
-    ownerEmail: '',
-    websiteUrl: '',
-    bookingLink: '',
-    googleReviewLink: '',
-    twilioNumber: '',
-    forwardingPhone: '',
-    customSmsTemplate: '',
+    business_name: '',
+    owner_email: '',
+    website_url: '',
+    booking_link: '',
+    google_review_link: '',
+    twilio_number: '',
+    forwarding_phone: '',
+    custom_sms_template: '',
   });
+
+  useEffect(() => {
+    loadClients();
+  }, []);
+
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE}/api/clients`);
+      if (!res.ok) throw new Error('Failed to fetch clients');
+      const data = await res.json();
+      setClients(data.clients || []);
+    } catch (err) {
+      console.error('Error loading clients:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleEdit = (client: typeof dummyClients[0]) => {
-    setEditingClient(client as ClientData);
-    setFormData(client as ClientData);
+  const handleEdit = (client: ClientData) => {
+    setEditingClient(client);
+    setFormData(client);
     setShowEditForm(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // TODO: Connect to POST /api/clients
-    console.log('Creating new client:', formData);
-    
-    // For now, add to dummy data
-    setClients(prev => [...prev, {
-      id: formData.id,
-      businessName: formData.businessName,
-      ownerEmail: formData.ownerEmail,
-      twilioNumber: formData.twilioNumber,
-      forwardingPhone: formData.forwardingPhone,
-      bookingLink: formData.bookingLink,
-      googleReviewLink: formData.googleReviewLink,
-      websiteUrl: formData.websiteUrl,
-      customSmsTemplate: formData.customSmsTemplate,
-    }]);
-    
-    // Reset form
-    setFormData({
-      id: '',
-      businessName: '',
-      ownerEmail: '',
-      websiteUrl: '',
-      bookingLink: '',
-      googleReviewLink: '',
-      twilioNumber: '',
-      forwardingPhone: '',
-      customSmsTemplate: '',
-    });
-    
-    setShowNewClientForm(false);
+    try {
+      const res = await fetch(`${API_BASE}/api/clients`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!res.ok) throw new Error('Failed to create client');
+      
+      await loadClients();
+      
+      // Reset form
+      setFormData({
+        id: '',
+        business_name: '',
+        owner_email: '',
+        website_url: '',
+        booking_link: '',
+        google_review_link: '',
+        twilio_number: '',
+        forwarding_phone: '',
+        custom_sms_template: '',
+      });
+      
+      setShowNewClientForm(false);
+    } catch (err) {
+      console.error('Error creating client:', err);
+      alert('Failed to create client. Please try again.');
+    }
   };
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // TODO: Connect to PUT /api/clients/:id
-    console.log('Updating client:', formData);
-    
-    // Update dummy data
-    setClients(prev => prev.map(client => 
-      client.id === formData.id ? { ...formData } : client
-    ));
-    
-    setShowEditForm(false);
-    setEditingClient(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/clients/${formData.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!res.ok) throw new Error('Failed to update client');
+      
+      await loadClients();
+      setShowEditForm(false);
+      setEditingClient(null);
+    } catch (err) {
+      console.error('Error updating client:', err);
+      alert('Failed to update client. Please try again.');
+    }
   };
 
   const resetForm = () => {
     setFormData({
       id: '',
-      businessName: '',
-      ownerEmail: '',
-      websiteUrl: '',
-      bookingLink: '',
-      googleReviewLink: '',
-      twilioNumber: '',
-      forwardingPhone: '',
-      customSmsTemplate: '',
+      business_name: '',
+      owner_email: '',
+      website_url: '',
+      booking_link: '',
+      google_review_link: '',
+      twilio_number: '',
+      forwarding_phone: '',
+      custom_sms_template: '',
     });
   };
 
@@ -150,11 +139,11 @@ export default function ClientsPage() {
   const filteredClients = clients.filter(client => {
     const search = searchTerm.toLowerCase();
     return (
-      client.businessName.toLowerCase().includes(search) ||
+      client.business_name.toLowerCase().includes(search) ||
       client.id.toLowerCase().includes(search) ||
-      client.ownerEmail.toLowerCase().includes(search) ||
-      client.twilioNumber.includes(search) ||
-      client.forwardingPhone.includes(search)
+      client.owner_email.toLowerCase().includes(search) ||
+      client.twilio_number.includes(search) ||
+      client.forwarding_phone.includes(search)
     );
   });
 
@@ -218,103 +207,109 @@ export default function ClientsPage() {
                 <th className="pl-6 pr-10 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
-              {filteredClients.map((client) => (
-                <tr key={client.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="pl-10 pr-6 py-5 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
-                        {client.businessName.charAt(0)}
-                      </div>
-                      <span className="font-semibold text-foreground text-[15px]">{client.businessName}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <code className="text-xs bg-muted px-2.5 py-1.5 rounded-lg font-mono text-foreground border">
-                      {client.id}
-                    </code>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-foreground">{client.ownerEmail}</td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <span className="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2.5 py-1.5 rounded-lg border border-blue-500/20">
-                      {client.twilioNumber}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <span className="text-xs font-mono bg-green-500/10 text-green-600 dark:text-green-400 px-2.5 py-1.5 rounded-lg border border-green-500/20">
-                      {client.forwardingPhone}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    {client.bookingLink ? (
-                      <a
-                        href={client.bookingLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-primary hover:underline text-sm font-medium"
-                      >
-                        View
-                        <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    {client.googleReviewLink ? (
-                      <a
-                        href={client.googleReviewLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-primary hover:underline text-sm font-medium"
-                      >
-                        View
-                        <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    )}
-                  </td>
-                  <td className="pl-6 pr-10 py-5 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => window.location.href = `${baseUrl}/admin/leads?client=${client.id}`}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white dark:text-white rounded-lg transition-all font-semibold text-sm shadow-sm"
-                        title="View Leads"
-                      >
-                        <UserPlus size={16} className="text-white dark:text-white" strokeWidth={2.5} />
-                        <span className="text-white dark:text-white">Leads</span>
-                      </button>
-                      <button
-                        onClick={() => window.location.href = `${baseUrl}/admin/reviews?client=${client.id}`}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white dark:text-white rounded-lg transition-all font-semibold text-sm shadow-sm"
-                        title="View Reviews"
-                      >
-                        <Star size={16} className="text-white dark:text-white" strokeWidth={2.5} />
-                        <span className="text-white dark:text-white">Reviews</span>
-                      </button>
-                      <button
-                        onClick={() => handleEdit(client)}
-                        className="p-2.5 hover:bg-muted rounded-lg transition-colors border-2 border-white/20 dark:border-white/20 hover:border-white/40 dark:hover:border-white/40"
-                        title="Edit Client"
-                      >
-                        <Edit size={18} className="text-white dark:text-white" strokeWidth={2.5} />
-                      </button>
-                    </div>
+            <tbody id="clients-table-body" className="divide-y divide-border">
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">
+                    Loading clients...
                   </td>
                 </tr>
-              ))}
+              ) : filteredClients.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-12 text-center text-muted-foreground">
+                    {searchTerm ? 'No clients found matching your search.' : 'No clients found.'}
+                  </td>
+                </tr>
+              ) : (
+                filteredClients.map((client) => (
+                  <tr key={client.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="pl-10 pr-6 py-5 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
+                          {client.business_name.charAt(0)}
+                        </div>
+                        <span className="font-semibold text-foreground text-[15px]">{client.business_name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <code className="text-xs bg-muted px-2.5 py-1.5 rounded-lg font-mono text-foreground border">
+                        {client.id}
+                      </code>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap text-sm text-foreground">{client.owner_email}</td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <span className="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2.5 py-1.5 rounded-lg border border-blue-500/20">
+                        {client.twilio_number || '—'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      <span className="text-xs font-mono bg-green-500/10 text-green-600 dark:text-green-400 px-2.5 py-1.5 rounded-lg border border-green-500/20">
+                        {client.forwarding_phone || '—'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      {client.booking_link ? (
+                        <a
+                          href={client.booking_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-primary hover:underline text-sm font-medium"
+                        >
+                          View
+                          <ExternalLink size={14} />
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-5 whitespace-nowrap">
+                      {client.google_review_link ? (
+                        <a
+                          href={client.google_review_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-primary hover:underline text-sm font-medium"
+                        >
+                          View
+                          <ExternalLink size={14} />
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">—</span>
+                      )}
+                    </td>
+                    <td className="pl-6 pr-10 py-5 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => window.location.href = `${baseUrl}/admin/leads?client=${client.id}`}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white dark:text-white rounded-lg transition-all font-semibold text-sm shadow-sm"
+                          title="View Leads"
+                        >
+                          <UserPlus size={16} className="text-white dark:text-white" strokeWidth={2.5} />
+                          <span className="text-white dark:text-white">Leads</span>
+                        </button>
+                        <button
+                          onClick={() => window.location.href = `${baseUrl}/admin/reviews?client=${client.id}`}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white dark:text-white rounded-lg transition-all font-semibold text-sm shadow-sm"
+                          title="View Reviews"
+                        >
+                          <Star size={16} className="text-white dark:text-white" strokeWidth={2.5} />
+                          <span className="text-white dark:text-white">Reviews</span>
+                        </button>
+                        <button
+                          onClick={() => handleEdit(client)}
+                          className="p-2.5 hover:bg-muted rounded-lg transition-colors border-2 border-white/20 dark:border-white/20 hover:border-white/40 dark:hover:border-white/40"
+                          title="Edit Client"
+                        >
+                          <Edit size={18} className="text-white dark:text-white" strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-
-        {filteredClients.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {searchTerm ? 'No clients found matching your search.' : 'No clients found.'}
-            </p>
-          </div>
-        )}
       </div>
 
       {/* New Client Form Dialog */}
@@ -350,15 +345,15 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="businessName" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="business_name" className="block text-sm font-medium mb-2 text-foreground">
                   Business Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  id="businessName"
-                  name="businessName"
+                  id="business_name"
+                  name="business_name"
                   required
-                  value={formData.businessName}
+                  value={formData.business_name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="Galt Hair Studio"
@@ -366,15 +361,15 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="ownerEmail" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="owner_email" className="block text-sm font-medium mb-2 text-foreground">
                   Owner Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
-                  id="ownerEmail"
-                  name="ownerEmail"
+                  id="owner_email"
+                  name="owner_email"
                   required
-                  value={formData.ownerEmail}
+                  value={formData.owner_email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="owner@galthair.com"
@@ -390,14 +385,14 @@ export default function ClientsPage() {
               <h3 className="text-lg font-bold text-foreground">Optional Information</h3>
 
               <div>
-                <label htmlFor="websiteUrl" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="website_url" className="block text-sm font-medium mb-2 text-foreground">
                   Website URL
                 </label>
                 <input
                   type="url"
-                  id="websiteUrl"
-                  name="websiteUrl"
-                  value={formData.websiteUrl}
+                  id="website_url"
+                  name="website_url"
+                  value={formData.website_url}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="https://galthair.com"
@@ -405,14 +400,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="bookingLink" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="booking_link" className="block text-sm font-medium mb-2 text-foreground">
                   Booking Link URL <span className="text-muted-foreground text-xs">(Recommended)</span>
                 </label>
                 <input
                   type="url"
-                  id="bookingLink"
-                  name="bookingLink"
-                  value={formData.bookingLink}
+                  id="booking_link"
+                  name="booking_link"
+                  value={formData.booking_link}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="https://calendly.com/galthair"
@@ -423,14 +418,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="googleReviewLink" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="google_review_link" className="block text-sm font-medium mb-2 text-foreground">
                   Google Review Link <span className="text-muted-foreground text-xs">(Recommended)</span>
                 </label>
                 <input
                   type="url"
-                  id="googleReviewLink"
-                  name="googleReviewLink"
-                  value={formData.googleReviewLink}
+                  id="google_review_link"
+                  name="google_review_link"
+                  value={formData.google_review_link}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="https://g.page/r/galthair/review"
@@ -441,14 +436,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="twilioNumber" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="twilio_number" className="block text-sm font-medium mb-2 text-foreground">
                   Twilio Number (Business Number)
                 </label>
                 <input
                   type="tel"
-                  id="twilioNumber"
-                  name="twilioNumber"
-                  value={formData.twilioNumber}
+                  id="twilio_number"
+                  name="twilio_number"
+                  value={formData.twilio_number}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all font-mono"
                   placeholder="+1 647 555 1234"
@@ -459,14 +454,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="forwardingPhone" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="forwarding_phone" className="block text-sm font-medium mb-2 text-foreground">
                   Forwarding Phone (Where calls ring)
                 </label>
                 <input
                   type="tel"
-                  id="forwardingPhone"
-                  name="forwardingPhone"
-                  value={formData.forwardingPhone}
+                  id="forwarding_phone"
+                  name="forwarding_phone"
+                  value={formData.forwarding_phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all font-mono"
                   placeholder="+1 519 555 9876"
@@ -477,14 +472,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="customSmsTemplate" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="custom_sms_template" className="block text-sm font-medium mb-2 text-foreground">
                   Custom SMS Template
                 </label>
                 <textarea
-                  id="customSmsTemplate"
-                  name="customSmsTemplate"
+                  id="custom_sms_template"
+                  name="custom_sms_template"
                   rows={4}
-                  value={formData.customSmsTemplate}
+                  value={formData.custom_sms_template}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="Hey {name}, thanks for contacting {business}. You can book here: {booking}."
@@ -548,15 +543,15 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-businessName" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-business_name" className="block text-sm font-medium mb-2 text-foreground">
                   Business Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  id="edit-businessName"
-                  name="businessName"
+                  id="edit-business_name"
+                  name="business_name"
                   required
-                  value={formData.businessName}
+                  value={formData.business_name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="Galt Hair Studio"
@@ -564,15 +559,15 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-ownerEmail" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-owner_email" className="block text-sm font-medium mb-2 text-foreground">
                   Owner Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
-                  id="edit-ownerEmail"
-                  name="ownerEmail"
+                  id="edit-owner_email"
+                  name="owner_email"
                   required
-                  value={formData.ownerEmail}
+                  value={formData.owner_email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="owner@galthair.com"
@@ -585,14 +580,14 @@ export default function ClientsPage() {
               <h3 className="text-lg font-bold text-foreground">Optional Information</h3>
 
               <div>
-                <label htmlFor="edit-websiteUrl" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-website_url" className="block text-sm font-medium mb-2 text-foreground">
                   Website URL
                 </label>
                 <input
                   type="url"
-                  id="edit-websiteUrl"
-                  name="websiteUrl"
-                  value={formData.websiteUrl}
+                  id="edit-website_url"
+                  name="website_url"
+                  value={formData.website_url}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="https://galthair.com"
@@ -600,14 +595,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-bookingLink" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-booking_link" className="block text-sm font-medium mb-2 text-foreground">
                   Booking Link URL
                 </label>
                 <input
                   type="url"
-                  id="edit-bookingLink"
-                  name="bookingLink"
-                  value={formData.bookingLink}
+                  id="edit-booking_link"
+                  name="booking_link"
+                  value={formData.booking_link}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="https://calendly.com/galthair"
@@ -615,14 +610,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-googleReviewLink" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-google_review_link" className="block text-sm font-medium mb-2 text-foreground">
                   Google Review Link
                 </label>
                 <input
                   type="url"
-                  id="edit-googleReviewLink"
-                  name="googleReviewLink"
-                  value={formData.googleReviewLink}
+                  id="edit-google_review_link"
+                  name="google_review_link"
+                  value={formData.google_review_link}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="https://g.page/r/galthair/review"
@@ -630,14 +625,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-twilioNumber" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-twilio_number" className="block text-sm font-medium mb-2 text-foreground">
                   Twilio Number (Business Number)
                 </label>
                 <input
                   type="tel"
-                  id="edit-twilioNumber"
-                  name="twilioNumber"
-                  value={formData.twilioNumber}
+                  id="edit-twilio_number"
+                  name="twilio_number"
+                  value={formData.twilio_number}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all font-mono"
                   placeholder="+1 647 555 1234"
@@ -645,14 +640,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-forwardingPhone" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-forwarding_phone" className="block text-sm font-medium mb-2 text-foreground">
                   Forwarding Phone
                 </label>
                 <input
                   type="tel"
-                  id="edit-forwardingPhone"
-                  name="forwardingPhone"
-                  value={formData.forwardingPhone}
+                  id="edit-forwarding_phone"
+                  name="forwarding_phone"
+                  value={formData.forwarding_phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all font-mono"
                   placeholder="+1 519 555 9876"
@@ -660,14 +655,14 @@ export default function ClientsPage() {
               </div>
 
               <div>
-                <label htmlFor="edit-customSmsTemplate" className="block text-sm font-medium mb-2 text-foreground">
+                <label htmlFor="edit-custom_sms_template" className="block text-sm font-medium mb-2 text-foreground">
                   Custom SMS Template
                 </label>
                 <textarea
-                  id="edit-customSmsTemplate"
-                  name="customSmsTemplate"
+                  id="edit-custom_sms_template"
+                  name="custom_sms_template"
                   rows={4}
-                  value={formData.customSmsTemplate}
+                  value={formData.custom_sms_template}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                   placeholder="Hey {name}, thanks for contacting {business}. You can book here: {booking}."
