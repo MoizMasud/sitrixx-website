@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
-import { Button } from './ui/button';
+import { TypeAnimation } from 'react-type-animation';
+import { Button } from './ui/card';
 import { 
   Star,
   ArrowRight,
   Check,
+  Sparkles
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { Button as ButtonComponent } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
 import { ThemeProvider } from './ThemeProvider';
@@ -128,9 +130,9 @@ function PortfolioPageContent() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+      <section className="relative pt-24 pb-20 px-4 overflow-hidden">
         <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-blue-500/10"
+          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-primary/10"
           animate={{
             backgroundPosition: ['0% 0%', '100% 100%'],
           }}
@@ -142,7 +144,7 @@ function PortfolioPageContent() {
         />
         
         {/* Floating particles */}
-        {[...Array(12)].map((_, i) => (
+        {[...Array(15)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-primary/20 rounded-full"
@@ -169,43 +171,44 @@ function PortfolioPageContent() {
           className="max-w-6xl mx-auto text-center relative z-10"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="relative inline-block mb-6"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="mb-4"
           >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-xl"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.8, 0.5],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-              }}
-            />
-            <div className="relative bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/30 px-8 py-3 rounded-full shadow-lg">
-              <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                Our Work
-              </span>
+            <div className="text-xl md:text-2xl font-light text-muted-foreground min-h-[2rem]">
+              <TypeAnimation
+                sequence={[
+                  'Our Work',
+                  2000,
+                  'Real Success Stories',
+                  2000,
+                  'Built for Results',
+                  2000,
+                  'Exceptional Digital Experiences',
+                  2000,
+                ]}
+                wrapper="span"
+                speed={50}
+                repeat={Infinity}
+              />
             </div>
           </motion.div>
 
           <motion.h1 
-            className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-[1.1] bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+            className="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-[1.1] bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2 }}
+            transition={{ duration: 1, delay: 0.3 }}
           >
             Featured Projects
           </motion.h1>
           
           <motion.p 
-            className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto font-light leading-relaxed"
+            className="text-lg md:text-xl text-muted-foreground mb-6 max-w-4xl mx-auto font-light leading-relaxed"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.4 }}
+            transition={{ duration: 1, delay: 0.5 }}
           >
             Exceptional digital experiences crafted for ambitious brands across industries
           </motion.p>
@@ -345,7 +348,7 @@ function PortfolioPageContent() {
                   </ul>
                 </div>
 
-                <Button 
+                <ButtonComponent 
                   className="w-full rounded-2xl h-14 font-bold text-lg shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-[1.02] transition-all"
                   asChild
                   size="lg"
@@ -354,7 +357,7 @@ function PortfolioPageContent() {
                     Start Your Project Today
                     <ArrowRight className="ml-2" size={20} />
                   </a>
-                </Button>
+                </ButtonComponent>
               </div>
             </motion.div>
           )}
@@ -390,7 +393,7 @@ function PortfolioPageContent() {
               <p className="text-muted-foreground text-lg md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed">
                 Let's build something extraordinary together
               </p>
-              <Button 
+              <ButtonComponent 
                 size="lg" 
                 asChild 
                 className="group rounded-2xl px-10 h-14 text-lg font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all"
@@ -399,7 +402,7 @@ function PortfolioPageContent() {
                   Start Your Project
                   <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
                 </a>
-              </Button>
+              </ButtonComponent>
             </div>
           </motion.div>
         </div>

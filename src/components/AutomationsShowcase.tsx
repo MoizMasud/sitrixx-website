@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
+import { TypeAnimation } from 'react-type-animation';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { 
@@ -17,7 +18,8 @@ import {
   Mail,
   TrendingUp,
   Shield,
-  PhoneMissed
+  PhoneMissed,
+  Sparkles
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
@@ -116,39 +118,89 @@ function AutomationsShowcaseContent() {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* Hero Section */}
+      <section className="relative pt-24 pb-20 px-4 overflow-hidden">
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-primary/10"
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            repeatType: 'reverse',
+          }}
+        />
+
+        {[...Array(15)].map((_, i) => (
           <motion.div
-            className="inline-block mb-6"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            key={i}
+            className="absolute w-2 h-2 bg-primary/20 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 0.8, 0.2],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2 }}
+          className="max-w-6xl mx-auto text-center relative z-10"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="mb-4"
           >
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 rounded-full shadow-lg">
-              <span className="text-sm font-bold tracking-wider uppercase flex items-center gap-2 text-white">
-                <Bot size={16} />
-                Smart Automation System
-              </span>
+            <div className="text-xl md:text-2xl font-light text-muted-foreground min-h-[2rem]">
+              <TypeAnimation
+                sequence={[
+                  'Smart Automation System',
+                  2000,
+                  'Convert More Leads',
+                  2000,
+                  'Never Miss an Opportunity',
+                  2000,
+                  'Build Your Reputation',
+                  2000,
+                ]}
+                wrapper="span"
+                speed={50}
+                repeat={Infinity}
+              />
             </div>
           </motion.div>
 
           <motion.h1 
-            className="text-5xl md:text-7xl font-black mb-6 tracking-tight"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-[1.1] bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+            initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3 }}
           >
             Automation That Converts
           </motion.h1>
+          
           <motion.p 
-            className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-lg md:text-xl text-muted-foreground mb-6 max-w-4xl mx-auto font-light leading-relaxed"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            transition={{ duration: 1, delay: 0.5 }}
           >
             We've built a custom backend system that automatically follows up with leads, manages your reputation, and never lets a potential customer slip away.
           </motion.p>
-        </div>
+        </motion.div>
       </section>
 
       {/* Core Automation Features */}
