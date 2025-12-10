@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, Phone, Mail } from 'lucide-react';
 
 type Lead = {
@@ -27,18 +27,11 @@ type LeadsPageProps = {
 };
 
 export default function LeadsPage({ initialData }: LeadsPageProps) {
-  const [clients, setClients] = useState<Client[]>(initialData?.clients || []);
+  const [clients] = useState<Client[]>(initialData?.clients || []);
   const [selectedClient, setSelectedClient] = useState('all');
-  const [allLeads, setAllLeads] = useState<Lead[]>(initialData?.leads || []);
+  const [allLeads] = useState<Lead[]>(initialData?.leads || []);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-    if (initialData?.clients && initialData.clients.length > 0 && selectedClient === 'all') {
-      // Auto-select first client if we have data
-      setSelectedClient(initialData.clients[0].id);
-    }
-  }, [initialData]);
+  const [loading] = useState(false);
 
   const filteredLeads = allLeads
     .filter(lead => selectedClient === 'all' || lead.client_id === selectedClient)
@@ -169,6 +162,13 @@ export default function LeadsPage({ initialData }: LeadsPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Debug Info */}
+      {allLeads.length === 0 && clients.length > 0 && (
+        <div className="bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 px-4 py-3 rounded-lg mb-6">
+          Loaded {clients.length} clients but no leads found. This might be normal if there are no leads yet.
+        </div>
+      )}
 
       {/* Leads Table */}
       <div className="bg-card border rounded-xl overflow-hidden shadow-xl">

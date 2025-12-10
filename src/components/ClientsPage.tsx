@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Plus, Edit, UserPlus, Star, ExternalLink, Search } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
@@ -32,6 +32,8 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
   const [clients, setClients] = useState<ClientData[]>(initialData.clients);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState<string | null>(initialData.error);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [formData, setFormData] = useState<ClientData>({
     id: '',
     business_name: '',
@@ -65,11 +67,15 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
   const handleEdit = (client: ClientData) => {
     setEditingClient(client);
     setFormData(client);
+    setSaveError(null);
+    setSaveSuccess(null);
     setShowEditForm(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveError(null);
+    setSaveSuccess(null);
     
     try {
       const res = await fetch(`${API_BASE}/api/clients`, {
@@ -78,48 +84,77 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
         body: JSON.stringify(formData),
       });
       
-      if (!res.ok) throw new Error('Failed to create client');
+      const data = await res.json();
+      
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Failed to create client');
+      }
       
       await loadClients();
+      setSaveSuccess('Client created successfully!');
       
-      // Reset form
-      setFormData({
-        id: '',
-        business_name: '',
-        owner_email: '',
-        website_url: '',
-        booking_link: '',
-        google_review_link: '',
-        twilio_number: '',
-        forwarding_phone: '',
-        custom_sms_template: '',
-      });
-      
-      setShowNewClientForm(false);
+      // Reset form after short delay
+      setTimeout(() => {
+        setFormData({
+          id: '',
+          business_name: '',
+          owner_email: '',
+          website_url: '',
+          booking_link: '',
+          google_review_link: '',
+          twilio_number: '',
+          forwarding_phone: '',
+          custom_sms_template: '',
+        });
+        setShowNewClientForm(false);
+        setSaveSuccess(null);
+      }, 1500);
     } catch (err) {
       console.error('Error creating client:', err);
-      alert('Failed to create client. Please try again.');
+      setSaveError(err instanceof Error ? err.message : 'Failed to create client');
     }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveError(null);
+    setSaveSuccess(null);
     
     try {
-      const res = await fetch(`${API_BASE}/api/clients/${formData.id}`, {
+      const res = await fetch(`${API_BASE}/api/clients`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          id: formData.id,
+          business_name: formData.business_name,
+          owner_email: formData.owner_email,
+          website_url: formData.website_url,
+          booking_link: formData.booking_link,
+          google_review_link: formData.google_review_link,
+          twilio_number: formData.twilio_number,
+          forwarding_phone: formData.forwarding_phone,
+          custom_sms_template: formData.custom_sms_template,
+        }),
       });
       
-      if (!res.ok) throw new Error('Failed to update client');
+      const data = await res.json();
+      
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || 'Failed to update client');
+      }
       
       await loadClients();
-      setShowEditForm(false);
-      setEditingClient(null);
+      setSaveSuccess('Client updated successfully!');
+      
+      // Close form after short delay
+      setTimeout(() => {
+        setShowEditForm(false);
+        setEditingClient(null);
+        setSaveSuccess(null);
+      }, 1500);
     } catch (err) {
       console.error('Error updating client:', err);
-      alert('Failed to update client. Please try again.');
+      setSaveError(err instanceof Error ? err.message : 'Failed to update client. Please try again.');
     }
   };
 
@@ -135,6 +170,8 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
       forwarding_phone: '',
       custom_sms_template: '',
     });
+    setSaveError(null);
+    setSaveSuccess(null);
   };
 
   // Filter clients based on search term
@@ -174,7 +211,7 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header - Made Bigger and More Prominent */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-10">
         <div>
           <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
@@ -337,6 +374,18 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
           <DialogHeader>
             <DialogTitle className="text-3xl font-black">Add New Client</DialogTitle>
           </DialogHeader>
+
+          {saveError && (
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
+              {saveError}
+            </div>
+          )}
+
+          {saveSuccess && (
+            <div className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg">
+              {saveSuccess}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6 mt-6">
             {/* Required Fields */}
@@ -520,7 +569,10 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowNewClientForm(false)}
+                onClick={() => {
+                  setShowNewClientForm(false);
+                  resetForm();
+                }}
                 className="px-8 rounded-lg h-12"
               >
                 Cancel
@@ -530,7 +582,181 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Client Form Dialog - Similar structure, truncated for brevity */}
+      {/* Edit Client Form Dialog */}
+      <Dialog open={showEditForm} onOpenChange={setShowEditForm}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-black">Edit Client</DialogTitle>
+          </DialogHeader>
+
+          {saveError && (
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
+              {saveError}
+            </div>
+          )}
+
+          {saveSuccess && (
+            <div className="bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 px-4 py-3 rounded-lg">
+              {saveSuccess}
+            </div>
+          )}
+
+          <form onSubmit={handleUpdate} className="space-y-6 mt-6">
+            {/* Client ID - Read Only */}
+            <div>
+              <label htmlFor="edit-id" className="block text-sm font-medium mb-2 text-foreground">
+                Client ID (Cannot be changed)
+              </label>
+              <input
+                type="text"
+                id="edit-id"
+                value={formData.id}
+                disabled
+                className="w-full px-4 py-3 rounded-lg border bg-muted text-muted-foreground cursor-not-allowed"
+              />
+            </div>
+
+            {/* Editable Fields */}
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="edit-business_name" className="block text-sm font-medium mb-2 text-foreground">
+                  Business Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="edit-business_name"
+                  name="business_name"
+                  required
+                  value={formData.business_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-owner_email" className="block text-sm font-medium mb-2 text-foreground">
+                  Owner Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="edit-owner_email"
+                  name="owner_email"
+                  required
+                  value={formData.owner_email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-website_url" className="block text-sm font-medium mb-2 text-foreground">
+                  Website URL
+                </label>
+                <input
+                  type="url"
+                  id="edit-website_url"
+                  name="website_url"
+                  value={formData.website_url}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-booking_link" className="block text-sm font-medium mb-2 text-foreground">
+                  Booking Link URL
+                </label>
+                <input
+                  type="url"
+                  id="edit-booking_link"
+                  name="booking_link"
+                  value={formData.booking_link}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-google_review_link" className="block text-sm font-medium mb-2 text-foreground">
+                  Google Review Link
+                </label>
+                <input
+                  type="url"
+                  id="edit-google_review_link"
+                  name="google_review_link"
+                  value={formData.google_review_link}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-twilio_number" className="block text-sm font-medium mb-2 text-foreground">
+                  Twilio Number (Business Number)
+                </label>
+                <input
+                  type="tel"
+                  id="edit-twilio_number"
+                  name="twilio_number"
+                  value={formData.twilio_number}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all font-mono"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-forwarding_phone" className="block text-sm font-medium mb-2 text-foreground">
+                  Forwarding Phone
+                </label>
+                <input
+                  type="tel"
+                  id="edit-forwarding_phone"
+                  name="forwarding_phone"
+                  value={formData.forwarding_phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all font-mono"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-custom_sms_template" className="block text-sm font-medium mb-2 text-foreground">
+                  Custom SMS Template
+                </label>
+                <textarea
+                  id="edit-custom_sms_template"
+                  name="custom_sms_template"
+                  rows={4}
+                  value={formData.custom_sms_template}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex gap-4 pt-6 border-t">
+              <Button
+                type="submit"
+                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all shadow-lg rounded-lg h-12"
+              >
+                Save Changes
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowEditForm(false);
+                  setEditingClient(null);
+                  resetForm();
+                }}
+                className="px-8 rounded-lg h-12"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
