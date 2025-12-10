@@ -176,12 +176,12 @@ export default function LeadsPage({ initialData }: LeadsPageProps) {
           <table className="w-full">
             <thead className="bg-muted/50 border-b-2">
               <tr>
-                <th className="pl-10 pr-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Source</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Lead Name</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Contact Info</th>
-                <th className="pl-6 pr-10 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Message</th>
+                <th className="pl-8 pr-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Source</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Lead Name</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Contact Info</th>
+                <th className="pl-4 pr-8 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Message</th>
               </tr>
             </thead>
             <tbody id="leads-table-body" className="divide-y divide-border">
@@ -200,12 +200,12 @@ export default function LeadsPage({ initialData }: LeadsPageProps) {
               ) : (
                 filteredLeads.map((lead) => (
                   <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="pl-10 pr-6 py-5 whitespace-nowrap">
+                    <td className="pl-8 pr-4 py-5 whitespace-nowrap">
                       <span className="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
                         {new Date(lead.created_at).toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
                           {(lead.client_name || currentClientName).charAt(0)}
@@ -213,7 +213,7 @@ export default function LeadsPage({ initialData }: LeadsPageProps) {
                         <span className="font-semibold text-foreground text-[15px]">{lead.client_name || currentClientName}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5 whitespace-nowrap">
                       <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold ${
                         lead.source === 'website_form' 
                           ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
@@ -222,14 +222,14 @@ export default function LeadsPage({ initialData }: LeadsPageProps) {
                         {lead.source === 'website_form' ? '📝 Website Form' : '📞 Missed Call'}
                       </span>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5 whitespace-nowrap">
                       {lead.name ? (
                         <span className="font-semibold text-foreground text-[15px]">{lead.name}</span>
                       ) : (
                         <span className="text-muted-foreground text-sm italic">No name provided</span>
                       )}
                     </td>
-                    <td className="px-6 py-5">
+                    <td className="px-4 py-5">
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
                           <Phone size={14} className="text-green-600 dark:text-green-400" />
@@ -253,7 +253,7 @@ export default function LeadsPage({ initialData }: LeadsPageProps) {
                         )}
                       </div>
                     </td>
-                    <td className="pl-6 pr-10 py-5 text-sm max-w-md">
+                    <td className="pl-4 pr-8 py-5 text-sm max-w-md">
                       <p className="text-foreground line-clamp-2 text-[15px]">
                         {lead.message}
                       </p>

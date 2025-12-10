@@ -259,14 +259,14 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
           <table className="w-full">
             <thead className="bg-muted/50 border-b-2">
               <tr>
-                <th className="pl-10 pr-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Business Name</th>
+                <th className="pl-8 pr-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Business Name</th>
                 <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client ID</th>
                 <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Owner Email</th>
                 <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Twilio Number</th>
                 <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Forwarding Phone</th>
                 <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Booking Link</th>
                 <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Review Link</th>
-                <th className="pl-6 pr-10 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Actions</th>
+                <th className="pl-4 pr-8 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Actions</th>
               </tr>
             </thead>
             <tbody id="clients-table-body" className="divide-y divide-border">
@@ -279,7 +279,7 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
               ) : (
                 filteredClients.map((client) => (
                   <tr key={client.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="pl-10 pr-6 py-5 whitespace-nowrap">
+                    <td className="pl-8 pr-4 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
                           {client.business_name.charAt(0)}
@@ -333,7 +333,7 @@ export default function ClientsPage({ initialData }: ClientsPageProps) {
                         <span className="text-muted-foreground text-sm">—</span>
                       )}
                     </td>
-                    <td className="pl-6 pr-10 py-5 whitespace-nowrap">
+                    <td className="pl-4 pr-8 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => window.location.href = `${baseUrl}/admin/leads?client=${client.id}`}

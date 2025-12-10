@@ -114,10 +114,10 @@ function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutP
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="w-full rounded-xl justify-start"
+            className="w-full rounded-xl justify-start text-foreground dark:!text-white hover:text-foreground dark:hover:!text-white [&_svg]:text-foreground dark:[&_svg]:!text-white"
           >
             <LogOut size={20} className="mr-3" />
-            Logout
+            <span className="text-foreground dark:!text-white">Logout</span>
           </Button>
         </div>
       </aside>

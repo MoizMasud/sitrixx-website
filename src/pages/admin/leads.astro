@@ -137,7 +137,7 @@ try {
           <table class="w-full">
             <thead class="bg-muted/50 border-b-2">
               <tr>
-                <th class="pl-10 pr-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
+                <th class="pl-16 pr-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
                 <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
                 <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Source</th>
                 <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Lead Name</th>
@@ -299,7 +299,7 @@ try {
 
     tbody.innerHTML = leads.map(lead => `
       <tr class="hover:bg-muted/30 transition-colors">
-        <td class="pl-10 pr-6 py-5 whitespace-nowrap">
+        <td class="pl-16 pr-6 py-5 whitespace-nowrap">
           <span class="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
             ${lead.created_at ? new Date(lead.created_at).toLocaleString() : 'N/A'}
           </span>

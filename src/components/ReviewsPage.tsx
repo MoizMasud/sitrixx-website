@@ -197,11 +197,11 @@ export default function ReviewsPage({ initialData }: ReviewsPageProps) {
           <table className="w-full">
             <thead className="bg-muted/50 border-b-2">
               <tr>
-                <th className="pl-10 pr-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Customer Name</th>
-                <th className="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Rating</th>
-                <th className="pl-6 pr-10 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Comments</th>
+                <th className="pl-8 pr-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Customer Name</th>
+                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Rating</th>
+                <th className="pl-4 pr-8 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Comments</th>
               </tr>
             </thead>
             <tbody id="reviews-table-body" className="divide-y divide-border">
@@ -220,12 +220,12 @@ export default function ReviewsPage({ initialData }: ReviewsPageProps) {
               ) : (
                 filteredReviews.map((review) => (
                   <tr key={review.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="pl-10 pr-6 py-5 whitespace-nowrap">
+                    <td className="pl-8 pr-4 py-5 whitespace-nowrap">
                       <span className="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
                         {new Date(review.created_at).toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
                           {(review.client_name || currentClientName).charAt(0)}
@@ -233,16 +233,16 @@ export default function ReviewsPage({ initialData }: ReviewsPageProps) {
                         <span className="font-semibold text-foreground text-[15px]">{review.client_name || currentClientName}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5 whitespace-nowrap">
                       <span className="font-semibold text-foreground text-[15px]">{review.name}</span>
                     </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
+                    <td className="px-4 py-5 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         {renderStars(review.rating)}
                         <span className="text-sm font-bold text-foreground">{review.rating}.0</span>
                       </div>
                     </td>
-                    <td className="pl-6 pr-10 py-5 text-sm max-w-md">
+                    <td className="pl-4 pr-8 py-5 text-sm max-w-md">
                       <p className="text-foreground line-clamp-2 text-[15px]">
                         {review.comments}
                       </p>

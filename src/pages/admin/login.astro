@@ -18,7 +18,18 @@ import { baseUrl } from '../../lib/base-url';
         <p class="text-muted-foreground">Admin Portal</p>
       </div>
 
-      <div class="bg-card border-2 rounded-3xl p-8 shadow-xl">
+      <div id="login-container" class="bg-card border-2 rounded-3xl p-8 shadow-xl">
+        <!-- Back Button -->
+        <a 
+          href={`${baseUrl}/`}
+          class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back to Home
+        </a>
+
         <h2 class="text-2xl font-bold mb-6 tracking-tight">Log In</h2>
         
         <!-- Error Message -->
@@ -79,12 +90,6 @@ import { baseUrl } from '../../lib/base-url';
             <span id="button-loading" class="hidden">Logging in...</span>
           </button>
         </form>
-
-        <div class="mt-6 p-4 bg-muted/30 rounded-xl border">
-          <p class="text-xs text-muted-foreground">
-            <strong>🔒 Secure Login:</strong> This form uses Supabase authentication to securely manage admin access.
-          </p>
-        </div>
       </div>
     </div>
   </div>
@@ -93,7 +98,13 @@ import { baseUrl } from '../../lib/base-url';
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script define:vars={{ baseUrl }}>
-    document.addEventListener('DOMContentLoaded', function () {
+    // Prevent redirect loops
+    let isRedirecting = false;
+    let isCheckingAuth = false;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      console.log('Login page loaded');
+      
       const { createClient } = window.supabase;
 
       // 🔑 Supabase Configuration
@@ -111,13 +122,26 @@ import { baseUrl } from '../../lib/base-url';
       const errorMessage = document.getElementById('error-message');
       const successMessage = document.getElementById('success-message');
 
-      // Check if user is already logged in
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          // User is already logged in, redirect to admin
-          window.location.href = baseUrl + '/admin';
+      // Check if user is already logged in - only check once
+      if (!isRedirecting && !isCheckingAuth) {
+        isCheckingAuth = true;
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          console.log('Session check:', session ? 'Active session found' : 'No session');
+          
+          if (session && localStorage.getItem('sitrixx_token')) {
+            isRedirecting = true;
+            console.log('Already logged in, redirecting to dashboard...');
+            window.location.replace(baseUrl + '/admin');
+            return; // Stop further execution
+          }
+        } catch (error) {
+          console.error('Session check error:', error);
+          // Continue to show login form on error
+        } finally {
+          isCheckingAuth = false;
         }
-      });
+      }
 
       if (!form || !emailInput || !passwordInput) {
         console.warn('Login form elements not found');
@@ -155,10 +179,19 @@ import { baseUrl } from '../../lib/base-url';
 
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
+        
+        // Prevent double submission
+        if (isRedirecting || loginButton.disabled) {
+          console.log('Form submission blocked - already processing');
+          return;
+        }
+
         hideMessages();
 
         const email = emailInput.value.trim();
         const password = passwordInput.value;
+
+        console.log('Attempting login for:', email);
 
         if (!email || !password) {
           showError('Please enter your email and password.');
@@ -180,18 +213,22 @@ import { baseUrl } from '../../lib/base-url';
             return;
           }
 
+          console.log('Login successful:', data.user?.email);
+
           // Store session token for later API calls
           const accessToken = data.session?.access_token;
           if (accessToken) {
             localStorage.setItem('sitrixx_token', accessToken);
             localStorage.setItem('sitrixx_user', JSON.stringify(data.user));
+            console.log('Token stored successfully');
           }
 
           showSuccess('Login successful! Redirecting...');
+          isRedirecting = true;
           
           // Redirect to admin dashboard
           setTimeout(() => {
-            window.location.href = baseUrl + '/admin';
+            window.location.replace(baseUrl + '/admin');
           }, 1000);
 
         } catch (err) {
