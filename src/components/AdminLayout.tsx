@@ -14,6 +14,23 @@ function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayout
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [activePage, setActivePage] = useState(currentPage);
+
+  // Update active page when URL changes
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path.includes('/admin/clients')) {
+      setActivePage('clients');
+    } else if (path.includes('/admin/leads')) {
+      setActivePage('leads');
+    } else if (path.includes('/admin/reviews')) {
+      setActivePage('reviews');
+    } else if (path.includes('/admin/settings')) {
+      setActivePage('settings');
+    } else if (path.includes('/admin')) {
+      setActivePage('dashboard');
+    }
+  }, []);
 
   useEffect(() => {
     // Check authentication status
@@ -141,12 +158,15 @@ function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayout
         <nav className="p-4 space-y-2 mt-16 lg:mt-0">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentPage === item.key;
+            const isActive = activePage === item.key;
             return (
               <a
                 key={item.key}
                 href={item.href}
-                onClick={() => setIsSidebarOpen(false)}
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  setActivePage(item.key);
+                }}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
                     ? 'bg-gradient-to-r from-primary/20 to-purple-600/20 text-primary font-semibold'
