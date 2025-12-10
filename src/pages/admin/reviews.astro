@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import AdminLayout from '../../components/AdminLayout';
+import ReviewsPage from '../../components/ReviewsPage';
+---
+
+<MainLayout 
+  title="Reviews - Admin - Sitrixx"
+  description="Monitor customer reviews and ratings"
+>
+  <AdminLayout client:load activePage="reviews">
+    <ReviewsPage client:load />
+  </AdminLayout>
+</MainLayout>

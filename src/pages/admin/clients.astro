@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import AdminLayout from '../../components/AdminLayout';
+import ClientsPage from '../../components/ClientsPage';
+---
+
+<MainLayout 
+  title="Clients - Admin - Sitrixx"
+  description="Manage Sitrixx clients"
+>
+  <AdminLayout client:load activePage="clients">
+    <ClientsPage client:load />
+  </AdminLayout>
+</MainLayout>

@@ -1,0 +1,14 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import AdminLayout from '../../components/AdminLayout';
+import LeadsPage from '../../components/LeadsPage';
+---
+
+<MainLayout 
+  title="Leads - Admin - Sitrixx"
+  description="Manage incoming leads"
+>
+  <AdminLayout client:load activePage="leads">
+    <LeadsPage client:load />
+  </AdminLayout>
+</MainLayout>
