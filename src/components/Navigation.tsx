@@ -4,8 +4,9 @@ import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import ThemeToggle from './ThemeToggle';
+import { ThemeProvider } from './ThemeProvider';
 
-export default function Navigation() {
+function NavigationContent() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
@@ -83,5 +84,13 @@ export default function Navigation() {
         )}
       </div>
     </nav>
+  );
+}
+
+export default function Navigation() {
+  return (
+    <ThemeProvider>
+      <NavigationContent />
+    </ThemeProvider>
   );
 }

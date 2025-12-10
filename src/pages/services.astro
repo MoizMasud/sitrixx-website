@@ -1,8 +1,10 @@
 ---
 import MainLayout from '../layouts/main.astro';
 import ServicesPage from '../components/ServicesPage';
+import Navigation from '../components/Navigation';
 ---
 
 <MainLayout>
+  <Navigation client:only="react" />
   <ServicesPage client:only="react" />
 </MainLayout>

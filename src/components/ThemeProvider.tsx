@@ -10,37 +10,37 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>('dark'); // Default to dark to prevent flash
 
   useEffect(() => {
-    // Function to determine theme based on time of day
+    // Run once on mount
     const getThemeByTime = (): Theme => {
       const hour = new Date().getHours();
-      // Dark mode from 6 PM (18:00) to 6 AM (06:00)
       return (hour >= 18 || hour < 6) ? 'dark' : 'light';
     };
 
-    // Check for saved theme preference first
     const savedTheme = localStorage.getItem('theme') as Theme | null;
-    
-    // If user has set a preference, use it and don't auto-switch
-    // Otherwise use time-based theme
     const initialTheme = savedTheme || getThemeByTime();
     
     setTheme(initialTheme);
     document.documentElement.classList.toggle('dark', initialTheme === 'dark');
 
-    // Only auto-update theme if user hasn't set a preference
+    // Only auto-update if no saved preference
     if (!savedTheme) {
       const interval = setInterval(() => {
         const timeBasedTheme = getThemeByTime();
-        setTheme(timeBasedTheme);
-        document.documentElement.classList.toggle('dark', timeBasedTheme === 'dark');
-      }, 60000); // Check every minute
+        setTheme(prev => {
+          if (prev !== timeBasedTheme) {
+            document.documentElement.classList.toggle('dark', timeBasedTheme === 'dark');
+            return timeBasedTheme;
+          }
+          return prev;
+        });
+      }, 60000);
 
       return () => clearInterval(interval);
     }
-  }, []);
+  }, []); // Empty deps - run only once
 
   const handleSetTheme = (newTheme: Theme) => {
     setTheme(newTheme);

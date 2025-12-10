@@ -11,9 +11,13 @@ import {
   Clock,
   CheckCircle2,
   Send,
-  Gift,
+  PhoneCall,
   ArrowRight,
-  User
+  User,
+  Mail,
+  TrendingUp,
+  Shield,
+  PhoneMissed
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
 import Navigation from './Navigation';
@@ -32,31 +36,34 @@ const chatbotMessages = [
   { type: 'bot', text: "You're welcome! We're looking forward to seeing you tomorrow at 2:00 PM. Have a great day! ✂️", delay: 8000 }
 ];
 
-// SMS Examples
-const smsExamples = [
+const automationFeatures = [
   {
-    title: "Before Appointment",
-    message: "Hi Sarah! Reminder: Haircut tomorrow at 2:00 PM. Reply C to confirm or R to reschedule.",
-    icon: Clock,
-    color: "text-blue-500"
-  },
-  {
-    title: "After Appointment",
-    message: "Thanks for visiting! How did everything go? We'd love your feedback.",
+    title: "Smart Lead Follow-Up",
+    description: "When someone submits your contact form, they instantly receive a personalized text message to keep the conversation going and guide them toward booking.",
     icon: MessageSquare,
-    color: "text-green-500"
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10"
   },
   {
-    title: "Review Request",
-    message: "We'd love a review! https://g.page/r/bobjoe-reviews/review ⭐",
+    title: "Intelligent Review Management",
+    description: "5-star reviews? Automatically posted to Google. Lower ratings? Sent privately to your email so you can improve — protecting your reputation while gathering valuable feedback.",
     icon: Star,
-    color: "text-yellow-500"
+    color: "text-yellow-500",
+    bgColor: "bg-yellow-500/10"
   },
   {
-    title: "Birthday Message",
-    message: "🎉 Happy Birthday, Sarah! Use code BDAY20 for 20% off your next visit.",
-    icon: Gift,
-    color: "text-pink-500"
+    title: "Missed Call Recovery",
+    description: "Never lose a lead again. When you miss a call, we automatically send a text to the caller letting them know you'll get back to them — and nudge them to book online.",
+    icon: PhoneMissed,
+    color: "text-red-500",
+    bgColor: "bg-red-500/10"
+  },
+  {
+    title: "SEO Boost from Reviews",
+    description: "More 5-star Google reviews = higher search rankings = more organic traffic. Our system helps you rank higher by collecting authentic positive reviews.",
+    icon: TrendingUp,
+    color: "text-green-500",
+    bgColor: "bg-green-500/10"
   }
 ];
 
@@ -112,26 +119,237 @@ function AutomationsShowcaseContent() {
       {/* Hero */}
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            className="inline-block mb-6"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="bg-gradient-to-r from-primary to-purple-600 px-6 py-3 rounded-full shadow-lg">
+              <span className="text-sm font-bold tracking-wider uppercase flex items-center gap-2 text-white">
+                <Bot size={16} />
+                Smart Automation System
+              </span>
+            </div>
+          </motion.div>
+
           <motion.h1 
             className="text-5xl md:text-7xl font-black mb-6 tracking-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Smart Automations
+            Automation That Converts
           </motion.h1>
           <motion.p 
-            className="text-xl text-muted-foreground mb-10"
+            className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            Calendar booking, AI chatbot, and SMS automation that works 24/7
+            We've built a custom backend system that automatically follows up with leads, manages your reputation, and never lets a potential customer slip away.
           </motion.p>
         </div>
       </section>
 
+      {/* Core Automation Features */}
+      <section className="py-24 px-6 bg-gradient-to-b from-muted/30 to-transparent">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">How Our System Works</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Built-in backend automation that turns visitors into customers and protects your online reputation
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {automationFeatures.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                >
+                  <Card className="h-full border-2 hover:shadow-xl hover:border-primary/30 transition-all">
+                    <CardHeader>
+                      <div className={`w-16 h-16 ${feature.bgColor} rounded-2xl flex items-center justify-center mb-4`}>
+                        <Icon className={feature.color} size={32} strokeWidth={2.5} />
+                      </div>
+                      <CardTitle className="text-2xl font-bold">{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Lead Follow-Up Process */}
+      <section className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">The Lead Follow-Up Journey</h2>
+            <p className="text-xl text-muted-foreground">What happens after someone contacts you</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Send className="text-white" size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">1. Form Submitted</h3>
+              <p className="text-muted-foreground">Customer fills out your contact form with their info and needs</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <MessageSquare className="text-white" size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">2. Instant Text</h3>
+              <p className="text-muted-foreground">They receive a personalized SMS within seconds to keep them engaged</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <CalendarIcon className="text-white" size={28} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">3. Guided to Book</h3>
+              <p className="text-muted-foreground">The message includes a direct link to book an appointment online</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Review Management System */}
+      <section className="py-24 px-6 bg-gradient-to-b from-transparent to-muted/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Smart Review Filter</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Protect your reputation while collecting valuable feedback
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <Card className="border-2 border-green-500/30 bg-green-500/5">
+                <CardHeader>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center">
+                      <Star className="text-white" size={28} fill="white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl">5-Star Reviews</CardTitle>
+                      <p className="text-sm text-muted-foreground">Happy customers</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="text-green-500" size={20} />
+                      <span className="text-sm">Automatically posted to Google</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="text-green-500" size={20} />
+                      <span className="text-sm">Boosts your SEO rankings</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="text-green-500" size={20} />
+                      <span className="text-sm">Increases trust & conversions</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="border-2 border-blue-500/30 bg-blue-500/5">
+                <CardHeader>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                      <Mail className="text-white" size={28} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl">Lower Ratings</CardTitle>
+                      <p className="text-sm text-muted-foreground">Constructive feedback</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Shield className="text-blue-500" size={20} />
+                      <span className="text-sm">Sent privately to your email</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Shield className="text-blue-500" size={20} />
+                      <span className="text-sm">NOT posted publicly</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Shield className="text-blue-500" size={20} />
+                      <span className="text-sm">Opportunity to improve service</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 text-center"
+          >
+            <Card className="inline-block border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-purple-500/5 p-8">
+              <div className="flex items-center gap-4">
+                <TrendingUp className="text-green-500" size={40} strokeWidth={2.5} />
+                <div className="text-left">
+                  <p className="text-sm text-muted-foreground mb-1">The Result</p>
+                  <p className="text-lg font-bold">Higher Google Rankings = More Organic Traffic = More Leads</p>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Calendar Sync */}
-      <section className="py-20 px-6">
+      <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black mb-4">Smart Calendar Integration</h2>
@@ -145,7 +363,7 @@ function AutomationsShowcaseContent() {
               viewport={{ once: true }}
               transition={{ delay: 0 }}
             >
-              <Card className="h-full">
+              <Card className="h-full border-2 hover:shadow-lg transition-all">
                 <CardHeader>
                   <div className="w-12 h-12 flex items-center justify-center mb-4">
                     <CalendarIcon className="text-blue-500" size={32} />
@@ -164,7 +382,7 @@ function AutomationsShowcaseContent() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="h-full">
+              <Card className="h-full border-2 hover:shadow-lg transition-all">
                 <CardHeader>
                   <div className="w-12 h-12 flex items-center justify-center mb-4">
                     <CheckCircle2 className="text-green-500" size={32} />
@@ -183,15 +401,15 @@ function AutomationsShowcaseContent() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="h-full">
+              <Card className="h-full border-2 hover:shadow-lg transition-all">
                 <CardHeader>
                   <div className="w-12 h-12 flex items-center justify-center mb-4">
                     <MessageSquare className="text-purple-500" size={32} />
                   </div>
-                  <CardTitle className="text-xl">Custom Integration</CardTitle>
+                  <CardTitle className="text-xl">SMS Reminders</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Works with any calendar system you use. We integrate with your existing workflow seamlessly.</p>
+                  <p className="text-muted-foreground">Automatic appointment reminders and follow-ups to reduce no-shows and keep clients engaged.</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -200,17 +418,17 @@ function AutomationsShowcaseContent() {
       </section>
 
       {/* AI Chatbot */}
-      <section className="py-20 px-6 bg-muted/30" ref={chatRef}>
+      <section className="py-24 px-6 bg-muted/30" ref={chatRef}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black mb-4">AI Chatbot</h2>
-            <p className="text-lg text-muted-foreground">Trained on your business to answer questions and book appointments</p>
+            <p className="text-lg text-muted-foreground">Trained on your business to answer questions and book appointments 24/7</p>
           </div>
 
           <div className="max-w-3xl mx-auto">
-            <Card className="overflow-hidden shadow-2xl">
+            <Card className="overflow-hidden shadow-2xl border-2">
               {/* Chat Header */}
-              <div className="bg-primary p-5 text-primary-foreground">
+              <div className="bg-gradient-to-r from-primary to-purple-600 p-5 text-white">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center ring-2 ring-white/30">
@@ -248,7 +466,7 @@ function AutomationsShowcaseContent() {
                         {message.type === 'user' ? (
                           <User size={16} className="text-white" />
                         ) : (
-                          <Bot size={16} className="text-primary-foreground" />
+                          <Bot size={16} className="text-white" />
                         )}
                       </div>
                       <div
@@ -272,7 +490,7 @@ function AutomationsShowcaseContent() {
                   >
                     <div className="flex items-start gap-3">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                        <Bot size={16} className="text-primary-foreground" />
+                        <Bot size={16} className="text-white" />
                       </div>
                       <div className="bg-card border-2 rounded-2xl px-4 py-3 shadow-md">
                         <div className="flex gap-1.5">
@@ -315,70 +533,40 @@ function AutomationsShowcaseContent() {
         </div>
       </section>
 
-      {/* SMS Automation */}
-      <section className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">SMS Automation</h2>
-            <p className="text-lg text-muted-foreground">Automated messages throughout the customer journey</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {smsExamples.map((sms, index) => {
-              const Icon = sms.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card>
-                    <CardHeader>
-                      <div className="flex items-center gap-3 mb-3">
-                        <Icon className={sms.color} size={24} />
-                        <CardTitle className="text-lg">{sms.title}</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="bg-muted rounded-xl p-4">
-                        <p className="text-sm text-foreground leading-relaxed">{sms.message}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
-      <section className="py-20 px-6">
-        <div className="max-w-3xl mx-auto">
-          <Card className="overflow-hidden border-2">
-            <div className="p-12 text-center bg-muted/30">
-              <h2 className="text-3xl md:text-4xl font-black mb-4">Ready to Automate?</h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Let us handle your bookings, customer service, and follow-ups automatically
+      <section className="py-24 px-6 mb-20">
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            className="relative bg-gradient-to-br from-primary/10 via-purple-500/10 to-primary/10 border-2 border-primary/20 rounded-3xl p-16 md:p-20 text-center overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-50" />
+            
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Ready to Automate Your Business?</h2>
+              <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+                Let our backend system handle lead follow-ups, reputation management, and customer engagement automatically
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <Button 
                   size="lg" 
                   asChild
-                  className="rounded-xl px-8 bg-gradient-to-r from-primary to-purple-600 text-primary-foreground hover:scale-105 transition-all"
+                  className="rounded-2xl px-10 h-14 font-bold text-base shadow-xl hover:shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-110 transition-all"
                 >
-                  <a href={`${baseUrl}/contact`}>
+                  <a href={`${baseUrl}/contact`} className="flex items-center justify-center gap-2">
                     Get Started
-                    <ArrowRight className="ml-2" size={20} />
+                    <ArrowRight size={20} />
                   </a>
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline"
                   asChild
-                  className="rounded-xl px-8 hover:scale-105 transition-all"
+                  className="rounded-2xl px-10 h-14 font-bold text-base shadow-lg hover:shadow-xl hover:scale-110 transition-all border-2"
                 >
                   <a href={`${baseUrl}/services`}>
                     View Pricing
@@ -386,7 +574,7 @@ function AutomationsShowcaseContent() {
                 </Button>
               </div>
             </div>
-          </Card>
+          </motion.div>
         </div>
       </section>
 

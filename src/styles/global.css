@@ -1,11 +1,11 @@
+/* Import fonts first, before Tailwind */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @import "tailwindcss";
 @import "../../generated/webflow.css";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-
-/* Apple-like fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @theme inline {
 --color-background: var(--background);
@@ -255,7 +255,7 @@ overflow-x: hidden;
 html {
 height: -webkit-fill-available;
 }
-  
+
 body {
 min-height: 100vh;
 min-height: -webkit-fill-available;
