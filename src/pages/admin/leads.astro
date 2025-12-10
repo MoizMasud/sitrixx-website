@@ -1,48 +1,27 @@
 ---
 import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
-import LeadsPage from '../../components/LeadsPage';
 import { baseUrl } from '../../lib/base-url';
 
 const API_BASE = 'https://sitrixx-website-backend.vercel.app';
 
-// Fetch data server-side
-let leadsData = {
+// Only fetch clients server-side, leads will be fetched client-side based on selection
+let clientsData = {
   clients: [],
-  leads: [],
   error: null as string | null
 };
 
 try {
-  // Fetch clients first
   const clientsRes = await fetch(`${API_BASE}/api/clients`);
   if (clientsRes.ok) {
     const data = await clientsRes.json();
-    leadsData.clients = Array.isArray(data) ? data : (data.clients || []);
-  }
-
-  // Fetch leads for each client
-  if (Array.isArray(leadsData.clients)) {
-    for (const client of leadsData.clients) {
-      try {
-        const leadsRes = await fetch(`${API_BASE}/api/leads?clientId=${encodeURIComponent(client.id)}`);
-        if (leadsRes.ok) {
-          const data = await leadsRes.json();
-          const clientLeads = (data.leads || []).map((lead: any) => ({
-            ...lead,
-            client_name: client.business_name,
-            client_id: client.id
-          }));
-          leadsData.leads.push(...clientLeads);
-        }
-      } catch (err) {
-        console.error(`Error fetching leads for client ${client.id}:`, err);
-      }
-    }
+    clientsData.clients = Array.isArray(data) ? data : (data.clients || []);
+  } else {
+    clientsData.error = 'Failed to load clients';
   }
 } catch (err) {
-  console.error('Error fetching leads data:', err);
-  leadsData.error = err instanceof Error ? err.message : 'Failed to load leads data';
+  console.error('Error fetching clients:', err);
+  clientsData.error = err instanceof Error ? err.message : 'Failed to load clients';
 }
 ---
 
@@ -51,7 +30,132 @@ try {
   description="Manage incoming leads"
 >
   <AdminLayout client:only="react" activePage="leads">
-    <LeadsPage client:only="react" initialData={leadsData} />
+    <div class="max-w-7xl mx-auto">
+      <!-- Header -->
+      <div class="mb-10">
+        <h1 class="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+          Leads
+        </h1>
+        <p class="text-lg text-muted-foreground">Track and manage incoming leads from all clients</p>
+      </div>
+
+      {clientsData.error && (
+        <div class="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
+          {clientsData.error}
+        </div>
+      )}
+
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-card border rounded-lg p-6 shadow-lg">
+          <div id="total-leads" class="text-4xl font-black mb-1 text-foreground">0</div>
+          <div class="text-sm text-muted-foreground font-medium">Total Leads</div>
+        </div>
+        <div class="bg-card border rounded-lg p-6 shadow-lg">
+          <div id="website-forms" class="text-4xl font-black mb-1 text-foreground">0</div>
+          <div class="text-sm text-muted-foreground font-medium">Website Forms</div>
+        </div>
+        <div class="bg-card border rounded-lg p-6 shadow-lg">
+          <div id="missed-calls" class="text-4xl font-black mb-1 text-foreground">0</div>
+          <div class="text-sm text-muted-foreground font-medium">Missed Calls</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="bg-card border rounded-xl p-6 mb-6 shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label for="client-filter" class="block text-sm font-semibold mb-3 text-foreground">
+              Client
+            </label>
+            <div class="relative">
+              <select
+                id="client-filter"
+                class="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
+                style="background-image: none;"
+              >
+                <option value="">Select a client</option>
+                <option value="all">All Clients</option>
+                {clientsData.clients.map((client: any) => (
+                  <option value={client.id}>{client.business_name}</option>
+                ))}
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-foreground">
+                <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="date-range" class="block text-sm font-semibold mb-3 text-foreground">
+              Date Range
+            </label>
+            <div class="relative">
+              <select
+                id="date-range"
+                class="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
+                style="background-image: none;"
+              >
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 90 days</option>
+                <option>All time</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-foreground">
+                <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="search" class="block text-sm font-semibold mb-3 text-foreground">
+              Search
+            </label>
+            <div class="relative">
+              <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input
+                type="text"
+                id="search"
+                placeholder="Name, phone, email..."
+                class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 bg-background text-foreground font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm hover:shadow-md"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leads Table -->
+      <div class="bg-card border rounded-xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-muted/50 border-b-2">
+              <tr>
+                <th class="pl-10 pr-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
+                <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
+                <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Source</th>
+                <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Lead Name</th>
+                <th class="px-6 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Contact Info</th>
+                <th class="pl-6 pr-10 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Message</th>
+              </tr>
+            </thead>
+            <tbody id="leads-tbody" class="divide-y divide-border">
+              <tr>
+                <td colspan="6" class="px-6 py-12 text-center text-muted-foreground">
+                  Select a client to view their leads
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </AdminLayout>
 
   <!-- Authentication Guard Script -->
@@ -62,3 +166,292 @@ try {
     }
   </script>
 </MainLayout>
+
+<!-- Leads Management Script - Must be outside of React component scope -->
+<script define:vars={{ clientsData }}>
+  const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+  
+  let allLeads = [];
+  let currentClientId = '';
+  let clients = clientsData.clients || [];
+
+  console.log('📊 Loaded clients from server:', clients);
+
+  async function fetchJSON(url) {
+    console.log('🌐 Fetching:', url);
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('❌ Request failed:', res.status, text);
+      throw new Error(`Request failed: ${res.status} ${text}`);
+    }
+    const data = await res.json();
+    console.log('✅ Response:', data);
+    return data;
+  }
+
+  async function loadLeadsForClient(clientId) {
+    console.log('📥 Loading leads for client:', clientId);
+    const tbody = document.getElementById('leads-tbody');
+    if (!tbody) {
+      console.error('❌ Table body not found');
+      return;
+    }
+
+    // Show loading state
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="px-6 py-12 text-center text-muted-foreground">
+          Loading leads...
+        </td>
+      </tr>
+    `;
+
+    if (!clientId || clientId === '') {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center text-muted-foreground">
+            Select a client to view their leads
+          </td>
+        </tr>
+      `;
+      updateStats([]);
+      return;
+    }
+
+    try {
+      if (clientId === 'all') {
+        console.log('📊 Fetching leads for all clients...');
+        // Fetch leads for all clients
+        allLeads = [];
+        for (const client of clients) {
+          try {
+            const data = await fetchJSON(
+              `${API_BASE}/api/leads?clientId=${encodeURIComponent(client.id)}`
+            );
+            const clientLeads = (data.leads || []).map(lead => ({
+              ...lead,
+              client_name: client.business_name,
+              client_id: client.id
+            }));
+            console.log(`✅ Loaded ${clientLeads.length} leads for ${client.business_name}`);
+            allLeads.push(...clientLeads);
+          } catch (err) {
+            console.error(`❌ Error loading leads for ${client.id}:`, err);
+          }
+        }
+      } else {
+        console.log('📊 Fetching leads for single client:', clientId);
+        // Fetch leads for specific client
+        const data = await fetchJSON(
+          `${API_BASE}/api/leads?clientId=${encodeURIComponent(clientId)}`
+        );
+        const client = clients.find(c => c.id === clientId);
+        console.log('👤 Found client:', client);
+        allLeads = (data.leads || []).map(lead => ({
+          ...lead,
+          client_name: client?.business_name || 'Unknown',
+          client_id: clientId
+        }));
+        console.log('✅ Total leads loaded:', allLeads.length);
+      }
+
+      currentClientId = clientId;
+      renderLeads(allLeads);
+      updateStats(allLeads);
+    } catch (err) {
+      console.error('❌ Error loading leads:', err);
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center text-destructive">
+            Error loading leads: ${err.message}
+          </td>
+        </tr>
+      `;
+      updateStats([]);
+    }
+  }
+
+  function renderLeads(leads) {
+    console.log('🎨 Rendering leads:', leads.length);
+    const tbody = document.getElementById('leads-tbody');
+    if (!tbody) {
+      console.error('❌ Table body not found for rendering');
+      return;
+    }
+
+    if (leads.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center text-muted-foreground">
+            No leads found for this client.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = leads.map(lead => `
+      <tr class="hover:bg-muted/30 transition-colors">
+        <td class="pl-10 pr-6 py-5 whitespace-nowrap">
+          <span class="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
+            ${lead.created_at ? new Date(lead.created_at).toLocaleString() : 'N/A'}
+          </span>
+        </td>
+        <td class="px-6 py-5 whitespace-nowrap">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
+              ${(lead.client_name || 'U').charAt(0)}
+            </div>
+            <span class="font-semibold text-foreground text-[15px]">${lead.client_name || 'Unknown'}</span>
+          </div>
+        </td>
+        <td class="px-6 py-5 whitespace-nowrap">
+          <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold ${
+            lead.source === 'website_form' 
+              ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
+              : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20'
+          }">
+            ${lead.source === 'website_form' ? '📝 Website Form' : '📞 Missed Call'}
+          </span>
+        </td>
+        <td class="px-6 py-5 whitespace-nowrap">
+          ${lead.name 
+            ? `<span class="font-semibold text-foreground text-[15px]">${lead.name}</span>`
+            : `<span class="text-muted-foreground text-sm italic">No name provided</span>`
+          }
+        </td>
+        <td class="px-6 py-5">
+          <div class="space-y-1.5">
+            <div class="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600 dark:text-green-400">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <a 
+                href="tel:${lead.phone}"
+                class="text-sm font-mono text-foreground hover:text-primary hover:underline"
+              >
+                ${lead.phone || 'N/A'}
+              </a>
+            </div>
+            ${lead.email ? `
+              <div class="flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-600 dark:text-blue-400">
+                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+                <a 
+                  href="mailto:${lead.email}"
+                  class="text-sm text-foreground hover:text-primary hover:underline"
+                >
+                  ${lead.email}
+                </a>
+              </div>
+            ` : ''}
+          </div>
+        </td>
+        <td class="pl-6 pr-10 py-5 text-sm max-w-md">
+          <p class="text-foreground line-clamp-2 text-[15px]">
+            ${lead.message || 'No message'}
+          </p>
+        </td>
+      </tr>
+    `).join('');
+    console.log('✅ Leads rendered successfully');
+  }
+
+  function updateStats(leads) {
+    const totalLeadsEl = document.getElementById('total-leads');
+    const websiteFormsEl = document.getElementById('website-forms');
+    const missedCallsEl = document.getElementById('missed-calls');
+
+    const total = leads.length;
+    const forms = leads.filter(l => l.source === 'website_form').length;
+    const calls = leads.filter(l => l.source === 'missed_call').length;
+
+    console.log('📈 Stats:', { total, forms, calls });
+
+    if (totalLeadsEl) totalLeadsEl.textContent = total;
+    if (websiteFormsEl) websiteFormsEl.textContent = forms;
+    if (missedCallsEl) missedCallsEl.textContent = calls;
+  }
+
+  function handleSearch() {
+    const searchInput = document.getElementById('search');
+    if (!searchInput) return;
+
+    const searchTerm = searchInput.value.toLowerCase();
+    console.log('🔍 Searching for:', searchTerm);
+    
+    if (!searchTerm) {
+      renderLeads(allLeads);
+      return;
+    }
+
+    const filtered = allLeads.filter(lead => {
+      return (
+        (lead.name && lead.name.toLowerCase().includes(searchTerm)) ||
+        (lead.phone && lead.phone.includes(searchTerm)) ||
+        (lead.email && lead.email.toLowerCase().includes(searchTerm)) ||
+        (lead.message && lead.message.toLowerCase().includes(searchTerm))
+      );
+    });
+
+    console.log('🔍 Found', filtered.length, 'matching leads');
+    renderLeads(filtered);
+  }
+
+  // Wait for both DOM and AdminLayout to be ready
+  function initializeLeadsPage() {
+    console.log('🚀 Initializing leads page...');
+    
+    const selectEl = document.getElementById('client-filter');
+    const searchInput = document.getElementById('search');
+
+    if (!selectEl) {
+      console.error('❌ Client filter dropdown not found, retrying...');
+      setTimeout(initializeLeadsPage, 100);
+      return;
+    }
+
+    console.log('✅ Client filter dropdown found');
+    
+    // Set up client filter change handler
+    selectEl.addEventListener('change', (e) => {
+      const clientId = e.target.value;
+      console.log('🔄 Client selection changed to:', clientId);
+      loadLeadsForClient(clientId);
+    });
+
+    // Set up search handler
+    if (searchInput) {
+      console.log('✅ Search input found');
+      searchInput.addEventListener('input', handleSearch);
+    }
+
+    // Check if there's a client in URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientParam = urlParams.get('client');
+    if (clientParam) {
+      console.log('🔗 URL param detected, loading client:', clientParam);
+      selectEl.value = clientParam;
+      loadLeadsForClient(clientParam);
+    }
+
+    console.log('✅ Leads page initialized successfully');
+  }
+
+  // Start initialization when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLeadsPage);
+  } else {
+    // DOM already loaded, but wait a bit for React to render
+    setTimeout(initializeLeadsPage, 100);
+  }
+</script>
