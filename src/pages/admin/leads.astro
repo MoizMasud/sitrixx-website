@@ -9,8 +9,8 @@ import { baseUrl } from '../../lib/base-url';
   title="Leads - Admin - Sitrixx"
   description="Manage incoming leads"
 >
-  <AdminLayout client:load activePage="leads">
-    <LeadsPage client:load />
+  <AdminLayout client:only="react" activePage="leads">
+    <LeadsPage />
   </AdminLayout>
 
   <!-- Authentication Guard Script -->

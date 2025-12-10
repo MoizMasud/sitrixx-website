@@ -1,7 +1,31 @@
 import { useState, useEffect } from 'react';
 import { Users, UserPlus, Star, TrendingUp } from 'lucide-react';
 
-const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+type Client = {
+  id: string;
+  business_name: string;
+};
+
+type Lead = {
+  id: string;
+  name: string;
+  source: string;
+  created_at: string;
+};
+
+type Review = {
+  id: string;
+  rating: number;
+  comments: string;
+  created_at: string;
+};
+
+type DashboardData = {
+  clients: Client[];
+  leads: Lead[];
+  reviews: Review[];
+  error: string | null;
+};
 
 type DashboardStats = {
   totalClients: number;
@@ -18,7 +42,11 @@ type RecentActivity = {
   timestamp: string;
 };
 
-export default function DashboardOverview() {
+interface DashboardOverviewProps {
+  initialData: DashboardData;
+}
+
+export default function DashboardOverview({ initialData }: DashboardOverviewProps) {
   const [stats, setStats] = useState<DashboardStats>({
     totalClients: 0,
     totalLeads: 0,
@@ -27,118 +55,60 @@ export default function DashboardOverview() {
     averageRating: '0.0',
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (initialData.error) {
+      return; // Show error state
+    }
 
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    // Calculate stats from initial data
+    const fiveStarCount = initialData.reviews.filter(r => r.rating === 5).length;
+    const avgRating = initialData.reviews.length > 0
+      ? (initialData.reviews.reduce((sum, r) => sum + r.rating, 0) / initialData.reviews.length).toFixed(1)
+      : '0.0';
 
-      console.log('Fetching clients...');
-      
-      // Fetch clients - API returns array directly
-      const clientsRes = await fetch(`${API_BASE}/api/clients`);
-      if (!clientsRes.ok) {
-        throw new Error(`Failed to fetch clients: ${clientsRes.status}`);
-      }
-      const clients = await clientsRes.json();
-      
-      console.log('Clients fetched:', clients);
+    setStats({
+      totalClients: initialData.clients.length,
+      totalLeads: initialData.leads.length,
+      totalReviews: initialData.reviews.length,
+      fiveStarReviews: fiveStarCount,
+      averageRating: avgRating,
+    });
 
-      if (!Array.isArray(clients)) {
-        throw new Error('Invalid clients response format');
-      }
+    // Build recent activity
+    const activity: RecentActivity[] = [];
 
-      let allLeads: any[] = [];
-      let allReviews: any[] = [];
-
-      // Fetch leads and reviews for each client
-      for (const client of clients) {
-        try {
-          console.log(`Fetching data for client: ${client.business_name}`);
-
-          // Fetch leads
-          const leadsRes = await fetch(`${API_BASE}/api/leads?clientId=${encodeURIComponent(client.id)}`);
-          const leadsData = await leadsRes.json();
-          const leads = (leadsData.leads || []).map((l: any) => ({ ...l, client_name: client.business_name }));
-          allLeads = [...allLeads, ...leads];
-          console.log(`Leads for ${client.business_name}:`, leads.length);
-
-          // Fetch reviews
-          const reviewsRes = await fetch(`${API_BASE}/api/reviews?clientId=${encodeURIComponent(client.id)}`);
-          const reviewsData = await reviewsRes.json();
-          const reviews = (reviewsData.reviews || []).map((r: any) => ({ ...r, client_name: client.business_name }));
-          allReviews = [...allReviews, ...reviews];
-          console.log(`Reviews for ${client.business_name}:`, reviews.length);
-        } catch (err) {
-          console.error(`Error fetching data for client ${client.id}:`, err);
-        }
-      }
-
-      console.log('Total leads:', allLeads.length);
-      console.log('Total reviews:', allReviews.length);
-
-      // Calculate stats
-      const fiveStarCount = allReviews.filter(r => r.rating === 5).length;
-      const avgRating = allReviews.length > 0
-        ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)
-        : '0.0';
-
-      setStats({
-        totalClients: clients.length,
-        totalLeads: allLeads.length,
-        totalReviews: allReviews.length,
-        fiveStarReviews: fiveStarCount,
-        averageRating: avgRating,
+    // Add recent leads (last 5)
+    initialData.leads
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 5)
+      .forEach(lead => {
+        activity.push({
+          type: 'lead',
+          clientName: 'Client', // We'll need to match this if needed
+          details: `${lead.name || 'Someone'} submitted a ${lead.source === 'website_form' ? 'contact form' : 'missed call'}`,
+          timestamp: lead.created_at,
+        });
       });
 
-      // Build recent activity
-      const activity: RecentActivity[] = [];
-
-      // Add recent leads (last 5)
-      allLeads
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5)
-        .forEach(lead => {
-          activity.push({
-            type: 'lead',
-            clientName: lead.client_name,
-            details: `${lead.name || 'Someone'} submitted a ${lead.source === 'website_form' ? 'contact form' : 'missed call'}`,
-            timestamp: lead.created_at,
-          });
+    // Add recent reviews (last 5)
+    initialData.reviews
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 5)
+      .forEach(review => {
+        activity.push({
+          type: 'review',
+          clientName: 'Client',
+          details: `${review.rating}-star review: "${review.comments.slice(0, 50)}${review.comments.length > 50 ? '...' : ''}"`,
+          timestamp: review.created_at,
         });
+      });
 
-      // Add recent reviews (last 5)
-      allReviews
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5)
-        .forEach(review => {
-          activity.push({
-            type: 'review',
-            clientName: review.client_name,
-            details: `${review.rating}-star review: "${review.comments.slice(0, 50)}${review.comments.length > 50 ? '...' : ''}"`,
-            timestamp: review.created_at,
-          });
-        });
+    // Sort all activity by timestamp
+    activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-      // Sort all activity by timestamp
-      activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-      console.log('Recent activity:', activity);
-
-      setRecentActivity(activity.slice(0, 10));
-      setLoading(false);
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
-      setLoading(false);
-    }
-  };
+    setRecentActivity(activity.slice(0, 10));
+  }, [initialData]);
 
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
@@ -177,29 +147,7 @@ export default function DashboardOverview() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            Overview
-          </h1>
-          <p className="text-lg text-muted-foreground">Welcome to your Sitrixx admin dashboard</p>
-        </div>
-        <div className="text-center py-12">
-          <div className="inline-flex items-center gap-3 text-muted-foreground">
-            <svg className="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Loading dashboard data...
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
+  if (initialData.error) {
     return (
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
@@ -210,9 +158,9 @@ export default function DashboardOverview() {
         </div>
         <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
           <p className="text-destructive font-medium">Error loading dashboard:</p>
-          <p className="text-sm text-muted-foreground mt-2">{error}</p>
+          <p className="text-sm text-muted-foreground mt-2">{initialData.error}</p>
           <button
-            onClick={() => loadDashboardData()}
+            onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             Retry

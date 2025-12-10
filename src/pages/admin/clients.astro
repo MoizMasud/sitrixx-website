@@ -3,23 +3,43 @@ import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
 import ClientsPage from '../../components/ClientsPage';
 import { baseUrl } from '../../lib/base-url';
+
+const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+// Fetch clients server-side
+let clientsData = {
+  clients: [],
+  error: null as string | null
+};
+
+try {
+  const clientsRes = await fetch(`${API_BASE}/api/clients`);
+  if (clientsRes.ok) {
+    const data = await clientsRes.json();
+    // Handle both array and object with clients property
+    clientsData.clients = Array.isArray(data) ? data : (data.clients || []);
+  } else {
+    clientsData.error = `Failed to fetch clients: ${clientsRes.status}`;
+  }
+} catch (err) {
+  console.error('Error fetching clients:', err);
+  clientsData.error = err instanceof Error ? err.message : 'Failed to load clients';
+}
 ---
 
 <MainLayout 
   title="Clients - Admin - Sitrixx"
   description="Manage Sitrixx clients"
 >
-  <AdminLayout client:load activePage="clients">
-    <ClientsPage client:load />
+  <AdminLayout client:only="react" activePage="clients">
+    <ClientsPage client:only="react" initialData={clientsData} />
   </AdminLayout>
 
   <!-- Authentication Guard Script -->
   <script define:vars={{ baseUrl }}>
-    document.addEventListener('DOMContentLoaded', function () {
-      const token = localStorage.getItem('sitrixx_token');
-      if (!token) {
-        window.location.href = baseUrl + '/admin/login';
-      }
-    });
+    const token = localStorage.getItem('sitrixx_token');
+    if (!token) {
+      window.location.href = baseUrl + '/admin/login';
+    }
   </script>
 </MainLayout>

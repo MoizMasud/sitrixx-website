@@ -3,29 +3,69 @@ import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
 import DashboardOverview from '../../components/DashboardOverview';
 import { baseUrl } from '../../lib/base-url';
+
+const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+// Fetch all data server-side
+let dashboardData = {
+  clients: [],
+  leads: [],
+  reviews: [],
+  error: null as string | null
+};
+
+try {
+  // Fetch clients
+  const clientsRes = await fetch(`${API_BASE}/api/clients`);
+  if (clientsRes.ok) {
+    const clientsData = await clientsRes.json();
+    // Handle both array and object with clients property
+    dashboardData.clients = Array.isArray(clientsData) ? clientsData : (clientsData.clients || []);
+  }
+
+  // Fetch all leads and reviews for each client
+  if (Array.isArray(dashboardData.clients)) {
+    for (const client of dashboardData.clients) {
+      try {
+        // Fetch leads
+        const leadsRes = await fetch(`${API_BASE}/api/leads?clientId=${encodeURIComponent(client.id)}`);
+        if (leadsRes.ok) {
+          const leadsData = await leadsRes.json();
+          const leads = leadsData.leads || [];
+          dashboardData.leads.push(...leads);
+        }
+
+        // Fetch reviews
+        const reviewsRes = await fetch(`${API_BASE}/api/reviews?clientId=${encodeURIComponent(client.id)}`);
+        if (reviewsRes.ok) {
+          const reviewsData = await reviewsRes.json();
+          const reviews = reviewsData.reviews || [];
+          dashboardData.reviews.push(...reviews);
+        }
+      } catch (err) {
+        console.error(`Error fetching data for client ${client.id}:`, err);
+      }
+    }
+  }
+} catch (err) {
+  console.error('Error fetching dashboard data:', err);
+  dashboardData.error = err instanceof Error ? err.message : 'Failed to load data';
+}
 ---
 
 <MainLayout 
   title="Admin Dashboard - Sitrixx"
   description="Sitrixx admin dashboard overview"
 >
-  <AdminLayout client:load activePage="overview">
-    <DashboardOverview client:load />
+  <AdminLayout client:only="react" activePage="dashboard">
+    <DashboardOverview client:only="react" initialData={dashboardData} />
   </AdminLayout>
 
   <!-- Authentication Guard Script -->
   <script define:vars={{ baseUrl }}>
-    // Quick auth guard - prevents casual access
-    document.addEventListener('DOMContentLoaded', function () {
-      const token = localStorage.getItem('sitrixx_token');
-
-      if (!token) {
-        // No token → redirect to login immediately
-        window.location.href = baseUrl + '/admin/login';
-      }
-      
-      // The AdminLayout component will do the full Supabase verification
-      // This script just provides immediate protection before React loads
-    });
+    const token = localStorage.getItem('sitrixx_token');
+    if (!token) {
+      window.location.href = baseUrl + '/admin/login';
+    }
   </script>
 </MainLayout>

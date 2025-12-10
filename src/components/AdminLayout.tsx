@@ -7,95 +7,38 @@ import { ThemeProvider } from './ThemeProvider';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
-  currentPage?: string;
+  activePage?: string;
 }
 
-function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayoutProps) {
+function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
-  const [activePage, setActivePage] = useState(currentPage);
+  const [currentPage, setCurrentPage] = useState(activePage);
+  const [mounted, setMounted] = useState(false);
+
+  // Just mount the component - auth is handled by the Astro page script
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Update active page when URL changes
   useEffect(() => {
     const path = window.location.pathname;
     if (path.includes('/admin/clients')) {
-      setActivePage('clients');
+      setCurrentPage('clients');
     } else if (path.includes('/admin/leads')) {
-      setActivePage('leads');
+      setCurrentPage('leads');
     } else if (path.includes('/admin/reviews')) {
-      setActivePage('reviews');
+      setCurrentPage('reviews');
     } else if (path.includes('/admin/settings')) {
-      setActivePage('settings');
+      setCurrentPage('settings');
     } else if (path.includes('/admin')) {
-      setActivePage('dashboard');
+      setCurrentPage('dashboard');
     }
   }, []);
 
-  useEffect(() => {
-    // Check authentication status
-    const checkAuth = async () => {
-      const token = localStorage.getItem('sitrixx_token');
-      
-      if (!token) {
-        // No token, redirect to login
-        window.location.href = `${baseUrl}/admin/login`;
-        return;
-      }
-
-      // Verify token with Supabase
-      try {
-        const { createClient } = (window as any).supabase;
-        const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
-        
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!session) {
-          // Invalid or expired token
-          localStorage.removeItem('sitrixx_token');
-          localStorage.removeItem('sitrixx_user');
-          window.location.href = `${baseUrl}/admin/login`;
-          return;
-        }
-
-        setIsAuthenticated(true);
-        setIsChecking(false);
-      } catch (error) {
-        console.error('Auth check error:', error);
-        window.location.href = `${baseUrl}/admin/login`;
-      }
-    };
-
-    // Load Supabase if not already loaded
-    if (!(window as any).supabase) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-      script.onload = () => checkAuth();
-      document.head.appendChild(script);
-    } else {
-      checkAuth();
-    }
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      const { createClient } = (window as any).supabase;
-      const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
-      const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
-      
-      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      await supabase.auth.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-
-    // Clear local storage
+  const handleLogout = () => {
     localStorage.removeItem('sitrixx_token');
     localStorage.removeItem('sitrixx_user');
-    
-    // Redirect to login
     window.location.href = `${baseUrl}/admin/login`;
   };
 
@@ -107,20 +50,7 @@ function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayout
     { name: 'Settings', href: `${baseUrl}/admin/settings`, icon: Settings, key: 'settings' },
   ];
 
-  // Show loading state while checking authentication
-  if (isChecking) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Verifying authentication...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render admin content if not authenticated
-  if (!isAuthenticated) {
+  if (!mounted) {
     return null;
   }
 
@@ -158,14 +88,14 @@ function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayout
         <nav className="p-4 space-y-2 mt-16 lg:mt-0">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activePage === item.key;
+            const isActive = currentPage === item.key;
             return (
               <a
                 key={item.key}
                 href={item.href}
                 onClick={() => {
                   setIsSidebarOpen(false);
-                  setActivePage(item.key);
+                  setCurrentPage(item.key);
                 }}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive

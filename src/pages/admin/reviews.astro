@@ -9,8 +9,8 @@ import { baseUrl } from '../../lib/base-url';
   title="Reviews - Admin - Sitrixx"
   description="Monitor customer reviews and ratings"
 >
-  <AdminLayout client:load activePage="reviews">
-    <ReviewsPage client:load />
+  <AdminLayout client:only="react" activePage="reviews">
+    <ReviewsPage />
   </AdminLayout>
 
   <!-- Authentication Guard Script -->
