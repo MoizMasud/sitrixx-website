@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import ThemeToggle from './ThemeToggle';
@@ -18,7 +18,7 @@ function NavigationContent() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -38,7 +38,13 @@ function NavigationContent() {
               </a>
             ))}
             <ThemeToggle />
-            <Button asChild size="sm" className="rounded-xl">
+            <Button asChild variant="outline" size="sm" className="rounded-xl">
+              <a href={`${baseUrl}/admin/login`}>
+                <LogIn size={16} className="mr-2" />
+                Login
+              </a>
+            </Button>
+            <Button asChild size="sm" className="rounded-xl bg-gradient-to-r from-primary to-purple-600">
               <a href={`${baseUrl}/contact`}>Get in Touch</a>
             </Button>
           </div>
@@ -74,7 +80,13 @@ function NavigationContent() {
                   {link.name}
                 </a>
               ))}
-              <Button asChild className="w-full rounded-xl">
+              <Button asChild variant="outline" className="w-full rounded-xl">
+                <a href={`${baseUrl}/admin/login`} onClick={() => setIsOpen(false)}>
+                  <LogIn size={16} className="mr-2" />
+                  Login
+                </a>
+              </Button>
+              <Button asChild className="w-full rounded-xl bg-gradient-to-r from-primary to-purple-600">
                 <a href={`${baseUrl}/contact`} onClick={() => setIsOpen(false)}>
                   Get in Touch
                 </a>
