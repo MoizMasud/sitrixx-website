@@ -1,132 +1,197 @@
-import { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  Users, 
-  UserPlus, 
-  Star, 
-  Settings, 
-  Menu,
-  X,
-  LogOut,
-  User
-} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Home, Users, MessageSquare, Star, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
+import ThemeToggle from './ThemeToggle';
+import { ThemeProvider } from './ThemeProvider';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
-  activePage: 'overview' | 'clients' | 'leads' | 'reviews' | 'settings';
+  currentPage?: string;
 }
 
-const navItems = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard, href: '/admin' },
-  { id: 'clients', label: 'Clients', icon: Users, href: '/admin/clients' },
-  { id: 'leads', label: 'Leads', icon: UserPlus, href: '/admin/leads' },
-  { id: 'reviews', label: 'Reviews', icon: Star, href: '/admin/reviews' },
-  { id: 'settings', label: 'Settings', icon: Settings, href: '/admin/settings' },
-];
+function AdminLayoutContent({ children, currentPage = 'dashboard' }: AdminLayoutProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
-export default function AdminLayout({ children, activePage }: AdminLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const token = localStorage.getItem('sitrixx_token');
+      
+      if (!token) {
+        // No token, redirect to login
+        window.location.href = `${baseUrl}/admin/login`;
+        return;
+      }
+
+      // Verify token with Supabase
+      try {
+        const { createClient } = (window as any).supabase;
+        const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtdnltY25jbW14dGdmaGtvc21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0NjU2NjksImV4cCI6MjA1MjA0MTY2OX0.Bl5_yeiYWuyhjZBBoSPcFRRKowcYscq5858efMlK';
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+          // Invalid or expired token
+          localStorage.removeItem('sitrixx_token');
+          localStorage.removeItem('sitrixx_user');
+          window.location.href = `${baseUrl}/admin/login`;
+          return;
+        }
+
+        setIsAuthenticated(true);
+        setIsChecking(false);
+      } catch (error) {
+        console.error('Auth check error:', error);
+        window.location.href = `${baseUrl}/admin/login`;
+      }
+    };
+
+    // Load Supabase if not already loaded
+    if (!(window as any).supabase) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      script.onload = () => checkAuth();
+      document.head.appendChild(script);
+    } else {
+      checkAuth();
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { createClient } = (window as any).supabase;
+      const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtdnltY25jbW14dGdmaGtvc21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY0NjU2NjksImV4cCI6MjA1MjA0MTY2OX0.Bl5_yeiYWuyhjZBBoSPcFRRKowcYscq5858efMlK';
+      
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+
+    // Clear local storage
+    localStorage.removeItem('sitrixx_token');
+    localStorage.removeItem('sitrixx_user');
+    
+    // Redirect to login
+    window.location.href = `${baseUrl}/admin/login`;
+  };
+
+  const navItems = [
+    { name: 'Dashboard', href: `${baseUrl}/admin`, icon: Home, key: 'dashboard' },
+    { name: 'Clients', href: `${baseUrl}/admin/clients`, icon: Users, key: 'clients' },
+    { name: 'Leads', href: `${baseUrl}/admin/leads`, icon: MessageSquare, key: 'leads' },
+    { name: 'Reviews', href: `${baseUrl}/admin/reviews`, icon: Star, key: 'reviews' },
+    { name: 'Settings', href: `${baseUrl}/admin/settings`, icon: Settings, key: 'settings' },
+  ];
+
+  // Show loading state while checking authentication
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render admin content if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top Navigation Bar */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-card border-b-2 z-50">
-        <div className="h-full px-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 hover:bg-muted rounded-lg transition-colors"
-            >
-              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black tracking-tight">Sitrixx</h1>
-              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-bold">
-                ADMIN
-              </span>
-            </div>
-          </div>
-
-          {/* User Menu */}
-          <div className="relative">
-            <button
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-2 px-3 py-2 hover:bg-muted rounded-lg transition-colors"
-            >
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                MM
-              </div>
-              <span className="hidden md:inline text-sm font-medium">Admin</span>
-            </button>
-
-            {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-card border-2 rounded-xl shadow-xl py-2">
-                <a
-                  href="#"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-muted transition-colors"
-                >
-                  <User size={16} />
-                  <span className="text-sm">Profile</span>
-                </a>
-                <hr className="my-2 border-border" />
-                <a
-                  href={`${baseUrl}/admin/login`}
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-muted transition-colors text-red-500"
-                >
-                  <LogOut size={16} />
-                  <span className="text-sm">Log Out</span>
-                </a>
-              </div>
-            )}
-          </div>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+          Sitrixx Admin
+        </h1>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
+          >
+            {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-      </header>
+      </div>
 
-      {/* Sidebar Navigation */}
+      {/* Sidebar */}
       <aside
-        className={`fixed top-16 left-0 bottom-0 w-64 bg-card border-r-2 transition-transform duration-300 z-40 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-0 left-0 h-screen w-64 bg-card border-r z-40 transition-transform duration-300 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0`}
       >
-        <nav className="p-4 space-y-2">
+        <div className="p-6 border-b hidden lg:flex items-center justify-between">
+          <h1 className="text-2xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            Sitrixx
+          </h1>
+          <ThemeToggle />
+        </div>
+
+        <nav className="p-4 space-y-2 mt-16 lg:mt-0">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.id === activePage;
-            
+            const isActive = currentPage === item.key;
             return (
               <a
-                key={item.id}
-                href={`${baseUrl}${item.href}`}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+                key={item.key}
+                href={item.href}
+                onClick={() => setIsSidebarOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg'
-                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    ? 'bg-gradient-to-r from-primary/20 to-purple-600/20 text-primary font-semibold'
+                    : 'hover:bg-accent text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Icon size={20} />
-                <span>{item.label}</span>
+                <span>{item.name}</span>
               </a>
             );
           })}
         </nav>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-card">
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="w-full rounded-xl justify-start"
+          >
+            <LogOut size={20} className="mr-3" />
+            Logout
+          </Button>
+        </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="pt-16 lg:pl-64">
-        <div className="p-4 md:p-8">
-          {children}
-        </div>
-      </main>
-
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => setIsSidebarOpen(false)}
         />
       )}
+
+      {/* Main Content */}
+      <main className="lg:ml-64 min-h-screen pt-20 lg:pt-0">
+        <div className="p-6 lg:p-8">{children}</div>
+      </main>
     </div>
+  );
+}
+
+export default function AdminLayout(props: AdminLayoutProps) {
+  return (
+    <ThemeProvider>
+      <AdminLayoutContent {...props} />
+    </ThemeProvider>
   );
 }
