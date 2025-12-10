@@ -132,7 +132,7 @@ function AutomationsShowcaseContent() {
               </span>
             </div>
           </motion.div>
-
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-3 rounded-full shadow-lg">
           <motion.h1 
             className="text-5xl md:text-7xl font-black mb-6 tracking-tight"
             initial={{ opacity: 0, y: 20 }}
