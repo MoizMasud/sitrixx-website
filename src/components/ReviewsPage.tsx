@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Star, Search } from 'lucide-react';
 
 type Review = {
@@ -30,6 +30,17 @@ export default function ReviewsPage({ initialData }: ReviewsPageProps) {
   const [allReviews] = useState<Review[]>(initialData?.reviews || []);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading] = useState(false);
+
+  // Check URL params for client context on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientParam = urlParams.get('client');
+    
+    if (clientParam) {
+      console.log('🔗 Reviews page: Pre-selecting client from URL:', clientParam);
+      setSelectedClient(clientParam);
+    }
+  }, []);
 
   const filteredReviews = allReviews
     .filter(review => selectedClient === 'all' || review.client_id === selectedClient)
