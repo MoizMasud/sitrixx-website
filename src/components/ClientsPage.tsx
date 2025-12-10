@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Edit, Eye, Trash2, X } from 'lucide-react';
+import { Plus, Edit, Eye, UserPlus, Star, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { baseUrl } from '../lib/base-url';
@@ -106,79 +106,98 @@ export default function ClientsPage() {
       </div>
 
       {/* Clients Table */}
-      <div className="bg-card border-2 rounded-2xl overflow-hidden">
+      <div className="bg-card border-2 rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-muted/30 border-b-2">
+            <thead className="bg-gradient-to-r from-muted/50 to-muted/30 border-b-2">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-bold">Business Name</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Client ID</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Owner Email</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Twilio Number</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Forwarding Phone</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Booking Link</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Review Link</th>
-                <th className="px-6 py-4 text-left text-sm font-bold">Actions</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Business Name</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Client ID</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Owner Email</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Twilio Number</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Forwarding Phone</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Booking Link</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Review Link</th>
+                <th className="px-6 py-4 text-left text-sm font-bold uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
-              {clients.map((client) => (
-                <tr key={client.id} className="hover:bg-muted/20 transition-colors">
-                  <td className="px-6 py-4">
-                    <span className="font-medium">{client.businessName}</span>
+            <tbody className="divide-y divide-border">
+              {clients.map((client, index) => (
+                <tr key={client.id} className="hover:bg-muted/20 transition-colors group">
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary">
+                        {client.businessName.charAt(0)}
+                      </div>
+                      <span className="font-semibold text-foreground">{client.businessName}</span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <code className="text-xs bg-muted px-2 py-1 rounded">{client.id}</code>
+                  <td className="px-6 py-5">
+                    <code className="text-xs bg-muted/60 px-3 py-1.5 rounded-lg font-mono font-medium border">
+                      {client.id}
+                    </code>
                   </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">{client.ownerEmail}</td>
-                  <td className="px-6 py-4 text-sm font-mono">{client.twilioNumber}</td>
-                  <td className="px-6 py-4 text-sm font-mono">{client.forwardingPhone}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-5 text-sm text-muted-foreground">{client.ownerEmail}</td>
+                  <td className="px-6 py-5">
+                    <span className="text-sm font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded">
+                      {client.twilioNumber}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5">
+                    <span className="text-sm font-mono bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded">
+                      {client.forwardingPhone}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5">
                     {client.bookingLink ? (
                       <a
                         href={client.bookingLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:underline text-sm"
+                        className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
                       >
                         View
+                        <ExternalLink size={14} />
                       </a>
                     ) : (
                       <span className="text-muted-foreground text-sm">—</span>
                     )}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-5">
                     {client.googleReviewLink ? (
                       <a
                         href={client.googleReviewLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary hover:underline text-sm"
+                        className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
                       >
                         View
+                        <ExternalLink size={14} />
                       </a>
                     ) : (
                       <span className="text-muted-foreground text-sm">—</span>
                     )}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-5">
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => window.location.href = `${baseUrl}/admin/leads?client=${client.id}`}
-                        className="p-2 hover:bg-muted rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-lg transition-all font-medium text-sm"
                         title="View Leads"
                       >
-                        <Eye size={16} />
+                        <UserPlus size={16} />
+                        Leads
                       </button>
                       <button
                         onClick={() => window.location.href = `${baseUrl}/admin/reviews?client=${client.id}`}
-                        className="p-2 hover:bg-muted rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-lg transition-all font-medium text-sm"
                         title="View Reviews"
                       >
-                        <Eye size={16} />
+                        <Star size={16} />
+                        Reviews
                       </button>
                       <button
-                        className="p-2 hover:bg-muted rounded-lg transition-colors"
+                        className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
                         title="Edit"
                       >
                         <Edit size={16} />
