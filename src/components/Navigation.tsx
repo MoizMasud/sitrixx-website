@@ -4,9 +4,8 @@ import { Menu, X, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import ThemeToggle from './ThemeToggle';
-import { ThemeProvider } from './ThemeProvider';
 
-function NavigationContent() {
+export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
@@ -18,7 +17,7 @@ function NavigationContent() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -96,13 +95,5 @@ function NavigationContent() {
         )}
       </div>
     </nav>
-  );
-}
-
-export default function Navigation() {
-  return (
-    <ThemeProvider>
-      <NavigationContent />
-    </ThemeProvider>
   );
 }

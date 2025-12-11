@@ -23,6 +23,13 @@ import {
   MousePointerClick,
   Handshake,
   Compass,
+  Triangle,
+  Eye,
+  RefreshCcw,
+  Megaphone,
+  Building,
+  Target,
+  Smartphone
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { baseUrl } from '../lib/base-url';
@@ -90,35 +97,39 @@ const reviews = [
   }
 ];
 
-const problems = [
+const valueTriangle = [
   {
-    icon: Laptop,
-    title: "Not Online",
-    description: "You don't have a website or online presence yet"
+    icon: Building,
+    title: "Reputation",
+    subtitle: "The Foundation",
+    description: "What do you look like online? When people Google you, do you show up professionally? This is your foundation.",
+    color: "from-blue-500 to-cyan-500",
+    order: 1
   },
   {
-    icon: Globe2,
-    title: "No Digital Brand",
-    description: "Your business lacks a professional online identity"
+    icon: RefreshCcw,
+    title: "Resell",
+    subtitle: "Maximize Customers",
+    description: "Turn every customer into a repeat buyer or referral. Automated follow-ups keep them coming back.",
+    color: "from-purple-500 to-pink-500",
+    order: 2
   },
   {
-    icon: Compass,
-    title: "Don't Know Where to Start",
-    description: "Building a website feels overwhelming and confusing"
-  },
-  {
-    icon: Handshake,
-    title: "No Digital Handshake",
-    description: "You're missing that crucial first impression online"
+    icon: Megaphone,
+    title: "Reach",
+    subtitle: "The Roof",
+    description: "What's the point of paid ads if you can't be found? No online presence = wasted money.",
+    color: "from-amber-500 to-orange-500",
+    order: 3
   }
 ];
 
 const solutions = [
   {
-    icon: Bot,
-    title: "AI Chatbot",
-    description: "Answer questions 24/7, qualify leads, and schedule appointments automatically while you sleep",
-    features: ["24/7 availability", "Instant responses", "Lead qualification", "Appointment booking"]
+    icon: Smartphone,
+    title: "Private Mobile App Portal",
+    description: "Your own branded mobile app to view and manage all leads in one place. Check lead status, contact info, and follow-up tasks from anywhere",
+    features: ["Real-time lead tracking", "Contact management", "Follow-up reminders", "Mobile & desktop access"]
   },
   {
     icon: CalendarIcon,
@@ -252,8 +263,8 @@ function PortfolioShowcaseContent() {
   const portfolioRef = useRef(null);
   const isPortfolioInView = useInView(portfolioRef, { once: true, margin: "-100px" });
 
-  const problemsRef = useRef(null);
-  const isProblemsInView = useInView(problemsRef, { once: true, margin: "-100px" });
+  const valueTriangleRef = useRef(null);
+  const isValueTriangleInView = useInView(valueTriangleRef, { once: true, margin: "-100px" });
 
   const solutionsRef = useRef(null);
   const isSolutionsInView = useInView(solutionsRef, { once: true, margin: "-100px" });
@@ -467,15 +478,14 @@ function PortfolioShowcaseContent() {
         </div>
       </section>
 
-      {/* Problems Section */}
-      <section className="py-32 px-4" ref={problemsRef}>
+      {/* Value Triangle Section */}
+      <section className="py-32 px-4" ref={valueTriangleRef}>
         <div className="max-w-6xl mx-auto">
           <motion.div
-            ref={problemsRef}
             initial="hidden"
-            animate={isProblemsInView ? "visible" : "hidden"}
+            animate={isValueTriangleInView ? "visible" : "hidden"}
             variants={slideInLeft}
-            className="text-center mb-20"
+            className="text-center mb-16"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -484,7 +494,7 @@ function PortfolioShowcaseContent() {
               className="relative inline-block mb-6"
             >
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-destructive/20 to-red-500/20 rounded-full blur-xl"
+                className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-amber-500/20 rounded-full blur-xl"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.5, 0.8, 0.5],
@@ -494,59 +504,72 @@ function PortfolioShowcaseContent() {
                   repeat: Infinity,
                 }}
               />
-              <div className="relative bg-gradient-to-r from-destructive/10 to-red-500/10 backdrop-blur-sm border border-destructive/30 px-8 py-3 rounded-full shadow-lg">
-                <span className="text-sm font-black tracking-widest uppercase text-foreground">
-                  Common Challenges
+              <div className="relative bg-gradient-to-r from-blue-500/10 to-amber-500/10 backdrop-blur-sm border border-blue-500/30 px-8 py-3 rounded-full shadow-lg">
+                <span className="text-sm font-black tracking-widest uppercase text-foreground flex items-center gap-2 justify-center">
+                  <Triangle className="w-4 h-4" />
+                  The Value Triangle
                 </span>
               </div>
             </motion.div>
-            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-foreground">What's Holding You Back?</h2>
-            <p className="text-muted-foreground text-2xl font-light">
-              We help you establish your online presence from the ground up
+            <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tighter text-foreground">What Most Businesses Miss</h2>
+            <p className="text-muted-foreground text-lg font-light max-w-2xl mx-auto">
+              The three pillars of sustainable growth — in the right order
             </p>
           </motion.div>
 
+          {/* Triangle Cards - Horizontal Row */}
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
             variants={staggerContainer}
             initial="hidden"
-            animate={isProblemsInView ? "visible" : "hidden"}
+            animate={isValueTriangleInView ? "visible" : "hidden"}
           >
-            {problems.map((problem, index) => {
-              const Icon = problem.icon;
+            {valueTriangle.map((item, index) => {
+              const Icon = item.icon;
+              
               return (
                 <motion.div
                   key={index}
                   variants={scaleIn}
-                  whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.4 } }}
-                  className="relative bg-gradient-to-br from-card to-muted/30 border-2 rounded-3xl p-10 shadow-xl hover:shadow-3xl transition-all overflow-hidden group"
+                  whileHover={{ y: -8, scale: 1.02, transition: { duration: 0.3 } }}
                 >
-                  <motion.div
-                    className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.3, 0.5, 0.3],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                    }}
-                  />
-                  <div className="relative z-10">
-                    <motion.div 
-                      className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-lg"
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <Icon className="text-primary" size={32} strokeWidth={2.5} />
-                    </motion.div>
-                    <h3 className="text-2xl font-bold mb-4 tracking-tight text-foreground">{problem.title}</h3>
-                    <p className="text-muted-foreground font-light leading-relaxed text-base">{problem.description}</p>
+                  <div className={`relative bg-gradient-to-br from-card via-card to-primary/5 border-2 rounded-3xl p-8 shadow-xl hover:shadow-3xl transition-all overflow-hidden group h-full`}>
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-5 group-hover:opacity-10 transition-opacity`}
+                    />
+                    <div className="relative z-10">
+                      <motion.div 
+                        className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center shadow-2xl mb-6`}
+                        whileHover={{ rotate: [0, -5, 5, -5, 0] }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <Icon className="text-white" size={32} strokeWidth={2.5} />
+                      </motion.div>
+                      <h3 className="text-2xl font-black tracking-tight text-foreground mb-2">{item.title}</h3>
+                      <span className={`text-xs font-bold tracking-wider uppercase bg-gradient-to-r ${item.color} bg-clip-text text-transparent block mb-4`}>
+                        {item.subtitle}
+                      </span>
+                      <p className="text-sm text-muted-foreground font-medium leading-relaxed">{item.description}</p>
+                    </div>
                   </div>
                 </motion.div>
               );
             })}
           </motion.div>
+
+          <AnimatedSection className="text-center bg-gradient-to-br from-primary/10 via-purple-500/10 to-amber-500/10 border-2 border-primary/20 rounded-3xl p-10" delay={0.3}>
+            <Triangle className="w-12 h-12 mx-auto mb-4 text-primary" strokeWidth={2} />
+            <h3 className="text-2xl font-black mb-4 text-foreground">Build Your Business the Right Way</h3>
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto mb-6 font-light leading-relaxed">
+              Start with Reputation, maximize with Resell, then scale with Reach. We help you build all three.
+            </p>
+            <Button size="lg" asChild className="group rounded-2xl px-8 h-12 font-bold shadow-2xl bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all">
+              <a href={`${baseUrl}/contact`}>
+                Let's Build Your Foundation
+                <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={18} />
+              </a>
+            </Button>
+          </AnimatedSection>
         </div>
       </section>
 

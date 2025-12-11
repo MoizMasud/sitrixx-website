@@ -1,10 +1,11 @@
 ---
 import MainLayout from '../layouts/main.astro';
-import ServicesPage from '../components/ServicesPage';
-import Navigation from '../components/Navigation';
+import ServicesPageWrapper from '../components/ServicesPageWrapper';
 ---
 
-<MainLayout>
-  <Navigation client:only="react" />
-  <ServicesPage client:only="react" />
+<MainLayout
+  title="Our Services - Flexible Website Plans | Sitrixx"
+  description="Choose from our flexible website plans: monthly subscription or one-time build. Fully customized websites with smart automation, hosting, and ongoing support."
+>
+  <ServicesPageWrapper client:only="react" />
 </MainLayout>

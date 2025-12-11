@@ -14,87 +14,86 @@ const currentUrl = Astro.url.href;
 ---
 
 <html lang="en" class={pageClass}>
-<head>
-<meta charset="utf-8" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="alternate icon" type="image/png" href="/favicon.ico" />
-<link rel="apple-touch-icon" href="/favicon.svg" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-<meta name="generator" content={Astro.generator} />
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="generator" content={Astro.generator} />
 
-<!-- Primary Meta Tags -->
-<title>{title}</title>
-<meta name="title" content={title} />
-<meta name="description" content={description} />
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
 
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content={currentUrl} />
-<meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={`${baseUrl}/favicon.svg`} />
-<meta property="og:image:alt" content="Sitrixx - Premium Websites with Smart Automation" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:site_name" content="Sitrixx" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${baseUrl}/favicon.svg`} />
+    <meta property="og:image:alt" content="Sitrixx - Premium Websites with Smart Automation" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Sitrixx" />
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:url" content={currentUrl} />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={`${baseUrl}/favicon.svg`} />
-<meta name="twitter:image:alt" content="Sitrixx - Premium Websites with Smart Automation" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={currentUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${baseUrl}/favicon.svg`} />
+    <meta name="twitter:image:alt" content="Sitrixx - Premium Websites with Smart Automation" />
 
-<!-- iOS Web App -->
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Sitrixx" />
+    <!-- iOS Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Sitrixx" />
 
-<!-- Theme Color - Fixed for iPhone status bar -->
-<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-<meta name="msapplication-TileColor" content="#0a0a0a" />
+    <!-- Theme Color - Fixed for iPhone status bar -->
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="msapplication-TileColor" content="#0a0a0a" />
 
-<!-- Additional iOS status bar styling -->
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-</head>
-<!-- Dark mode class injection point - will be replaced with `dark` class based on your site palette -->
-<body class="__DARK_MODE_CLASS__">
-<slot />
-</body>
+    <!-- Additional iOS status bar styling -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 
 <style is:global>
-/* Mobile viewport fixes */
-html {
-overflow-x: hidden;
-width: 100%;
-max-width: 100vw;
-}
+  /* Mobile viewport fixes */
+  html {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
 
-body {
-overflow-x: hidden;
-width: 100%;
-max-width: 100vw;
-min-height: 100vh;
-min-height: -webkit-fill-available;
-position: relative;
-}
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    position: relative;
+  }
 
-/* Prevent horizontal scroll on all containers */
-* {
-max-width: 100%;
-}
+  /* Prevent horizontal scroll on all containers */
+  * {
+    max-width: 100%;
+  }
 
-/* Page-specific overrides */
-html.splash main { 
-display: flex !important; 
-}
+  /* Page-specific overrides */
+  html.splash main { 
+    display: flex !important; 
+  }
 
-html.splash ol,
-html.splash ul { 
-padding-left: 0 !important; 
-margin: 0 !important; 
-}
+  html.splash ol,
+  html.splash ul { 
+    padding-left: 0 !important; 
+    margin: 0 !important; 
+  }
 </style>
