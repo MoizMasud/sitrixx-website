@@ -1,73 +1,147 @@
-import { useState, useEffect } from 'react';
-import { Star, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Star, Calendar, MessageSquare } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './ui/table';
+import { Input } from './ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
-type Review = {
-  id: string;
-  created_at: string;
-  client_id: string;
-  client_name?: string;
-  name: string;
-  rating: number;
-  comments: string;
-};
-
-type Client = {
+interface Client {
   id: string;
   business_name: string;
-};
+}
 
-type ReviewsPageProps = {
-  initialData?: {
-    clients: Client[];
-    reviews: Review[];
-    error: string | null;
-  };
-};
+interface Review {
+  id: string;
+  customer_name?: string;
+  customer_phone?: string;
+  rating: number;
+  feedback?: string;
+  created_at: string;
+  client_name?: string;
+  client_id?: string;
+}
 
-export default function ReviewsPage({ initialData }: ReviewsPageProps) {
-  const [clients] = useState<Client[]>(initialData?.clients || []);
-  const [selectedClient, setSelectedClient] = useState('all');
-  const [allReviews] = useState<Review[]>(initialData?.reviews || []);
+interface ReviewsPageProps {
+  clients: Client[];
+}
+
+export default function ReviewsPage({ clients }: ReviewsPageProps) {
+  const [allReviews, setAllReviews] = useState<Review[]>([]);
+  const [filteredReviews, setFilteredReviews] = useState<Review[]>([]);
+  const [selectedClient, setSelectedClient] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Check URL params for client context on mount
+  // Stats
+  const totalReviews = filteredReviews.length;
+  const fiveStarReviews = filteredReviews.filter(r => r.rating === 5).length;
+  const averageRating = filteredReviews.length > 0
+    ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
+    : '0.0';
+
+  // Load reviews when client selection changes
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const clientParam = urlParams.get('client');
-    
-    if (clientParam) {
-      console.log('🔗 Reviews page: Pre-selecting client from URL:', clientParam);
-      setSelectedClient(clientParam);
+    if (selectedClient && selectedClient !== '') {
+      loadReviewsForClient(selectedClient);
+    } else {
+      setAllReviews([]);
+      setFilteredReviews([]);
     }
-  }, []);
+  }, [selectedClient]);
 
-  const filteredReviews = allReviews
-    .filter(review => selectedClient === 'all' || review.client_id === selectedClient)
-    .filter(review => {
-      const search = searchTerm.toLowerCase();
+  // Filter reviews when search term changes
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredReviews(allReviews);
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const filtered = allReviews.filter(review => {
       return (
-        review.name.toLowerCase().includes(search) ||
-        review.comments.toLowerCase().includes(search)
+        (review.customer_name && review.customer_name.toLowerCase().includes(term)) ||
+        (review.customer_phone && review.customer_phone.includes(term)) ||
+        (review.feedback && review.feedback.toLowerCase().includes(term))
       );
     });
 
-  const averageRating = filteredReviews.length > 0 
-    ? (filteredReviews.reduce((sum, r) => sum + r.rating, 0) / filteredReviews.length).toFixed(1)
-    : '0';
+    setFilteredReviews(filtered);
+  }, [searchTerm, allReviews]);
 
-  const currentClientName = selectedClient === 'all'
-    ? 'All Clients'
-    : clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
+  async function loadReviewsForClient(clientId: string) {
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (clientId === 'all') {
+        // Load reviews for all clients
+        const allClientReviews: Review[] = [];
+        for (const client of clients) {
+          try {
+            const res = await (window as any).authFetch(`/api/reviews?clientId=${encodeURIComponent(client.id)}`);
+            const data = await res.json();
+            const clientReviews = (data.reviews || []).map((review: Review) => ({
+              ...review,
+              client_name: client.business_name,
+              client_id: client.id
+            }));
+            allClientReviews.push(...clientReviews);
+          } catch (err) {
+            console.error(`Error loading reviews for ${client.id}:`, err);
+          }
+        }
+        setAllReviews(allClientReviews);
+        setFilteredReviews(allClientReviews);
+      } else {
+        // Load reviews for single client
+        const res = await (window as any).authFetch(`/api/reviews?clientId=${encodeURIComponent(clientId)}`);
+        const data = await res.json();
+        const client = clients.find(c => c.id === clientId);
+        const reviews = (data.reviews || []).map((review: Review) => ({
+          ...review,
+          client_name: client?.business_name || 'Unknown',
+          client_id: clientId
+        }));
+        setAllReviews(reviews);
+        setFilteredReviews(reviews);
+      }
+    } catch (err) {
+      console.error('Error loading reviews:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load reviews');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString();
+  };
 
   const renderStars = (rating: number) => {
     return (
-      <div className="flex gap-1">
+      <div className="flex items-center gap-0.5">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            size={18}
-            className={star <= rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-300 dark:text-gray-600'}
+            className={`h-4 w-4 ${
+              star <= rating
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700'
+            }`}
           />
         ))}
       </div>
@@ -75,184 +149,181 @@ export default function ReviewsPage({ initialData }: ReviewsPageProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="mb-10">
+      <div>
         <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
           Reviews
         </h1>
-        <p className="text-lg text-muted-foreground">Monitor and manage customer reviews across all clients</p>
+        <p className="text-lg text-muted-foreground">
+          Track customer feedback and ratings
+        </p>
       </div>
 
-      {initialData?.error && (
-        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
-          {initialData.error}
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-card border rounded-lg p-6 shadow-lg">
-          <div className="text-4xl font-black mb-1 text-foreground">{filteredReviews.length}</div>
-          <div className="text-sm text-muted-foreground font-medium">Total Reviews</div>
-        </div>
-        <div className="bg-card border rounded-lg p-6 shadow-lg">
-          <div className="flex items-center gap-2">
-            <div className="text-4xl font-black text-foreground">{averageRating}</div>
-            <Star className="fill-yellow-500 text-yellow-500" size={24} />
-          </div>
-          <div className="text-sm text-muted-foreground font-medium">Average Rating</div>
-        </div>
-        <div className="bg-card border rounded-lg p-6 shadow-lg">
-          <div className="text-4xl font-black mb-1 text-foreground">
-            {filteredReviews.filter(r => r.rating === 5).length}
-          </div>
-          <div className="text-sm text-muted-foreground font-medium">5-Star Reviews</div>
-        </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-4xl font-black">{totalReviews}</CardTitle>
+            <CardDescription className="font-medium">Total Reviews</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-4xl font-black">{fiveStarReviews}</CardTitle>
+            <CardDescription className="font-medium">5-Star Reviews</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-4xl font-black">{averageRating}</CardTitle>
+            <CardDescription className="font-medium">Average Rating</CardDescription>
+          </CardHeader>
+        </Card>
       </div>
 
       {/* Filters */}
-      <div className="bg-card border rounded-xl p-6 mb-6 shadow-xl">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label htmlFor="client-select" className="block text-sm font-semibold mb-3 text-foreground">
-              Client
-            </label>
-            <div className="relative">
-              <select
-                id="client-select"
-                value={selectedClient}
-                onChange={(e) => setSelectedClient(e.target.value)}
-                className="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
-                style={{
-                  backgroundImage: 'none',
-                }}
-              >
-                <option value="all" className="py-3 bg-background text-foreground">
-                  All Clients
-                </option>
-                {clients.map(client => (
-                  <option key={client.id} value={client.id} className="py-3 bg-background text-foreground">
-                    {client.business_name}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-foreground">
-                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Client</label>
+              <Select value={selectedClient} onValueChange={setSelectedClient}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a client" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Clients</SelectItem>
+                  {clients.map((client) => (
+                    <SelectItem key={client.id} value={client.id}>
+                      {client.business_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Date Range</label>
+              <Select defaultValue="7">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Last 7 days</SelectItem>
+                  <SelectItem value="30">Last 30 days</SelectItem>
+                  <SelectItem value="90">Last 90 days</SelectItem>
+                  <SelectItem value="all">All time</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Search</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Customer name, phone..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <div>
-            <label htmlFor="rating-filter" className="block text-sm font-semibold mb-3 text-foreground">
-              Rating
-            </label>
-            <div className="relative">
-              <select
-                id="rating-filter"
-                className="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
-                style={{
-                  backgroundImage: 'none',
-                }}
-              >
-                <option className="py-3 bg-background text-foreground">All ratings</option>
-                <option className="py-3 bg-background text-foreground">5 stars</option>
-                <option className="py-3 bg-background text-foreground">4 stars</option>
-                <option className="py-3 bg-background text-foreground">3 stars</option>
-                <option className="py-3 bg-background text-foreground">2 stars</option>
-                <option className="py-3 bg-background text-foreground">1 star</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-foreground">
-                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="search" className="block text-sm font-semibold mb-3 text-foreground">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
-              <input
-                type="text"
-                id="search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name or comment..."
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 bg-background text-foreground font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm hover:shadow-md"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Error Message */}
+      {error && (
+        <Card className="border-destructive/50 bg-destructive/10">
+          <CardContent className="pt-6">
+            <p className="text-destructive font-medium">{error}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Reviews Table */}
-      <div className="bg-card border rounded-xl overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted/50 border-b-2">
-              <tr>
-                <th className="pl-8 pr-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Customer Name</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Rating</th>
-                <th className="pl-4 pr-8 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Comments</th>
-              </tr>
-            </thead>
-            <tbody id="reviews-table-body" className="divide-y divide-border">
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                    Loading reviews...
-                  </td>
-                </tr>
-              ) : filteredReviews.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                    No reviews found matching your filters.
-                  </td>
-                </tr>
-              ) : (
-                filteredReviews.map((review) => (
-                  <tr key={review.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="pl-8 pr-4 py-5 whitespace-nowrap">
-                      <span className="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
-                        {new Date(review.created_at).toLocaleString()}
+      <div className="bg-card rounded-xl overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[180px]">Date / Time</TableHead>
+              <TableHead>Client</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead className="w-[140px]">Rating</TableHead>
+              <TableHead className="min-w-[300px]">Feedback</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-32 text-center">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="ml-3 text-muted-foreground">Loading reviews...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : !selectedClient ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                  Select a client to view their reviews
+                </TableCell>
+              </TableRow>
+            ) : filteredReviews.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                  No reviews found
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredReviews.map((review) => (
+                <TableRow key={review.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-mono">
+                        {formatDate(review.created_at)}
                       </span>
-                    </td>
-                    <td className="px-4 py-5 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
-                          {(review.client_name || currentClientName).charAt(0)}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-semibold">{review.client_name}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      {review.customer_name ? (
+                        <div className="font-semibold">{review.customer_name}</div>
+                      ) : (
+                        <div className="text-muted-foreground italic text-sm">Anonymous</div>
+                      )}
+                      {review.customer_phone && (
+                        <div className="text-xs text-muted-foreground font-mono">
+                          {review.customer_phone}
                         </div>
-                        <span className="font-semibold text-foreground text-[15px]">{review.client_name || currentClientName}</span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {renderStars(review.rating)}
+                  </TableCell>
+                  <TableCell>
+                    {review.feedback ? (
+                      <div className="flex items-start gap-2">
+                        <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                        <p className="text-sm line-clamp-3 max-w-md">{review.feedback}</p>
                       </div>
-                    </td>
-                    <td className="px-4 py-5 whitespace-nowrap">
-                      <span className="font-semibold text-foreground text-[15px]">{review.name}</span>
-                    </td>
-                    <td className="px-4 py-5 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        {renderStars(review.rating)}
-                        <span className="text-sm font-bold text-foreground">{review.rating}.0</span>
-                      </div>
-                    </td>
-                    <td className="pl-4 pr-8 py-5 text-sm max-w-md">
-                      <p className="text-foreground line-clamp-2 text-[15px]">
-                        {review.comments}
-                      </p>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    ) : (
+                      <span className="text-muted-foreground italic text-sm">No feedback provided</span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -1,269 +1,337 @@
-import { useState } from 'react';
-import { Search, Phone, Mail } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Mail, Phone, Calendar } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './ui/table';
+import { Input } from './ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
 
-type Lead = {
-  id: string;
-  created_at: string;
-  client_id: string;
-  client_name?: string;
-  source: string;
-  name: string;
-  phone: string;
-  email: string;
-  message: string;
-};
-
-type Client = {
+interface Client {
   id: string;
   business_name: string;
-};
+}
 
-type LeadsPageProps = {
-  initialData?: {
-    clients: Client[];
-    leads: Lead[];
-    error: string | null;
-  };
-};
+interface Lead {
+  id: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+  message?: string;
+  source: 'website_form' | 'missed_call';
+  created_at: string;
+  client_name?: string;
+  client_id?: string;
+}
 
-export default function LeadsPage({ initialData }: LeadsPageProps) {
-  const [clients] = useState<Client[]>(initialData?.clients || []);
-  const [selectedClient, setSelectedClient] = useState('all');
-  const [allLeads] = useState<Lead[]>(initialData?.leads || []);
+interface LeadsPageProps {
+  clients: Client[];
+}
+
+export default function LeadsPage({ clients }: LeadsPageProps) {
+  const [allLeads, setAllLeads] = useState<Lead[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
+  const [selectedClient, setSelectedClient] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredLeads = allLeads
-    .filter(lead => selectedClient === 'all' || lead.client_id === selectedClient)
-    .filter(lead => {
-      const search = searchTerm.toLowerCase();
+  // Stats
+  const totalLeads = filteredLeads.length;
+  const websiteForms = filteredLeads.filter(l => l.source === 'website_form').length;
+  const missedCalls = filteredLeads.filter(l => l.source === 'missed_call').length;
+
+  // Load leads when client selection changes
+  useEffect(() => {
+    if (selectedClient && selectedClient !== '') {
+      loadLeadsForClient(selectedClient);
+    } else {
+      setAllLeads([]);
+      setFilteredLeads([]);
+    }
+  }, [selectedClient]);
+
+  // Filter leads when search term changes
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredLeads(allLeads);
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const filtered = allLeads.filter(lead => {
       return (
-        lead.name.toLowerCase().includes(search) ||
-        lead.phone.includes(search) ||
-        (lead.email && lead.email.toLowerCase().includes(search)) ||
-        lead.message.toLowerCase().includes(search)
+        (lead.name && lead.name.toLowerCase().includes(term)) ||
+        (lead.phone && lead.phone.includes(term)) ||
+        (lead.email && lead.email.toLowerCase().includes(term)) ||
+        (lead.message && lead.message.toLowerCase().includes(term))
       );
     });
 
-  const currentClientName = selectedClient === 'all' 
-    ? 'All Clients'
-    : clients.find(c => c.id === selectedClient)?.business_name || 'Unknown';
+    setFilteredLeads(filtered);
+  }, [searchTerm, allLeads]);
+
+  async function loadLeadsForClient(clientId: string) {
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (clientId === 'all') {
+        // Load leads for all clients
+        const allClientLeads: Lead[] = [];
+        for (const client of clients) {
+          try {
+            const res = await (window as any).authFetch(`/api/leads?clientId=${encodeURIComponent(client.id)}`);
+            const data = await res.json();
+            const clientLeads = (data.leads || []).map((lead: Lead) => ({
+              ...lead,
+              client_name: client.business_name,
+              client_id: client.id
+            }));
+            allClientLeads.push(...clientLeads);
+          } catch (err) {
+            console.error(`Error loading leads for ${client.id}:`, err);
+          }
+        }
+        setAllLeads(allClientLeads);
+        setFilteredLeads(allClientLeads);
+      } else {
+        // Load leads for single client
+        const res = await (window as any).authFetch(`/api/leads?clientId=${encodeURIComponent(clientId)}`);
+        const data = await res.json();
+        const client = clients.find(c => c.id === clientId);
+        const leads = (data.leads || []).map((lead: Lead) => ({
+          ...lead,
+          client_name: client?.business_name || 'Unknown',
+          client_id: clientId
+        }));
+        setAllLeads(leads);
+        setFilteredLeads(leads);
+      }
+    } catch (err) {
+      console.error('Error loading leads:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load leads');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString();
+  };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="mb-10">
+      <div>
         <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
           Leads
         </h1>
-        <p className="text-lg text-muted-foreground">Track and manage incoming leads from all clients</p>
+        <p className="text-lg text-muted-foreground">
+          Track and manage incoming leads from all clients
+        </p>
       </div>
 
-      {initialData?.error && (
-        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
-          {initialData.error}
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-card border rounded-lg p-6 shadow-lg">
-          <div className="text-4xl font-black mb-1 text-foreground">{filteredLeads.length}</div>
-          <div className="text-sm text-muted-foreground font-medium">Total Leads</div>
-        </div>
-        <div className="bg-card border rounded-lg p-6 shadow-lg">
-          <div className="text-4xl font-black mb-1 text-foreground">
-            {filteredLeads.filter(l => l.source === 'website_form').length}
-          </div>
-          <div className="text-sm text-muted-foreground font-medium">Website Forms</div>
-        </div>
-        <div className="bg-card border rounded-lg p-6 shadow-lg">
-          <div className="text-4xl font-black mb-1 text-foreground">
-            {filteredLeads.filter(l => l.source === 'missed_call').length}
-          </div>
-          <div className="text-sm text-muted-foreground font-medium">Missed Calls</div>
-        </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-4xl font-black">{totalLeads}</CardTitle>
+            <CardDescription className="font-medium">Total Leads</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-4xl font-black">{websiteForms}</CardTitle>
+            <CardDescription className="font-medium">Website Forms</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-4xl font-black">{missedCalls}</CardTitle>
+            <CardDescription className="font-medium">Missed Calls</CardDescription>
+          </CardHeader>
+        </Card>
       </div>
 
       {/* Filters */}
-      <div className="bg-card border rounded-xl p-6 mb-6 shadow-xl">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label htmlFor="client-select" className="block text-sm font-semibold mb-3 text-foreground">
-              Client
-            </label>
-            <div className="relative">
-              <select
-                id="client-select"
-                value={selectedClient}
-                onChange={(e) => setSelectedClient(e.target.value)}
-                className="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
-                style={{
-                  backgroundImage: 'none',
-                }}
-              >
-                <option value="all" className="py-3 bg-background text-foreground">
-                  All Clients
-                </option>
-                {clients.map(client => (
-                  <option key={client.id} value={client.id} className="py-3 bg-background text-foreground">
-                    {client.business_name}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-foreground">
-                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Client</label>
+              <Select value={selectedClient} onValueChange={setSelectedClient}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a client" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Clients</SelectItem>
+                  {clients.map((client) => (
+                    <SelectItem key={client.id} value={client.id}>
+                      {client.business_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Date Range</label>
+              <Select defaultValue="7">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">Last 7 days</SelectItem>
+                  <SelectItem value="30">Last 30 days</SelectItem>
+                  <SelectItem value="90">Last 90 days</SelectItem>
+                  <SelectItem value="all">All time</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">Search</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Name, phone, email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <div>
-            <label htmlFor="date-range" className="block text-sm font-semibold mb-3 text-foreground">
-              Date Range
-            </label>
-            <div className="relative">
-              <select
-                id="date-range"
-                className="w-full px-4 py-3.5 pr-12 rounded-xl border-2 bg-background text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none shadow-sm hover:shadow-md cursor-pointer"
-                style={{
-                  backgroundImage: 'none',
-                }}
-              >
-                <option className="py-3 bg-background text-foreground">Last 7 days</option>
-                <option className="py-3 bg-background text-foreground">Last 30 days</option>
-                <option className="py-3 bg-background text-foreground">Last 90 days</option>
-                <option className="py-3 bg-background text-foreground">All time</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-foreground">
-                <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="search" className="block text-sm font-semibold mb-3 text-foreground">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
-              <input
-                type="text"
-                id="search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Name, phone, email..."
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 bg-background text-foreground font-medium placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm hover:shadow-md"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Debug Info */}
-      {allLeads.length === 0 && clients.length > 0 && (
-        <div className="bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 px-4 py-3 rounded-lg mb-6">
-          Loaded {clients.length} clients but no leads found. This might be normal if there are no leads yet.
-        </div>
+      {/* Error Message */}
+      {error && (
+        <Card className="border-destructive/50 bg-destructive/10">
+          <CardContent className="pt-6">
+            <p className="text-destructive font-medium">{error}</p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Leads Table */}
-      <div className="bg-card border rounded-xl overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted/50 border-b-2">
-              <tr>
-                <th className="pl-8 pr-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Date / Time</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Client</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Source</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Lead Name</th>
-                <th className="px-4 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Contact Info</th>
-                <th className="pl-4 pr-8 py-6 text-left text-xs font-bold uppercase tracking-widest text-foreground">Message</th>
-              </tr>
-            </thead>
-            <tbody id="leads-table-body" className="divide-y divide-border">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                    Loading leads...
-                  </td>
-                </tr>
-              ) : filteredLeads.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                    No leads found matching your filters.
-                  </td>
-                </tr>
-              ) : (
-                filteredLeads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="pl-8 pr-4 py-5 whitespace-nowrap">
-                      <span className="text-xs font-mono bg-muted px-2.5 py-1.5 rounded-lg text-foreground border">
-                        {new Date(lead.created_at).toLocaleString()}
+      <div className="bg-card rounded-xl overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[180px]">Date / Time</TableHead>
+              <TableHead>Client</TableHead>
+              <TableHead className="w-[140px]">Source</TableHead>
+              <TableHead>Lead Name</TableHead>
+              <TableHead>Contact Info</TableHead>
+              <TableHead className="min-w-[300px]">Message</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-32 text-center">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="ml-3 text-muted-foreground">Loading leads...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : !selectedClient ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                  Select a client to view their leads
+                </TableCell>
+              </TableRow>
+            ) : filteredLeads.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                  No leads found
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredLeads.map((lead) => (
+                <TableRow key={lead.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs font-mono">
+                        {formatDate(lead.created_at)}
                       </span>
-                    </td>
-                    <td className="px-4 py-5 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/20 to-purple-600/20 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-sm">
-                          {(lead.client_name || currentClientName).charAt(0)}
-                        </div>
-                        <span className="font-semibold text-foreground text-[15px]">{lead.client_name || currentClientName}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-5 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                        lead.source === 'website_form' 
-                          ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-                          : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20'
-                      }`}>
-                        {lead.source === 'website_form' ? '📝 Website Form' : '📞 Missed Call'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-5 whitespace-nowrap">
-                      {lead.name ? (
-                        <span className="font-semibold text-foreground text-[15px]">{lead.name}</span>
-                      ) : (
-                        <span className="text-muted-foreground text-sm italic">No name provided</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-5">
-                      <div className="space-y-1.5">
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-semibold">{lead.client_name}</span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={lead.source === 'website_form' ? 'default' : 'secondary'}
+                      className={
+                        lead.source === 'website_form'
+                          ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+                          : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
+                      }
+                    >
+                      {lead.source === 'website_form' ? '📝 Form' : '📞 Call'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {lead.name ? (
+                      <span className="font-semibold">{lead.name}</span>
+                    ) : (
+                      <span className="text-muted-foreground italic text-sm">No name</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1.5">
+                      {lead.phone && (
                         <div className="flex items-center gap-2">
-                          <Phone size={14} className="text-green-600 dark:text-green-400" />
-                          <a 
+                          <Phone className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                          <a
                             href={`tel:${lead.phone}`}
-                            className="text-sm font-mono text-foreground hover:text-primary hover:underline"
+                            className="text-sm hover:text-primary hover:underline font-mono"
                           >
                             {lead.phone}
                           </a>
                         </div>
-                        {lead.email && (
-                          <div className="flex items-center gap-2">
-                            <Mail size={14} className="text-blue-600 dark:text-blue-400" />
-                            <a 
-                              href={`mailto:${lead.email}`}
-                              className="text-sm text-foreground hover:text-primary hover:underline"
-                            >
-                              {lead.email}
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="pl-4 pr-8 py-5 text-sm max-w-md">
-                      <p className="text-foreground line-clamp-2 text-[15px]">
-                        {lead.message}
-                      </p>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                      )}
+                      {lead.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                          <a
+                            href={`mailto:${lead.email}`}
+                            className="text-sm hover:text-primary hover:underline"
+                          >
+                            {lead.email}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <p className="text-sm line-clamp-2 max-w-md">
+                      {lead.message || 'No message'}
+                    </p>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

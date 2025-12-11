@@ -3,37 +3,18 @@ import MainLayout from '../../layouts/main.astro';
 import AdminLayout from '../../components/AdminLayout';
 import ClientsPage from '../../components/ClientsPage';
 import { baseUrl } from '../../lib/base-url';
-
-const API_BASE = 'https://sitrixx-website-backend.vercel.app';
-
-// Fetch clients server-side
-let clientsData = {
-  clients: [],
-  error: null as string | null
-};
-
-try {
-  const clientsRes = await fetch(`${API_BASE}/api/clients`);
-  if (clientsRes.ok) {
-    const data = await clientsRes.json();
-    // Handle both array and object with clients property
-    clientsData.clients = Array.isArray(data) ? data : (data.clients || []);
-  } else {
-    clientsData.error = `Failed to fetch clients: ${clientsRes.status}`;
-  }
-} catch (err) {
-  console.error('Error fetching clients:', err);
-  clientsData.error = err instanceof Error ? err.message : 'Failed to load clients';
-}
 ---
 
 <MainLayout 
   title="Clients - Admin - Sitrixx"
-  description="Manage Sitrixx clients"
+  description="Manage client accounts"
 >
   <AdminLayout client:only="react" activePage="clients">
-    <ClientsPage client:only="react" initialData={clientsData} />
+    <ClientsPage client:only="react" />
   </AdminLayout>
+
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Authentication Guard Script -->
   <script define:vars={{ baseUrl }}>
@@ -41,5 +22,70 @@ try {
     if (!token) {
       window.location.href = baseUrl + '/admin/login';
     }
+  </script>
+
+  <!-- Initialize Supabase and authFetch -->
+  <script>
+    // Wait for Supabase library to load
+    function waitForSupabase(callback) {
+      if (window.supabase && window.supabase.createClient) {
+        callback();
+      } else {
+        console.log('⏳ Waiting for Supabase library to load...');
+        setTimeout(() => waitForSupabase(callback), 50);
+      }
+    }
+
+    waitForSupabase(() => {
+      console.log('✅ Supabase library loaded');
+      
+      // Initialize Supabase Client
+      const { createClient } = window.supabase;
+      const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
+      
+      console.log('🔧 Initializing Supabase client...');
+      window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log('✅ Supabase client initialized');
+
+      // Define authFetch
+      const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+      async function authFetch(path, options = {}) {
+        const supabase = window.supabaseClient;
+        if (!supabase) {
+          console.error('Supabase client not found');
+          throw new Error('Supabase not initialized');
+        }
+
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session', error);
+          throw error;
+        }
+
+        const session = data.session;
+        if (!session) {
+          window.location.href = '/admin/login';
+          throw new Error('Not authenticated');
+        }
+
+        const token = session.access_token;
+
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+          Authorization: `Bearer ${token}`,
+        };
+
+        return fetch(`${API_BASE}${path}`, {
+          ...options,
+          headers,
+        });
+      }
+
+      window.authFetch = authFetch;
+      console.log('✅ authFetch helper initialized and ready');
+    });
   </script>
 </MainLayout>

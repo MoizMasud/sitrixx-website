@@ -6,53 +6,44 @@ import { baseUrl } from '../../lib/base-url';
 
 const API_BASE = 'https://sitrixx-website-backend.vercel.app';
 
-// Fetch data server-side
-let reviewsData = {
+// Fetch clients server-side
+let clientsData = {
   clients: [],
-  reviews: [],
   error: null as string | null
 };
 
 try {
-  // Fetch clients first
   const clientsRes = await fetch(`${API_BASE}/api/clients`);
   if (clientsRes.ok) {
     const data = await clientsRes.json();
-    reviewsData.clients = Array.isArray(data) ? data : (data.clients || []);
-  }
-
-  // Fetch reviews for each client
-  if (Array.isArray(reviewsData.clients)) {
-    for (const client of reviewsData.clients) {
-      try {
-        const reviewsRes = await fetch(`${API_BASE}/api/reviews?clientId=${encodeURIComponent(client.id)}`);
-        if (reviewsRes.ok) {
-          const data = await reviewsRes.json();
-          const clientReviews = (data.reviews || []).map((review: any) => ({
-            ...review,
-            client_name: client.business_name,
-            client_id: client.id
-          }));
-          reviewsData.reviews.push(...clientReviews);
-        }
-      } catch (err) {
-        console.error(`Error fetching reviews for client ${client.id}:`, err);
-      }
-    }
+    clientsData.clients = Array.isArray(data) ? data : (data.clients || []);
+  } else {
+    clientsData.error = 'Failed to load clients';
   }
 } catch (err) {
-  console.error('Error fetching reviews data:', err);
-  reviewsData.error = err instanceof Error ? err.message : 'Failed to load reviews data';
+  console.error('Error fetching clients:', err);
+  clientsData.error = err instanceof Error ? err.message : 'Failed to load clients';
 }
 ---
 
 <MainLayout 
   title="Reviews - Admin - Sitrixx"
-  description="Monitor customer reviews and ratings"
+  description="Manage customer reviews"
 >
   <AdminLayout client:only="react" activePage="reviews">
-    <ReviewsPage client:only="react" initialData={reviewsData} />
+    {clientsData.error ? (
+      <div class="max-w-7xl mx-auto">
+        <div class="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg">
+          {clientsData.error}
+        </div>
+      </div>
+    ) : (
+      <ReviewsPage client:only="react" clients={clientsData.clients} />
+    )}
   </AdminLayout>
+
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Authentication Guard Script -->
   <script define:vars={{ baseUrl }}>
@@ -60,5 +51,70 @@ try {
     if (!token) {
       window.location.href = baseUrl + '/admin/login';
     }
+  </script>
+
+  <!-- Initialize Supabase and authFetch -->
+  <script>
+    // Wait for Supabase library to load
+    function waitForSupabase(callback) {
+      if (window.supabase && window.supabase.createClient) {
+        callback();
+      } else {
+        console.log('⏳ Waiting for Supabase library to load...');
+        setTimeout(() => waitForSupabase(callback), 50);
+      }
+    }
+
+    waitForSupabase(() => {
+      console.log('✅ Supabase library loaded');
+      
+      // Initialize Supabase Client
+      const { createClient } = window.supabase;
+      const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
+      
+      console.log('🔧 Initializing Supabase client...');
+      window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log('✅ Supabase client initialized');
+
+      // Define authFetch
+      const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+      async function authFetch(path, options = {}) {
+        const supabase = window.supabaseClient;
+        if (!supabase) {
+          console.error('Supabase client not found');
+          throw new Error('Supabase not initialized');
+        }
+
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session', error);
+          throw error;
+        }
+
+        const session = data.session;
+        if (!session) {
+          window.location.href = '/admin/login';
+          throw new Error('Not authenticated');
+        }
+
+        const token = session.access_token;
+
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+          Authorization: `Bearer ${token}`,
+        };
+
+        return fetch(`${API_BASE}${path}`, {
+          ...options,
+          headers,
+        });
+      }
+
+      window.authFetch = authFetch;
+      console.log('✅ authFetch helper initialized and ready');
+    });
   </script>
 </MainLayout>
