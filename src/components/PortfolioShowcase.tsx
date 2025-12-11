@@ -102,7 +102,7 @@ const valueTriangle = [
     icon: Building,
     title: "Reputation",
     subtitle: "The Foundation",
-    description: "What do you look like online? When people Google you, do you show up professionally? This is your foundation.",
+    description: "What do you look like online? When people Google you, do you show up professionally?",
     color: "from-blue-500 to-cyan-500",
     order: 1
   },

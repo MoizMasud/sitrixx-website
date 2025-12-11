@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, Phone, Mail } from 'lucide-react';
 import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import ThemeToggle from './ThemeToggle';
@@ -36,6 +36,25 @@ export default function Navigation() {
                 {link.name}
               </a>
             ))}
+            
+            {/* Contact Icons */}
+            <div className="flex items-center gap-3 ml-2">
+              <a 
+                href="tel:+15192122962"
+                className="p-2 hover:bg-accent rounded-lg transition-colors group"
+                aria-label="Call us"
+              >
+                <Phone size={18} className="text-foreground group-hover:text-primary transition-colors" />
+              </a>
+              <a 
+                href="mailto:sitrixx1@gmail.com"
+                className="p-2 hover:bg-accent rounded-lg transition-colors group"
+                aria-label="Email us"
+              >
+                <Mail size={18} className="text-foreground group-hover:text-primary transition-colors" />
+              </a>
+            </div>
+
             <ThemeToggle />
             <Button asChild variant="outline" size="sm" className="rounded-xl">
               <a href={`${baseUrl}/admin/login`}>
@@ -50,6 +69,20 @@ export default function Navigation() {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
+            <a 
+              href="tel:+15192122962"
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
+              aria-label="Call us"
+            >
+              <Phone size={20} className="text-foreground" />
+            </a>
+            <a 
+              href="mailto:sitrixx1@gmail.com"
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
+              aria-label="Email us"
+            >
+              <Mail size={20} className="text-foreground" />
+            </a>
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -79,6 +112,26 @@ export default function Navigation() {
                   {link.name}
                 </a>
               ))}
+              
+              {/* Contact Links in Mobile Menu */}
+              <div className="flex gap-3 px-2 py-2 border-t border-border pt-4">
+                <a 
+                  href="tel:+15192122962"
+                  className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Phone size={18} />
+                  <span className="text-sm">(519) 212-2962</span>
+                </a>
+                <a 
+                  href="mailto:sitrixx1@gmail.com"
+                  className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Mail size={18} />
+                </a>
+              </div>
+
               <Button asChild variant="outline" className="w-full rounded-xl">
                 <a href={`${baseUrl}/admin/login`} onClick={() => setIsOpen(false)}>
                   <LogIn size={16} className="mr-2" />
