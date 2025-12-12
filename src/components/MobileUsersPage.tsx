@@ -22,23 +22,33 @@ interface User {
   created_at: string;
 }
 
+interface Client {
+  id: string;
+  business_name: string;
+}
+
 export default function MobileUsersPage() {
   // Users table state
   const [users, setUsers] = useState<User[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Clients state
+  const [clients, setClients] = useState<Client[]>([]);
+  const [isLoadingClients, setIsLoadingClients] = useState(false);
+
   // Create modal state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [createFormData, setCreateFormData] = useState({
     email: '',
+    tempPassword: '',
     role: 'client',
+    clientId: '',
     display_name: '',
     phone: '',
   });
   const [isCreating, setIsCreating] = useState(false);
-  const [tempPassword, setTempPassword] = useState<string | null>(null);
-  const [passwordCopied, setPasswordCopied] = useState(false);
+  const [createdSuccessfully, setCreatedSuccessfully] = useState(false);
 
   // Edit modal state
   const [editUser, setEditUser] = useState<User | null>(null);
@@ -106,29 +116,53 @@ export default function MobileUsersPage() {
     }
   };
 
+  const fetchClients = async () => {
+    setIsLoadingClients(true);
+    try {
+      const res = await (window as any).authFetch('/api/clients');
+      const data = await res.json();
+      
+      if (!data.ok) {
+        throw new Error(data.error || 'Failed to load clients');
+      }
+      
+      const clientsList = Array.isArray(data.clients) ? data.clients : [];
+      setClients(clientsList);
+    } catch (err) {
+      console.error('Error loading clients:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load clients');
+    } finally {
+      setIsLoadingClients(false);
+    }
+  };
+
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
     setError(null);
-    setTempPassword(null);
-    setPasswordCopied(false);
+    setCreatedSuccessfully(false);
     setCreateFormData({
       email: '',
+      tempPassword: '',
       role: 'client',
+      clientId: '',
       display_name: '',
       phone: '',
     });
+    // Fetch clients when opening modal
+    fetchClients();
   };
 
   const closeCreateModal = () => {
     setIsCreateModalOpen(false);
     setCreateFormData({
       email: '',
+      tempPassword: '',
       role: 'client',
+      clientId: '',
       display_name: '',
       phone: '',
     });
-    setTempPassword(null);
-    setPasswordCopied(false);
+    setCreatedSuccessfully(false);
   };
 
   const handleCreateSubmit = async (e: React.FormEvent) => {
@@ -137,6 +171,21 @@ export default function MobileUsersPage() {
 
     if (!createFormData.email.trim()) {
       setError('Email is required');
+      return;
+    }
+
+    if (!createFormData.tempPassword.trim()) {
+      setError('Temporary password is required');
+      return;
+    }
+
+    if (createFormData.tempPassword.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
+    if (!createFormData.clientId) {
+      setError('Business is required');
       return;
     }
 
@@ -151,18 +200,12 @@ export default function MobileUsersPage() {
     try {
       const token = await getAccessToken();
 
-      const payload: any = {
+      const payload = {
         email: createFormData.email.trim(),
+        tempPassword: createFormData.tempPassword,
         role: createFormData.role,
+        clientId: createFormData.clientId,
       };
-
-      if (createFormData.display_name.trim()) {
-        payload.display_name = createFormData.display_name.trim();
-      }
-
-      if (createFormData.phone.trim()) {
-        payload.phone = createFormData.phone.trim();
-      }
 
       const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
         method: 'POST',
@@ -179,18 +222,18 @@ export default function MobileUsersPage() {
         throw new Error(data.error || 'Failed to create user');
       }
 
-      // Show temporary password
-      if (data.temp_password) {
-        setTempPassword(data.temp_password);
-      }
+      // Show success state
+      setCreatedSuccessfully(true);
 
       // Refresh users list
       await fetchUsers();
 
-      // Reset form but keep modal open to show password
+      // Reset form
       setCreateFormData({
         email: '',
+        tempPassword: '',
         role: 'client',
+        clientId: '',
         display_name: '',
         phone: '',
       });
@@ -200,14 +243,6 @@ export default function MobileUsersPage() {
       setError(err instanceof Error ? err.message : 'Failed to create user');
     } finally {
       setIsCreating(false);
-    }
-  };
-
-  const copyPassword = () => {
-    if (tempPassword) {
-      navigator.clipboard.writeText(tempPassword);
-      setPasswordCopied(true);
-      setTimeout(() => setPasswordCopied(false), 2000);
     }
   };
 
@@ -247,7 +282,7 @@ export default function MobileUsersPage() {
       const token = await getAccessToken();
 
       const payload: any = {
-        userId: editFormData.userId,  // ✅ Changed from user_id to userId (camelCase)
+        userId: editFormData.userId,
         role: editFormData.role,
       };
 
@@ -259,7 +294,7 @@ export default function MobileUsersPage() {
         payload.phone = editFormData.phone.trim();
       }
 
-      const res = await fetch(`${BACKEND_URL}/api/admin/users?id=${editFormData.userId}`, {
+      const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -294,12 +329,15 @@ export default function MobileUsersPage() {
     try {
       const token = await getAccessToken();
 
-      const res = await fetch(`${BACKEND_URL}/api/admin/users?id=${deleteUserId}`, {
+      const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          userId: deleteUserId
+        }),
       });
 
       const data = await res.json();
@@ -330,19 +368,13 @@ export default function MobileUsersPage() {
     setError(null);
 
     try {
-      // First get the token for the backend request
       const token = await getAccessToken();
 
-      // Get Supabase client
       const supabase = (window as any).supabaseClient;
       if (!supabase) {
         throw new Error('Supabase client not initialized');
       }
 
-      // Get the service role key from the Supabase client (if available)
-      // Note: For security, this should ideally be done on the backend
-      // For now, we'll just send the request to the backend
-      
       const res = await fetch(`${BACKEND_URL}/api/admin/users`, {
         method: 'POST',
         headers: {
@@ -441,7 +473,7 @@ export default function MobileUsersPage() {
       )}
 
       {/* Users Table */}
-      <Card>
+      <Card className="border-0 shadow-none">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-foreground">
             All Mobile Users
@@ -460,10 +492,10 @@ export default function MobileUsersPage() {
               No users found
             </div>
           ) : (
-            <div className="rounded-md border overflow-x-auto">
+            <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="border-b">
                     <TableHead className="whitespace-nowrap">Email / ID</TableHead>
                     <TableHead className="whitespace-nowrap">Display Name</TableHead>
                     <TableHead className="whitespace-nowrap">Phone</TableHead>
@@ -475,7 +507,7 @@ export default function MobileUsersPage() {
                 </TableHeader>
                 <TableBody>
                   {users.map((user) => (
-                    <TableRow key={user.id}>
+                    <TableRow key={user.id} className="border-b">
                       <TableCell className="font-medium">
                         {user.email || <span className="text-muted-foreground text-xs font-mono">{user.id}</span>}
                       </TableCell>
@@ -545,39 +577,21 @@ export default function MobileUsersPage() {
       <Dialog open={isCreateModalOpen} onOpenChange={(open) => !open && closeCreateModal()}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Create User</DialogTitle>
+            <DialogTitle>Create Mobile User</DialogTitle>
             <DialogDescription>
-              Add a new mobile app user account
+              Add a new mobile app user and link them to a business
             </DialogDescription>
           </DialogHeader>
 
-          {tempPassword ? (
-            // Show password after creation
+          {createdSuccessfully ? (
+            // Show success message
             <div className="py-6 space-y-4">
               <div className="text-center space-y-2">
                 <div className="text-5xl">✅</div>
                 <h3 className="text-xl font-semibold text-foreground">User Created Successfully!</h3>
                 <p className="text-sm text-muted-foreground">
-                  Save this temporary password. It will not be shown again.
+                  User created and linked to business. Temporary password must be changed on first login.
                 </p>
-              </div>
-
-              <div className="p-4 bg-muted rounded-lg space-y-3">
-                <Label>Temporary Password</Label>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 px-4 py-3 bg-background border rounded-md font-mono text-lg break-all">
-                    {tempPassword}
-                  </code>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={copyPassword}
-                    className="shrink-0"
-                  >
-                    {passwordCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
               </div>
 
               <Button onClick={closeCreateModal} className="w-full">
@@ -594,9 +608,9 @@ export default function MobileUsersPage() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {/* Email Field */}
-                  <div className="space-y-2 sm:col-span-2">
+                  <div className="space-y-2">
                     <Label htmlFor="create-email" className="text-foreground">
                       Email <span className="text-destructive">*</span>
                     </Label>
@@ -611,55 +625,55 @@ export default function MobileUsersPage() {
                     />
                   </div>
 
-                  {/* Role Field */}
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="create-role" className="text-foreground">
-                      Role <span className="text-destructive">*</span>
+                  {/* Temporary Password Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="create-temp-password" className="text-foreground">
+                      Temporary Password <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="create-temp-password"
+                      type="text"
+                      value={createFormData.tempPassword}
+                      onChange={(e) => setCreateFormData({ ...createFormData, tempPassword: e.target.value })}
+                      placeholder="Minimum 8 characters"
+                      disabled={isCreating}
+                      autoComplete="new-password"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      This is a temporary password. The user will be required to change it after logging in.
+                    </p>
+                  </div>
+
+                  {/* Business Dropdown */}
+                  <div className="space-y-2">
+                    <Label htmlFor="create-client-id" className="text-foreground">
+                      Business <span className="text-destructive">*</span>
                     </Label>
                     <Select
-                      value={createFormData.role}
-                      onValueChange={(value) => setCreateFormData({ ...createFormData, role: value })}
-                      disabled={isCreating}
+                      value={createFormData.clientId}
+                      onValueChange={(value) => setCreateFormData({ ...createFormData, clientId: value })}
+                      disabled={isCreating || isLoadingClients}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select role" />
+                        <SelectValue placeholder={isLoadingClients ? "Loading businesses..." : "Select a business"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="client">Client</SelectItem>
-                        <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        {clients.length === 0 ? (
+                          <div className="px-2 py-3 text-sm text-muted-foreground text-center">
+                            No businesses available
+                          </div>
+                        ) : (
+                          clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.business_name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  {/* Display Name Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="create-display-name" className="text-foreground">
-                      Display Name
-                    </Label>
-                    <Input
-                      id="create-display-name"
-                      type="text"
-                      value={createFormData.display_name}
-                      onChange={(e) => setCreateFormData({ ...createFormData, display_name: e.target.value })}
-                      placeholder="John Doe"
-                      disabled={isCreating}
-                    />
-                  </div>
-
-                  {/* Phone Field */}
-                  <div className="space-y-2">
-                    <Label htmlFor="create-phone" className="text-foreground">
-                      Phone
-                    </Label>
-                    <Input
-                      id="create-phone"
-                      type="tel"
-                      value={createFormData.phone}
-                      onChange={(e) => setCreateFormData({ ...createFormData, phone: e.target.value })}
-                      placeholder="+1 (555) 123-4567"
-                      disabled={isCreating}
-                    />
+                    <p className="text-xs text-muted-foreground">
+                      Select the business this user will be linked to
+                    </p>
                   </div>
                 </div>
               </div>
@@ -672,7 +686,7 @@ export default function MobileUsersPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isCreating}>
+                <Button type="submit" disabled={isCreating || isLoadingClients}>
                   {isCreating ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>

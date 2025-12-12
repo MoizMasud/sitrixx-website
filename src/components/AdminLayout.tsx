@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Home, Users, MessageSquare, Star, LogOut, Menu, X, UserPlus } from 'lucide-react';
+import { Home, Users, MessageSquare, Star, LogOut, Menu, X, KeyRound } from 'lucide-react';
 import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import ThemeToggle from './ThemeToggle';
@@ -47,7 +47,7 @@ function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutP
     { name: 'Clients', href: `${baseUrl}/admin/clients`, icon: Users, key: 'clients' },
     { name: 'Leads', href: `${baseUrl}/admin/leads`, icon: MessageSquare, key: 'leads' },
     { name: 'Reviews', href: `${baseUrl}/admin/reviews`, icon: Star, key: 'reviews' },
-    { name: 'Mobile Users', href: `${baseUrl}/admin/users`, icon: UserPlus, key: 'users' },
+    { name: 'User Credentials', href: `${baseUrl}/admin/users`, icon: KeyRound, key: 'users' },
   ];
 
   if (!mounted) {
