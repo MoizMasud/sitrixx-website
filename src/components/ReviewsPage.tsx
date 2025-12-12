@@ -152,7 +152,7 @@ export default function ReviewsPage({ clients }: ReviewsPageProps) {
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+        <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight text-foreground">
           Reviews
         </h1>
         <p className="text-lg text-muted-foreground">
@@ -164,19 +164,19 @@ export default function ReviewsPage({ clients }: ReviewsPageProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-4xl font-black">{totalReviews}</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">{totalReviews}</CardTitle>
             <CardDescription className="font-medium">Total Reviews</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-4xl font-black">{fiveStarReviews}</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">{fiveStarReviews}</CardTitle>
             <CardDescription className="font-medium">5-Star Reviews</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-4xl font-black">{averageRating}</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">{averageRating}</CardTitle>
             <CardDescription className="font-medium">Average Rating</CardDescription>
           </CardHeader>
         </Card>
@@ -245,15 +245,15 @@ export default function ReviewsPage({ clients }: ReviewsPageProps) {
       )}
 
       {/* Reviews Table */}
-      <div className="bg-card rounded-xl overflow-hidden">
+      <div className="bg-card rounded-xl overflow-hidden border border-border">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[180px]">Date / Time</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead className="w-[140px]">Rating</TableHead>
-              <TableHead className="min-w-[300px]">Feedback</TableHead>
+            <TableRow className="border-b border-border hover:bg-muted/50">
+              <TableHead className="w-[180px] text-foreground font-bold">Date / Time</TableHead>
+              <TableHead className="text-foreground font-bold">Client</TableHead>
+              <TableHead className="text-foreground font-bold">Customer</TableHead>
+              <TableHead className="w-[140px] text-foreground font-bold">Rating</TableHead>
+              <TableHead className="min-w-[300px] text-foreground font-bold">Feedback</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -280,22 +280,22 @@ export default function ReviewsPage({ clients }: ReviewsPageProps) {
               </TableRow>
             ) : (
               filteredReviews.map((review) => (
-                <TableRow key={review.id}>
+                <TableRow key={review.id} className="border-b border-border hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-xs font-mono">
+                      <span className="text-xs font-mono text-foreground">
                         {formatDate(review.created_at)}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-semibold">{review.client_name}</span>
+                    <span className="font-semibold text-foreground">{review.client_name}</span>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
                       {review.customer_name ? (
-                        <div className="font-semibold">{review.customer_name}</div>
+                        <div className="font-semibold text-foreground">{review.customer_name}</div>
                       ) : (
                         <div className="text-muted-foreground italic text-sm">Anonymous</div>
                       )}
@@ -313,7 +313,7 @@ export default function ReviewsPage({ clients }: ReviewsPageProps) {
                     {review.feedback ? (
                       <div className="flex items-start gap-2">
                         <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                        <p className="text-sm line-clamp-3 max-w-md">{review.feedback}</p>
+                        <p className="text-sm line-clamp-3 max-w-md text-foreground">{review.feedback}</p>
                       </div>
                     ) : (
                       <span className="text-muted-foreground italic text-sm">No feedback provided</span>

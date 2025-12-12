@@ -1,0 +1,82 @@
+---
+import MainLayout from '../../layouts/main.astro';
+import AdminLayout from '../../components/AdminLayout';
+import MobileUsersPage from '../../components/MobileUsersPage';
+import { baseUrl } from '../../lib/base-url';
+---
+
+<MainLayout title="Mobile Users - Admin - Sitrixx">
+  <AdminLayout activePage="users" client:only="react">
+    <MobileUsersPage client:only="react" />
+  </AdminLayout>
+
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Authentication Guard Script -->
+  <script define:vars={{ baseUrl }}>
+    const token = localStorage.getItem('sitrixx_token');
+    if (!token) {
+      window.location.href = baseUrl + '/admin/login';
+    }
+  </script>
+
+  <!-- Initialize Supabase and authFetch -->
+  <script>
+    // Wait for Supabase library to load
+    function waitForSupabase(callback) {
+      if (window.supabase && window.supabase.createClient) {
+        callback();
+      } else {
+        setTimeout(() => waitForSupabase(callback), 50);
+      }
+    }
+
+    waitForSupabase(() => {
+      // Initialize Supabase Client
+      const { createClient } = window.supabase;
+      const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
+      
+      window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Define authFetch
+      const API_BASE = 'https://sitrixx-website-backend.vercel.app';
+
+      async function authFetch(path, options = {}) {
+        const supabase = window.supabaseClient;
+        if (!supabase) {
+          console.error('Supabase client not found');
+          throw new Error('Supabase not initialized');
+        }
+
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting session', error);
+          throw error;
+        }
+
+        const session = data.session;
+        if (!session) {
+          window.location.href = '/admin/login';
+          throw new Error('Not authenticated');
+        }
+
+        const token = session.access_token;
+
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(options.headers || {}),
+          Authorization: `Bearer ${token}`,
+        };
+
+        return fetch(`${API_BASE}${path}`, {
+          ...options,
+          headers,
+        });
+      }
+
+      window.authFetch = authFetch;
+    });
+  </script>
+</MainLayout>

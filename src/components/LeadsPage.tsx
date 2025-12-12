@@ -136,7 +136,7 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+        <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight text-foreground">
           Leads
         </h1>
         <p className="text-lg text-muted-foreground">
@@ -148,19 +148,19 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-4xl font-black">{totalLeads}</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">{totalLeads}</CardTitle>
             <CardDescription className="font-medium">Total Leads</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-4xl font-black">{websiteForms}</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">{websiteForms}</CardTitle>
             <CardDescription className="font-medium">Website Forms</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-4xl font-black">{missedCalls}</CardTitle>
+            <CardTitle className="text-4xl font-black text-foreground">{missedCalls}</CardTitle>
             <CardDescription className="font-medium">Missed Calls</CardDescription>
           </CardHeader>
         </Card>
@@ -229,16 +229,16 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
       )}
 
       {/* Leads Table */}
-      <div className="bg-card rounded-xl overflow-hidden">
+      <div className="bg-card rounded-xl overflow-hidden border border-border">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[180px]">Date / Time</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead className="w-[140px]">Source</TableHead>
-              <TableHead>Lead Name</TableHead>
-              <TableHead>Contact Info</TableHead>
-              <TableHead className="min-w-[300px]">Message</TableHead>
+            <TableRow className="border-b border-border hover:bg-muted/50">
+              <TableHead className="w-[180px] text-foreground font-bold">Date / Time</TableHead>
+              <TableHead className="text-foreground font-bold">Client</TableHead>
+              <TableHead className="w-[140px] text-foreground font-bold">Source</TableHead>
+              <TableHead className="text-foreground font-bold">Lead Name</TableHead>
+              <TableHead className="text-foreground font-bold">Contact Info</TableHead>
+              <TableHead className="min-w-[300px] text-foreground font-bold">Message</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -265,17 +265,17 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
               </TableRow>
             ) : (
               filteredLeads.map((lead) => (
-                <TableRow key={lead.id}>
+                <TableRow key={lead.id} className="border-b border-border hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-xs font-mono">
+                      <span className="text-xs font-mono text-foreground">
                         {formatDate(lead.created_at)}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-semibold">{lead.client_name}</span>
+                    <span className="font-semibold text-foreground">{lead.client_name}</span>
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -291,7 +291,7 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
                   </TableCell>
                   <TableCell>
                     {lead.name ? (
-                      <span className="font-semibold">{lead.name}</span>
+                      <span className="font-semibold text-foreground">{lead.name}</span>
                     ) : (
                       <span className="text-muted-foreground italic text-sm">No name</span>
                     )}
@@ -303,7 +303,7 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
                           <Phone className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
                           <a
                             href={`tel:${lead.phone}`}
-                            className="text-sm hover:text-primary hover:underline font-mono"
+                            className="text-sm hover:text-primary hover:underline font-mono text-foreground"
                           >
                             {lead.phone}
                           </a>
@@ -314,7 +314,7 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
                           <Mail className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                           <a
                             href={`mailto:${lead.email}`}
-                            className="text-sm hover:text-primary hover:underline"
+                            className="text-sm hover:text-primary hover:underline text-foreground"
                           >
                             {lead.email}
                           </a>
@@ -323,7 +323,7 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <p className="text-sm line-clamp-2 max-w-md">
+                    <p className="text-sm line-clamp-2 max-w-md text-foreground">
                       {lead.message || 'No message'}
                     </p>
                   </TableCell>

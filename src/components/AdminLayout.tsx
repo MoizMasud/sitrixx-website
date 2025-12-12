@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Home, Users, MessageSquare, Star, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Home, Users, MessageSquare, Star, LogOut, Menu, X, UserPlus } from 'lucide-react';
 import { Button } from './ui/button';
 import { baseUrl } from '../lib/base-url';
 import ThemeToggle from './ThemeToggle';
@@ -29,8 +29,8 @@ function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutP
       setCurrentPage('leads');
     } else if (path.includes('/admin/reviews')) {
       setCurrentPage('reviews');
-    } else if (path.includes('/admin/settings')) {
-      setCurrentPage('settings');
+    } else if (path.includes('/admin/users')) {
+      setCurrentPage('users');
     } else if (path.includes('/admin')) {
       setCurrentPage('dashboard');
     }
@@ -47,7 +47,7 @@ function AdminLayoutContent({ children, activePage = 'dashboard' }: AdminLayoutP
     { name: 'Clients', href: `${baseUrl}/admin/clients`, icon: Users, key: 'clients' },
     { name: 'Leads', href: `${baseUrl}/admin/leads`, icon: MessageSquare, key: 'leads' },
     { name: 'Reviews', href: `${baseUrl}/admin/reviews`, icon: Star, key: 'reviews' },
-    { name: 'Settings', href: `${baseUrl}/admin/settings`, icon: Settings, key: 'settings' },
+    { name: 'Mobile Users', href: `${baseUrl}/admin/users`, icon: UserPlus, key: 'users' },
   ];
 
   if (!mounted) {

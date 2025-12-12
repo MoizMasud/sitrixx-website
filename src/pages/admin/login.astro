@@ -9,108 +9,117 @@ import { baseUrl } from '../../lib/base-url';
 >
   <div class="min-h-screen bg-background flex items-center justify-center px-4 py-12">
     <div class="w-full max-w-md">
-      <div class="text-center mb-8">
-        <a href={`${baseUrl}/`} class="inline-block">
-          <h1 class="text-4xl font-black mb-2 tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Sitrixx
-          </h1>
-        </a>
-        <p class="text-muted-foreground">Admin Portal</p>
+      <!-- Loading state shown initially -->
+      <div id="auth-checking" class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <p class="text-muted-foreground">Checking authentication...</p>
       </div>
 
-      <div id="login-container" class="bg-card border-2 rounded-3xl p-8 shadow-xl relative">
-        <!-- Theme Toggle Button -->
-        <div class="absolute top-6 right-6">
-          <button
-            id="theme-toggle"
-            class="p-2 hover:bg-accent rounded-lg transition-colors"
-            aria-label="Toggle theme"
+      <!-- Login form hidden initially -->
+      <div id="login-content" class="hidden">
+        <div class="text-center mb-8">
+          <a href={`${baseUrl}/`} class="inline-block">
+            <h1 class="text-4xl font-black mb-2 tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Sitrixx
+            </h1>
+          </a>
+          <p class="text-muted-foreground">Admin Portal</p>
+        </div>
+
+        <div id="login-container" class="bg-card border-2 rounded-3xl p-8 shadow-xl relative">
+          <!-- Theme Toggle Button -->
+          <div class="absolute top-6 right-6">
+            <button
+              id="theme-toggle"
+              class="p-2 hover:bg-accent rounded-lg transition-colors"
+              aria-label="Toggle theme"
+            >
+              <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+              <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Back Button -->
+          <a 
+            href={`${baseUrl}/`}
+            class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
           >
-            <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
-              <circle cx="12" cy="12" r="5"/>
-              <line x1="12" y1="1" x2="12" y2="3"/>
-              <line x1="12" y1="21" x2="12" y2="23"/>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-              <line x1="1" y1="12" x2="3" y2="12"/>
-              <line x1="21" y1="12" x2="23" y2="12"/>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform">
+              <path d="m15 18-6-6 6-6"/>
             </svg>
-            <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-          </button>
-        </div>
+            Back to Home
+          </a>
 
-        <!-- Back Button -->
-        <a 
-          href={`${baseUrl}/`}
-          class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 group"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform">
-            <path d="m15 18-6-6 6-6"/>
-          </svg>
-          Back to Home
-        </a>
-
-        <h2 class="text-2xl font-bold mb-6 tracking-tight">Log In</h2>
-        
-        <!-- Error Message -->
-        <div id="error-message" class="hidden mb-6 p-4 bg-destructive/10 border-2 border-destructive/50 rounded-xl">
-          <p class="text-sm text-destructive font-medium"></p>
-        </div>
-
-        <!-- Success Message -->
-        <div id="success-message" class="hidden mb-6 p-4 bg-green-500/10 border-2 border-green-500/50 rounded-xl">
-          <p class="text-sm text-green-600 dark:text-green-400 font-medium"></p>
-        </div>
-        
-        <form id="login-form" class="space-y-6">
-          <div>
-            <label for="login-email" class="block text-sm font-medium mb-2 text-foreground dark:!text-white">
-              Email <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              id="login-email"
-              name="email"
-              required
-              class="w-full px-4 py-3 rounded-xl border-2 bg-background text-foreground dark:!text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-              placeholder="admin@sitrixx.com"
-            />
+          <h2 class="text-2xl font-bold mb-6 tracking-tight">Log In</h2>
+          
+          <!-- Error Message -->
+          <div id="error-message" class="hidden mb-6 p-4 bg-destructive/10 border-2 border-destructive/50 rounded-xl">
+            <p class="text-sm text-destructive font-medium"></p>
           </div>
 
-          <div>
-            <label for="login-password" class="block text-sm font-medium mb-2 text-foreground dark:!text-white">
-              Password <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              id="login-password"
-              name="password"
-              required
-              class="w-full px-4 py-3 rounded-xl border-2 bg-background text-foreground dark:!text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-              placeholder="••••••••"
-            />
+          <!-- Success Message -->
+          <div id="success-message" class="hidden mb-6 p-4 bg-green-500/10 border-2 border-green-500/50 rounded-xl">
+            <p class="text-sm text-green-600 dark:text-green-400 font-medium"></p>
           </div>
+          
+          <form id="login-form" class="space-y-6">
+            <div>
+              <label for="login-email" class="block text-sm font-medium mb-2 text-foreground dark:!text-white">
+                Email <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                required
+                class="w-full px-4 py-3 rounded-xl border-2 bg-background text-foreground dark:!text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                placeholder="admin@sitrixx.com"
+              />
+            </div>
 
-          <div class="flex items-center text-sm">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="remember-me" class="rounded border-2" />
-              <span class="text-muted-foreground">Remember me</span>
-            </label>
-          </div>
+            <div>
+              <label for="login-password" class="block text-sm font-medium mb-2 text-foreground dark:!text-white">
+                Password <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                required
+                class="w-full px-4 py-3 rounded-xl border-2 bg-background text-foreground dark:!text-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                placeholder="••••••••"
+              />
+            </div>
 
-          <button
-            type="submit"
-            id="login-button"
-            class="w-full bg-gradient-to-r from-primary to-purple-600 !text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span id="button-text" class="!text-white">Log In</span>
-            <span id="button-loading" class="hidden !text-white">Logging in...</span>
-          </button>
-        </form>
+            <div class="flex items-center text-sm">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="remember-me" class="rounded border-2" />
+                <span class="text-muted-foreground">Remember me</span>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              id="login-button"
+              class="w-full bg-gradient-to-r from-primary to-purple-600 !text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span id="button-text" class="!text-white">Log In</span>
+              <span id="button-loading" class="hidden !text-white">Logging in...</span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -158,10 +167,10 @@ import { baseUrl } from '../../lib/base-url';
 
     // Prevent redirect loops
     let isRedirecting = false;
-    let isCheckingAuth = false;
 
     document.addEventListener('DOMContentLoaded', async function () {
-      console.log('Login page loaded');
+      const authCheckingEl = document.getElementById('auth-checking');
+      const loginContentEl = document.getElementById('login-content');
       
       const { createClient } = window.supabase;
 
@@ -174,6 +183,24 @@ import { baseUrl } from '../../lib/base-url';
       // Expose Supabase client globally for authFetch
       window.supabaseClient = supabase;
 
+      // Check if user is already logged in
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session && localStorage.getItem('sitrixx_token')) {
+          // Already logged in, redirect immediately
+          isRedirecting = true;
+          window.location.replace(baseUrl + '/admin');
+          return;
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      }
+
+      // Not logged in, show the login form
+      authCheckingEl.classList.add('hidden');
+      loginContentEl.classList.remove('hidden');
+
       const form = document.getElementById('login-form');
       const emailInput = document.getElementById('login-email');
       const passwordInput = document.getElementById('login-password');
@@ -182,27 +209,6 @@ import { baseUrl } from '../../lib/base-url';
       const buttonLoading = document.getElementById('button-loading');
       const errorMessage = document.getElementById('error-message');
       const successMessage = document.getElementById('success-message');
-
-      // Check if user is already logged in - only check once
-      if (!isRedirecting && !isCheckingAuth) {
-        isCheckingAuth = true;
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          console.log('Session check:', session ? 'Active session found' : 'No session');
-          
-          if (session && localStorage.getItem('sitrixx_token')) {
-            isRedirecting = true;
-            console.log('Already logged in, redirecting to dashboard...');
-            window.location.replace(baseUrl + '/admin');
-            return; // Stop further execution
-          }
-        } catch (error) {
-          console.error('Session check error:', error);
-          // Continue to show login form on error
-        } finally {
-          isCheckingAuth = false;
-        }
-      }
 
       if (!form || !emailInput || !passwordInput) {
         console.warn('Login form elements not found');
@@ -243,7 +249,6 @@ import { baseUrl } from '../../lib/base-url';
         
         // Prevent double submission
         if (isRedirecting || loginButton.disabled) {
-          console.log('Form submission blocked - already processing');
           return;
         }
 
@@ -251,8 +256,6 @@ import { baseUrl } from '../../lib/base-url';
 
         const email = emailInput.value.trim();
         const password = passwordInput.value;
-
-        console.log('Attempting login for:', email);
 
         if (!email || !password) {
           showError('Please enter your email and password.');
@@ -274,14 +277,11 @@ import { baseUrl } from '../../lib/base-url';
             return;
           }
 
-          console.log('Login successful:', data.user?.email);
-
           // Store session token for later API calls
           const accessToken = data.session?.access_token;
           if (accessToken) {
             localStorage.setItem('sitrixx_token', accessToken);
             localStorage.setItem('sitrixx_user', JSON.stringify(data.user));
-            console.log('Token stored successfully');
           }
 
           showSuccess('Login successful! Redirecting...');
@@ -290,7 +290,7 @@ import { baseUrl } from '../../lib/base-url';
           // Redirect to admin dashboard
           setTimeout(() => {
             window.location.replace(baseUrl + '/admin');
-          }, 1000);
+          }, 500);
 
         } catch (err) {
           console.error('Unexpected error:', err);

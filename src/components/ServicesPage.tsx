@@ -3,14 +3,11 @@ import { motion, useInView } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { Button } from './ui/button';
 import { 
-  RefreshCw,
-  Building2,
   Check,
   ArrowRight,
   Globe,
   Zap,
   Palette,
-  Crown,
   Sparkles,
   ArrowDown,
   Package,
@@ -21,45 +18,6 @@ import {
   Smartphone
 } from 'lucide-react';
 import { baseUrl } from '../lib/base-url';
-
-const pricingPlans = [
-  {
-    name: "Monthly Subscription",
-    subtitle: "Plan A",
-    price: "$149/month",
-    term: "12-month minimum commitment",
-    description: "Perfect for businesses wanting a low upfront cost with managed website service",
-    features: [
-      "Custom website build included",
-      "2 small edits per month",
-      "Hosting & backups",
-      "Basic support",
-      "Google review automation (email & SMS)"
-    ],
-    icon: RefreshCw,
-    gradient: "from-primary to-purple-600",
-    bestFor: "Ideal for businesses that want zero upfront costs and prefer monthly payments"
-  },
-  {
-    name: "One-Time Build + Maintenance",
-    subtitle: "Plan B",
-    price: "$1,499",
-    term: "One-time + $100/month (3-month minimum)",
-    description: "Complete custom website with ongoing support and maintenance",
-    features: [
-      "Full custom website build",
-      "1-2 edits per month included",
-      "Hosting & security monitoring",
-      "Priority support",
-      "Monthly maintenance & updates",
-      "Own your website outright"
-    ],
-    popular: true,
-    icon: Building2,
-    gradient: "from-primary to-purple-600",
-    bestFor: "Best for businesses that want to own the site outright with optional ongoing support"
-  }
-];
 
 const addOns = [
   {
@@ -80,6 +38,19 @@ const addOns = [
     price: "$100",
     icon: Palette,
   }
+];
+
+const includedFeatures = [
+  "Custom website",
+  "Automated lead follow-up",
+  "Missed call text back",
+  "5-star magic review funnel",
+  "One-click marketing campaign",
+  "Scannable Google review cards",
+  "SEO",
+  "Hosting & backups",
+  "Monthly maintenance & updates",
+  "Priority support"
 ];
 
 export default function ServicesPage() {
@@ -439,7 +410,7 @@ export default function ServicesPage() {
                   </motion.div>
                 </motion.div>
 
-                {/* Mobile App Card - Updated with better dark mode colors */}
+                {/* Mobile App Card */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8, rotateX: -20 }}
                   animate={diagramInView ? { opacity: 1, scale: 1, rotateX: 0 } : { opacity: 0, scale: 0.8, rotateX: -20 }}
@@ -469,105 +440,219 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Pricing Plans */}
+      {/* Single Pricing Plan with Two Payment Options */}
       <section ref={plansRef} className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
             animate={plansInView ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-20"
           >
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-foreground">Choose Your Plan</h2>
+            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-foreground">Choose Your Payment Plan</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Every website is fully customized — pick the structure that works best for you
+              Same great service, flexible payment options that work for you
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {pricingPlans.map((plan, index) => {
-              const Icon = plan.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={plansInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-                  transition={{ duration: 0.7, delay: index * 0.15 }}
-                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                  className="relative h-full"
-                >
-                  <div className={`relative h-full bg-card border-2 rounded-3xl shadow-xl hover:shadow-2xl transition-all overflow-hidden ${
-                    plan.popular ? 'border-primary/50 ring-2 ring-primary/20' : 'border-border'
-                  }`}>
-                    {plan.popular && (
-                      <div className="absolute top-0 left-0 right-0 h-14 bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center">
-                        <span className="text-white text-sm font-black tracking-wider flex items-center gap-2">
-                          <Crown size={18} strokeWidth={2.5} />
-                          MOST POPULAR
-                        </span>
-                      </div>
-                    )}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={plansInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+            transition={{ duration: 0.7 }}
+            className="relative"
+          >
+            {/* Redesigned Package Card */}
+            <div className="relative overflow-hidden rounded-3xl">
+              {/* Gradient Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5" />
+              
+              {/* Animated glow effect */}
+              <motion.div
+                className="absolute inset-0 opacity-30"
+                animate={{
+                  background: [
+                    'radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 50%)',
+                    'radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.1) 0%, transparent 50%)',
+                    'radial-gradient(circle at 0% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 50%)',
+                  ],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
 
-                    <div className={`p-10 ${plan.popular ? 'pt-24' : 'pt-10'}`}>
-                      <div className="flex items-start gap-5 mb-8">
-                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
-                          <Icon className="text-white" size={32} strokeWidth={2.5} />
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-xs text-muted-foreground font-bold tracking-widest uppercase mb-2">{plan.subtitle}</div>
-                          <h3 className="text-2xl md:text-3xl font-black tracking-tight text-foreground">{plan.name}</h3>
-                        </div>
-                      </div>
+              <div className="relative bg-card/80 backdrop-blur-xl border-2 border-border rounded-3xl shadow-2xl overflow-hidden">
+                {/* Top Badge Bar */}
+                <div className="relative h-20 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center overflow-hidden">
+                  {/* Animated shimmer effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{
+                      x: ['-100%', '200%'],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  />
+                  <div className="relative flex items-center gap-3">
+                    <Sparkles size={24} strokeWidth={2.5} className="text-white" />
+                    <span className="text-white text-lg md:text-xl font-black tracking-wide">
+                      COMPLETE WEBSITE PACKAGE
+                    </span>
+                    <Sparkles size={24} strokeWidth={2.5} className="text-white" />
+                  </div>
+                </div>
 
-                      {/* Pricing */}
-                      <div className="mb-6 pb-6 border-b border-border">
-                        <div className="text-4xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
-                          {plan.price}
-                        </div>
-                        <div className="text-sm text-muted-foreground font-medium">
-                          {plan.term}
-                        </div>
-                      </div>
-                      
-                      <p className="text-muted-foreground leading-relaxed mb-8 text-base">{plan.description}</p>
+                <div className="p-8 md:p-12">
+                  {/* What's Included Section */}
+                  <div className="mb-12">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={plansInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="text-center mb-10"
+                    >
+                      <h3 className="text-3xl md:text-4xl font-black mb-4 bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Everything Included
+                      </h3>
+                      <p className="text-muted-foreground text-base">
+                        One complete package with all the tools you need to succeed
+                      </p>
+                    </motion.div>
 
-                      <div className="space-y-4 mb-8">
-                        {plan.features.map((feature, i) => (
-                          <div key={i} className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <Check className="text-primary" size={14} strokeWidth={3} />
-                            </div>
-                            <span className="text-sm leading-relaxed text-foreground/90">{feature}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 max-w-3xl mx-auto">
+                      {includedFeatures.map((feature, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={plansInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                          transition={{ duration: 0.4, delay: 0.3 + i * 0.05 }}
+                          className="flex items-start gap-3 group"
+                        >
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                            <Check className="text-white" size={14} strokeWidth={3} />
                           </div>
-                        ))}
-                      </div>
-
-                      <div className="bg-gradient-to-br from-muted/50 to-muted/30 border border-muted rounded-2xl p-5 mb-8">
-                        <p className="text-xs text-muted-foreground font-medium text-center leading-relaxed">
-                          {plan.bestFor}
-                        </p>
-                      </div>
-
-                      <Button 
-                        className={`w-full rounded-2xl h-14 font-bold text-base shadow-lg hover:shadow-xl transition-all ${
-                          plan.popular 
-                            ? 'bg-gradient-to-r from-primary to-purple-600 hover:scale-105' 
-                            : 'hover:scale-105'
-                        }`}
-                        size="lg"
-                        asChild
-                      >
-                        <a href={`${baseUrl}/contact`} className="flex items-center justify-center gap-2">
-                          Get Started
-                          <ArrowRight size={18} />
-                        </a>
-                      </Button>
+                          <span className="text-sm leading-relaxed text-foreground/90 font-medium">{feature}</span>
+                        </motion.div>
+                      ))}
                     </div>
                   </div>
-                </motion.div>
-              );
-            })}
-          </div>
+
+                  {/* Divider */}
+                  <div className="relative my-12">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gradient-to-r from-transparent via-border to-transparent"></div>
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-card px-6 py-2 text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                        Choose Your Payment Structure
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Payment Options */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    {/* Option A - Monthly */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={plansInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.5, delay: 0.6 }}
+                      whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
+                      className="relative group"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="relative bg-gradient-to-br from-muted/80 to-muted/40 border-2 border-border hover:border-primary/50 rounded-2xl p-8 transition-all backdrop-blur-sm">
+                        <div className="text-center mb-6">
+                          <div className="inline-block px-4 py-2 bg-primary/10 rounded-full mb-4">
+                            <span className="text-xs font-bold text-primary tracking-wider uppercase">Option A</span>
+                          </div>
+                          <div className="text-5xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
+                            $149
+                          </div>
+                          <p className="text-sm text-muted-foreground font-semibold">per month</p>
+                          <p className="text-xs text-muted-foreground mt-1">12-month minimum commitment</p>
+                        </div>
+                        <div className="space-y-3 mb-6">
+                          <div className="flex items-start gap-2">
+                            <Check className="text-primary flex-shrink-0 mt-0.5" size={16} strokeWidth={3} />
+                            <span className="text-sm text-foreground/90">Zero upfront costs</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Check className="text-primary flex-shrink-0 mt-0.5" size={16} strokeWidth={3} />
+                            <span className="text-sm text-foreground/90">Low monthly investment</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Check className="text-primary flex-shrink-0 mt-0.5" size={16} strokeWidth={3} />
+                            <span className="text-sm text-foreground/90">Everything included above</span>
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full rounded-xl h-12 font-bold hover:scale-105 transition-all"
+                          asChild
+                        >
+                          <a href={`${baseUrl}/contact`}>
+                            Choose Monthly
+                          </a>
+                        </Button>
+                      </div>
+                    </motion.div>
+
+                    {/* Option B - One-Time */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={plansInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.5, delay: 0.7 }}
+                      whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
+                      className="relative group"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary to-purple-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity" />
+                      <div className="relative bg-gradient-to-br from-primary/10 to-purple-600/10 border-2 border-primary/50 rounded-2xl p-8 transition-all shadow-lg backdrop-blur-sm">
+                        <div className="text-center mb-6">
+                          <div className="inline-block px-4 py-2 bg-gradient-to-r from-primary to-purple-600 rounded-full mb-4 shadow-lg">
+                            <span className="text-xs font-bold text-white tracking-wider uppercase flex items-center gap-1.5">
+                              <Star size={14} strokeWidth={3} />
+                              Most Popular
+                            </span>
+                          </div>
+                          <div className="text-5xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
+                            $1,499
+                          </div>
+                          <p className="text-sm text-foreground font-semibold">one-time build</p>
+                          <p className="text-xs text-muted-foreground mt-1">+ $100/mo maintenance (3-month min)</p>
+                        </div>
+                        <div className="space-y-3 mb-6">
+                          <div className="flex items-start gap-2">
+                            <Check className="text-primary flex-shrink-0 mt-0.5" size={16} strokeWidth={3} />
+                            <span className="text-sm text-foreground/90 font-semibold">Own your website outright</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Check className="text-primary flex-shrink-0 mt-0.5" size={16} strokeWidth={3} />
+                            <span className="text-sm text-foreground/90">Lower long-term cost</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <Check className="text-primary flex-shrink-0 mt-0.5" size={16} strokeWidth={3} />
+                            <span className="text-sm text-foreground/90">Everything included above</span>
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full rounded-xl h-12 font-bold bg-gradient-to-r from-primary to-purple-600 hover:scale-105 transition-all shadow-lg"
+                          asChild
+                        >
+                          <a href={`${baseUrl}/contact`}>
+                            Choose One-Time
+                          </a>
+                        </Button>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
