@@ -183,11 +183,6 @@ export default function ClientsPage() {
     setFormError(null);
 
     // Validate required fields
-    if (!isEdit && !formData.id.trim()) {
-      setFormError('Client ID is required');
-      return false;
-    }
-
     if (!formData.business_name.trim()) {
       setFormError('Business Name is required');
       return false;
@@ -195,12 +190,6 @@ export default function ClientsPage() {
 
     if (!isEdit && !formData.owner_email.trim()) {
       setFormError('Owner Email is required');
-      return false;
-    }
-
-    // Validate Client ID format (no spaces)
-    if (!isEdit && formData.id.includes(' ')) {
-      setFormError('Client ID cannot contain spaces');
       return false;
     }
 
@@ -228,7 +217,6 @@ export default function ClientsPage() {
 
     try {
       const payload = {
-        id: formData.id.trim(),
         business_name: formData.business_name.trim(),
         owner_email: formData.owner_email.trim(),
         website_url: formData.website_url.trim() || undefined,
@@ -522,23 +510,6 @@ export default function ClientsPage() {
               {/* Basic Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="client-id" className="text-foreground">
-                    Client ID <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="client-id"
-                    value={formData.id}
-                    onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-                    placeholder="e.g., acme-corp"
-                    disabled={isSaving}
-                    className="font-mono"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Unique identifier (no spaces allowed)
-                  </p>
-                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="business-name" className="text-foreground">
