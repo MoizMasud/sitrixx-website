@@ -389,6 +389,16 @@ export default function UsersPage() {
     return 'Delete user';
   };
 
+  // Handler for delete button click with protection
+  const handleDeleteClick = (user: User) => {
+    // Double-check protection before opening modal
+    if (!canDeleteUser(user)) {
+      console.warn('Attempted to delete protected user:', user.email);
+      return;
+    }
+    setDeleteUserId(user.id);
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
@@ -471,46 +481,49 @@ export default function UsersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.email}</TableCell>
-                      <TableCell>{user.display_name || '—'}</TableCell>
-                      <TableCell>{user.phone || '—'}</TableCell>
-                      <TableCell>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
-                          user.role === 'admin' 
-                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' 
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-                        }`}>
-                          {user.role}
-                        </span>
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">{formatDate(user.created_at)}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openEditModal(user)}
-                            className="h-8 w-8 p-0"
-                            title="Edit user"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setDeleteUserId(user.id)}
-                            disabled={!canDeleteUser(user)}
-                            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-40 disabled:cursor-not-allowed"
-                            title={getDeleteTooltip(user)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {users.map((user) => {
+                    const isDeletable = canDeleteUser(user);
+                    return (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">{user.email}</TableCell>
+                        <TableCell>{user.display_name || '—'}</TableCell>
+                        <TableCell>{user.phone || '—'}</TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                            user.role === 'admin' 
+                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' 
+                              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                          }`}>
+                            {user.role}
+                          </span>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap">{formatDate(user.created_at)}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditModal(user)}
+                              className="h-8 w-8 p-0"
+                              title="Edit user"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteClick(user)}
+                              disabled={!isDeletable}
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                              title={getDeleteTooltip(user)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
