@@ -37,6 +37,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
   // Edit modal state
   const [editUser, setEditUser] = useState<User | null>(null);
@@ -53,7 +54,7 @@ export default function UsersPage() {
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Get current user ID on mount
+  // Get current user ID and email on mount
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
@@ -61,8 +62,9 @@ export default function UsersPage() {
         if (!supabase) return;
 
         const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user?.id) {
+        if (session?.user) {
           setCurrentUserId(session.user.id);
+          setCurrentUserEmail(session.user.email || null);
         }
       } catch (err) {
         console.error('Error getting current user:', err);
@@ -356,17 +358,35 @@ export default function UsersPage() {
     }
   };
 
-  // Helper to check if user is admin and can't be deleted
+  // Helper to check if user can be deleted
   const canDeleteUser = (user: User) => {
-    // Never allow deletion of admin users - must be done through backend
+    // Never allow deletion of admin users
     if (user.role === 'admin') {
       return false;
     }
-    // Also prevent self-deletion
+    // Never allow self-deletion
     if (user.id === currentUserId) {
       return false;
     }
+    // Additional safety: protect Sitrixx admin email
+    if (user.email?.toLowerCase() === 'admin@sitrixx.io') {
+      return false;
+    }
     return true;
+  };
+
+  // Get tooltip text for disabled delete buttons
+  const getDeleteTooltip = (user: User) => {
+    if (user.role === 'admin') {
+      return 'Admin users cannot be deleted from this interface';
+    }
+    if (user.id === currentUserId) {
+      return 'You cannot delete your own account';
+    }
+    if (user.email?.toLowerCase() === 'admin@sitrixx.io') {
+      return 'Sitrixx admin account is protected';
+    }
+    return 'Delete user';
   };
 
   return (
@@ -473,6 +493,7 @@ export default function UsersPage() {
                             size="sm"
                             onClick={() => openEditModal(user)}
                             className="h-8 w-8 p-0"
+                            title="Edit user"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -481,14 +502,8 @@ export default function UsersPage() {
                             size="sm"
                             onClick={() => setDeleteUserId(user.id)}
                             disabled={!canDeleteUser(user)}
-                            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-40"
-                            title={
-                              user.role === 'admin' 
-                                ? 'Admin users can only be deleted through the backend' 
-                                : user.id === currentUserId 
-                                  ? 'You cannot delete your own account' 
-                                  : 'Delete user'
-                            }
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                            title={getDeleteTooltip(user)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
