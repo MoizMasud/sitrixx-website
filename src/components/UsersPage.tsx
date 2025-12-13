@@ -509,16 +509,24 @@ export default function UsersPage() {
                             >
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteClick(user)}
-                              disabled={!isDeletable}
-                              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                              title={getDeleteTooltip(user)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {isDeletable ? (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteClick(user)}
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                title={getDeleteTooltip(user)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            ) : (
+                              <div
+                                className="inline-flex items-center justify-center h-8 w-8 p-0 opacity-40 cursor-not-allowed"
+                                title={getDeleteTooltip(user)}
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </div>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
