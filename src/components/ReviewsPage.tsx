@@ -245,86 +245,90 @@ export default function ReviewsPage({ clients }: ReviewsPageProps) {
       )}
 
       {/* Reviews Table */}
-      <div className="bg-card rounded-xl overflow-hidden border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b border-border hover:bg-muted/50">
-              <TableHead className="w-[180px] text-foreground font-bold">Date / Time</TableHead>
-              <TableHead className="text-foreground font-bold">Client</TableHead>
-              <TableHead className="text-foreground font-bold">Customer</TableHead>
-              <TableHead className="w-[140px] text-foreground font-bold">Rating</TableHead>
-              <TableHead className="min-w-[300px] text-foreground font-bold">Feedback</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <span className="ml-3 text-muted-foreground">Loading reviews...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : !selectedClient ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
-                  Select a client to view their reviews
-                </TableCell>
-              </TableRow>
-            ) : filteredReviews.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
-                  No reviews found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredReviews.map((review) => (
-                <TableRow key={review.id} className="border-b border-border hover:bg-muted/50">
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-xs font-mono text-foreground">
-                        {formatDate(review.created_at)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-semibold text-foreground">{review.client_name}</span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      {review.customer_name ? (
-                        <div className="font-semibold text-foreground">{review.customer_name}</div>
-                      ) : (
-                        <div className="text-muted-foreground italic text-sm">Anonymous</div>
-                      )}
-                      {review.customer_phone && (
-                        <div className="text-xs text-muted-foreground font-mono">
-                          {review.customer_phone}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {renderStars(review.rating)}
-                  </TableCell>
-                  <TableCell>
-                    {review.feedback ? (
-                      <div className="flex items-start gap-2">
-                        <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                        <p className="text-sm line-clamp-3 max-w-md text-foreground">{review.feedback}</p>
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground italic text-sm">No feedback provided</span>
-                    )}
-                  </TableCell>
+      <Card className="border-0 shadow-none">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="w-[180px] text-foreground font-bold">Date / Time</TableHead>
+                  <TableHead className="text-foreground font-bold">Client</TableHead>
+                  <TableHead className="text-foreground font-bold">Customer</TableHead>
+                  <TableHead className="w-[140px] text-foreground font-bold">Rating</TableHead>
+                  <TableHead className="min-w-[300px] text-foreground font-bold">Feedback</TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-32 text-center">
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span className="ml-3 text-muted-foreground">Loading reviews...</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : !selectedClient ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                      Select a client to view their reviews
+                    </TableCell>
+                  </TableRow>
+                ) : filteredReviews.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                      No reviews found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredReviews.map((review) => (
+                    <TableRow key={review.id} className="border-b">
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-mono text-foreground">
+                            {formatDate(review.created_at)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-semibold text-foreground">{review.client_name}</span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          {review.customer_name ? (
+                            <div className="font-semibold text-foreground">{review.customer_name}</div>
+                          ) : (
+                            <div className="text-muted-foreground italic text-sm">Anonymous</div>
+                          )}
+                          {review.customer_phone && (
+                            <div className="text-xs text-muted-foreground font-mono">
+                              {review.customer_phone}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {renderStars(review.rating)}
+                      </TableCell>
+                      <TableCell>
+                        {review.feedback ? (
+                          <div className="flex items-start gap-2">
+                            <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <p className="text-sm line-clamp-3 max-w-md text-foreground">{review.feedback}</p>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground italic text-sm">No feedback provided</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

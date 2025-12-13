@@ -229,110 +229,114 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
       )}
 
       {/* Leads Table */}
-      <div className="bg-card rounded-xl overflow-hidden border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b border-border hover:bg-muted/50">
-              <TableHead className="w-[180px] text-foreground font-bold">Date / Time</TableHead>
-              <TableHead className="text-foreground font-bold">Client</TableHead>
-              <TableHead className="w-[140px] text-foreground font-bold">Source</TableHead>
-              <TableHead className="text-foreground font-bold">Lead Name</TableHead>
-              <TableHead className="text-foreground font-bold">Contact Info</TableHead>
-              <TableHead className="min-w-[300px] text-foreground font-bold">Message</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <span className="ml-3 text-muted-foreground">Loading leads...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : !selectedClient ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                  Select a client to view their leads
-                </TableCell>
-              </TableRow>
-            ) : filteredLeads.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                  No leads found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredLeads.map((lead) => (
-                <TableRow key={lead.id} className="border-b border-border hover:bg-muted/50">
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-xs font-mono text-foreground">
-                        {formatDate(lead.created_at)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-semibold text-foreground">{lead.client_name}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={lead.source === 'website_form' ? 'default' : 'secondary'}
-                      className={
-                        lead.source === 'website_form'
-                          ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
-                          : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
-                      }
-                    >
-                      {lead.source === 'website_form' ? '📝 Form' : '📞 Call'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {lead.name ? (
-                      <span className="font-semibold text-foreground">{lead.name}</span>
-                    ) : (
-                      <span className="text-muted-foreground italic text-sm">No name</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1.5">
-                      {lead.phone && (
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
-                          <a
-                            href={`tel:${lead.phone}`}
-                            className="text-sm hover:text-primary hover:underline font-mono text-foreground"
-                          >
-                            {lead.phone}
-                          </a>
-                        </div>
-                      )}
-                      {lead.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                          <a
-                            href={`mailto:${lead.email}`}
-                            className="text-sm hover:text-primary hover:underline text-foreground"
-                          >
-                            {lead.email}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <p className="text-sm line-clamp-2 max-w-md text-foreground">
-                      {lead.message || 'No message'}
-                    </p>
-                  </TableCell>
+      <Card className="border-0 shadow-none">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="w-[180px] text-foreground font-bold">Date / Time</TableHead>
+                  <TableHead className="text-foreground font-bold">Client</TableHead>
+                  <TableHead className="w-[140px] text-foreground font-bold">Source</TableHead>
+                  <TableHead className="text-foreground font-bold">Lead Name</TableHead>
+                  <TableHead className="text-foreground font-bold">Contact Info</TableHead>
+                  <TableHead className="min-w-[300px] text-foreground font-bold">Message</TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-32 text-center">
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span className="ml-3 text-muted-foreground">Loading leads...</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : !selectedClient ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                      Select a client to view their leads
+                    </TableCell>
+                  </TableRow>
+                ) : filteredLeads.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                      No leads found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredLeads.map((lead) => (
+                    <TableRow key={lead.id} className="border-b">
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-mono text-foreground">
+                            {formatDate(lead.created_at)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-semibold text-foreground">{lead.client_name}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={lead.source === 'website_form' ? 'default' : 'secondary'}
+                          className={
+                            lead.source === 'website_form'
+                              ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+                              : 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20'
+                          }
+                        >
+                          {lead.source === 'website_form' ? '📝 Form' : '📞 Call'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {lead.name ? (
+                          <span className="font-semibold text-foreground">{lead.name}</span>
+                        ) : (
+                          <span className="text-muted-foreground italic text-sm">No name</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1.5">
+                          {lead.phone && (
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+                              <a
+                                href={`tel:${lead.phone}`}
+                                className="text-sm hover:text-primary hover:underline font-mono text-foreground"
+                              >
+                                {lead.phone}
+                              </a>
+                            </div>
+                          )}
+                          {lead.email && (
+                            <div className="flex items-center gap-2">
+                              <Mail className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                              <a
+                                href={`mailto:${lead.email}`}
+                                className="text-sm hover:text-primary hover:underline text-foreground"
+                              >
+                                {lead.email}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <p className="text-sm line-clamp-2 max-w-md text-foreground">
+                          {lead.message || 'No message'}
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

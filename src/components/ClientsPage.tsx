@@ -403,92 +403,96 @@ export default function ClientsPage() {
       )}
 
       {/* Clients Table */}
-      <div className="bg-card rounded-xl overflow-hidden border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b border-border hover:bg-muted/50">
-              <TableHead className="text-foreground font-bold">Business Name</TableHead>
-              {clients.some(c => c.subscription_status) && <TableHead className="w-[140px] text-foreground font-bold">Status</TableHead>}
-              <TableHead className="w-[160px] text-foreground font-bold">Created</TableHead>
-              <TableHead className="w-[140px] text-foreground font-bold text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={clients.some(c => c.subscription_status) ? 4 : 3} className="h-32 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <span className="ml-3 text-muted-foreground">Loading clients...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : filteredClients.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={clients.some(c => c.subscription_status) ? 4 : 3} className="h-32 text-center text-muted-foreground">
-                  {searchTerm ? 'No clients found matching your search' : 'No clients yet'}
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredClients.map((client) => (
-                <TableRow key={client.id} className="border-b border-border hover:bg-muted/50">
-                  <TableCell>
-                    <span className="font-semibold text-foreground">{client.business_name}</span>
-                  </TableCell>
-                  {clients.some(c => c.subscription_status) && (
-                    <TableCell>
-                      {client.subscription_status ? (
-                        <Badge
-                          variant={client.subscription_status === 'active' ? 'default' : 'secondary'}
-                          className={
-                            client.subscription_status === 'active'
-                              ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
-                              : 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20'
-                          }
-                        >
-                          {client.subscription_status === 'active' ? '✓ Active' : '○ Inactive'}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-sm">—</span>
-                      )}
-                    </TableCell>
-                  )}
-                  <TableCell>
-                    {client.created_at ? (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="text-sm text-foreground">{formatDate(client.created_at)}</span>
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditClient(client)}
-                        className="h-8 px-2 hover:bg-primary/10"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteClient(client)}
-                        className="h-8 px-2 hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+      <Card className="border-0 shadow-none">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="text-foreground font-bold">Business Name</TableHead>
+                  {clients.some(c => c.subscription_status) && <TableHead className="w-[140px] text-foreground font-bold">Status</TableHead>}
+                  <TableHead className="w-[160px] text-foreground font-bold">Created</TableHead>
+                  <TableHead className="w-[140px] text-foreground font-bold text-right">Actions</TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={clients.some(c => c.subscription_status) ? 4 : 3} className="h-32 text-center">
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span className="ml-3 text-muted-foreground">Loading clients...</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredClients.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={clients.some(c => c.subscription_status) ? 4 : 3} className="h-32 text-center text-muted-foreground">
+                      {searchTerm ? 'No clients found matching your search' : 'No clients yet'}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredClients.map((client) => (
+                    <TableRow key={client.id} className="border-b">
+                      <TableCell>
+                        <span className="font-semibold text-foreground">{client.business_name}</span>
+                      </TableCell>
+                      {clients.some(c => c.subscription_status) && (
+                        <TableCell>
+                          {client.subscription_status ? (
+                            <Badge
+                              variant={client.subscription_status === 'active' ? 'default' : 'secondary'}
+                              className={
+                                client.subscription_status === 'active'
+                                  ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
+                                  : 'bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20'
+                              }
+                            >
+                              {client.subscription_status === 'active' ? '✓ Active' : '○ Inactive'}
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">—</span>
+                          )}
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        {client.created_at ? (
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-sm text-foreground">{formatDate(client.created_at)}</span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditClient(client)}
+                            className="h-8 px-2 hover:bg-primary/10"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteClient(client)}
+                            className="h-8 px-2 hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Add Client Modal */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
