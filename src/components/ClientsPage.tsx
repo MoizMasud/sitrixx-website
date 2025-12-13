@@ -334,6 +334,32 @@ export default function ClientsPage() {
     }
   };
 
+  // Helper to check if client can be deleted
+  const canDeleteClient = (client: Client) => {
+    // Protect Sitrixx demo client - check by business name or specific ID
+    const protectedBusinessNames = ['sitrixx', 'sitrixx demo', 'demo'];
+    const businessNameLower = client.business_name?.toLowerCase() || '';
+    
+    if (protectedBusinessNames.some(name => businessNameLower.includes(name))) {
+      return false;
+    }
+
+    // Protect by owner email if it's the Sitrixx admin
+    if (client.owner_email?.toLowerCase() === 'admin@sitrixx.io') {
+      return false;
+    }
+
+    return true;
+  };
+
+  // Get tooltip text for disabled delete buttons
+  const getDeleteTooltip = (client: Client) => {
+    if (!canDeleteClient(client)) {
+      return 'Demo/System clients cannot be deleted';
+    }
+    return 'Delete client';
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
@@ -472,6 +498,7 @@ export default function ClientsPage() {
                             size="sm"
                             onClick={() => handleEditClient(client)}
                             className="h-8 px-2 hover:bg-primary/10"
+                            title="Edit client"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -479,7 +506,9 @@ export default function ClientsPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteClient(client)}
-                            className="h-8 px-2 hover:bg-destructive/10 hover:text-destructive"
+                            disabled={!canDeleteClient(client)}
+                            className="h-8 px-2 hover:bg-destructive/10 hover:text-destructive disabled:opacity-40 disabled:cursor-not-allowed"
+                            title={getDeleteTooltip(client)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
