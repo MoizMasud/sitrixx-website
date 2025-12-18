@@ -11,7 +11,7 @@ description = 'Premium websites with intelligent automation for forward-thinking
 
 const baseUrl = Astro.url.origin;
 const currentUrl = Astro.url.href;
-const ogImageUrl = `${baseUrl}/favicon.svg`;
+const faviconUrl = `${baseUrl}/favicon.svg`;
 ---
 
 <html lang="en" class={pageClass}>
@@ -23,7 +23,7 @@ const ogImageUrl = `${baseUrl}/favicon.svg`;
 <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/favicon.svg" />
 <link rel="mask-icon" href="/favicon.svg" color="#4F46E5" />
-<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="shortcut icon" href="/favicon.svg" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
 <meta name="generator" content={Astro.generator} />
@@ -38,24 +38,24 @@ const ogImageUrl = `${baseUrl}/favicon.svg`;
 <meta property="og:url" content={currentUrl} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image" content={faviconUrl} />
 <meta property="og:image:type" content="image/svg+xml" />
 <meta property="og:image:alt" content="Sitrixx - Premium Websites with Smart Automation" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+<meta property="og:image:width" content="512" />
+<meta property="og:image:height" content="512" />
 <meta property="og:site_name" content="Sitrixx" />
 
 <!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content="summary" />
 <meta name="twitter:url" content={currentUrl} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={ogImageUrl} />
+<meta name="twitter:image" content={faviconUrl} />
 <meta name="twitter:image:alt" content="Sitrixx - Premium Websites with Smart Automation" />
 
 <!-- iOS Web App -->
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Sitrixx" />
 
 <!-- Theme Color - Sitrixx brand colors -->
@@ -63,9 +63,6 @@ const ogImageUrl = `${baseUrl}/favicon.svg`;
 <meta name="theme-color" content="#4F46E5" media="(prefers-color-scheme: dark)" />
 <meta name="msapplication-TileColor" content="#4F46E5" />
 <meta name="msapplication-TileImage" content="/favicon.svg" />
-
-<!-- Additional iOS status bar styling -->
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 </head>
 <body>
 <slot />
