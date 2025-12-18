@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate OG Image</title>
+    <style>
+        body { margin: 0; padding: 20px; }
+        #preview { border: 1px solid #ccc; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Sitrixx OG Image Generator</h1>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    <img id="preview" width="600" height="315" />
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Background gradient
+        const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
+        gradient.addColorStop(0, '#4F46E5');
+        gradient.addColorStop(1, '#7C3AED');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1200, 630);
+        
+        // Draw large "S" logo
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.font = 'bold 400px Inter, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('S', 600, 315);
+        
+        // Draw main text
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 80px Inter, -apple-system, sans-serif';
+        ctx.fillText('SITRIXX', 600, 250);
+        
+        ctx.font = '36px Inter, -apple-system, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillText('Modern Websites with Smart Automations', 600, 350);
+        
+        // Show preview
+        const preview = document.getElementById('preview');
+        preview.src = canvas.toDataURL();
+        
+        console.log('OG Image generated! Right-click the canvas and save as og-image.png');
+    </script>
+</body>
+</html>
