@@ -36,22 +36,25 @@ interface Lead {
   client_id?: string;
 }
 
-interface LeadsPageProps {
-  clients: Client[];
-}
-
-export default function LeadsPage({ clients }: LeadsPageProps) {
+export default function LeadsPage() {
+  const [clients, setClients] = useState<Client[]>([]);
   const [allLeads, setAllLeads] = useState<Lead[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [selectedClient, setSelectedClient] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   // Stats
   const totalLeads = filteredLeads.length;
   const websiteForms = filteredLeads.filter(l => l.source === 'website_form').length;
   const missedCalls = filteredLeads.filter(l => l.source === 'missed_call').length;
+
+  // Load clients on mount
+  useEffect(() => {
+    loadClients();
+  }, []);
 
   // Load leads when client selection changes
   useEffect(() => {
@@ -83,18 +86,77 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
     setFilteredLeads(filtered);
   }, [searchTerm, allLeads]);
 
+  async function loadClients() {
+    setInitialLoading(true);
+    console.log('[LeadsPage] Loading clients...');
+    
+    try {
+      // Check if authFetch exists
+      if (!(window as any).authFetch) {
+        throw new Error('authFetch not initialized. Please refresh the page.');
+      }
+
+      const path = '/api/admin/clients';
+      console.log('[LeadsPage] Fetching from path:', path);
+      
+      const res = await (window as any).authFetch(path);
+      console.log('[LeadsPage] Response status:', res.status);
+      
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('[LeadsPage] Error response:', text);
+        throw new Error(`Failed to load clients: ${res.status} ${res.statusText}`);
+      }
+      
+      const data = await res.json();
+      console.log('[LeadsPage] Clients data:', data);
+      
+      if (data.ok) {
+        setClients(data.clients || []);
+        console.log('[LeadsPage] Successfully loaded', data.clients?.length || 0, 'clients');
+      } else {
+        throw new Error(data.error || 'Failed to load clients');
+      }
+    } catch (err) {
+      console.error('[LeadsPage] Error loading clients:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load clients');
+    } finally {
+      setInitialLoading(false);
+    }
+  }
+
   async function loadLeadsForClient(clientId: string) {
     setLoading(true);
     setError(null);
+    console.log('[LeadsPage] Loading leads for client:', clientId);
 
     try {
+      // Check if authFetch exists
+      if (!(window as any).authFetch) {
+        throw new Error('authFetch not initialized. Please refresh the page.');
+      }
+
       if (clientId === 'all') {
         // Load leads for all clients
+        console.log('[LeadsPage] Loading leads for all clients');
         const allClientLeads: Lead[] = [];
+        
         for (const client of clients) {
           try {
-            const res = await (window as any).authFetch(`/api/leads?clientId=${encodeURIComponent(client.id)}`);
+            const path = `/api/leads?clientId=${encodeURIComponent(client.id)}`;
+            console.log('[LeadsPage] Fetching leads from path:', path);
+            
+            const res = await (window as any).authFetch(path);
+            console.log('[LeadsPage] Response status for', client.business_name, ':', res.status);
+            
+            if (!res.ok) {
+              console.warn('[LeadsPage] Failed to fetch leads for', client.business_name);
+              continue;
+            }
+            
             const data = await res.json();
+            console.log('[LeadsPage] Leads data for', client.business_name, ':', data);
+            
             const clientLeads = (data.leads || []).map((lead: Lead) => ({
               ...lead,
               client_name: client.business_name,
@@ -102,26 +164,43 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
             }));
             allClientLeads.push(...clientLeads);
           } catch (err) {
-            console.error(`Error loading leads for ${client.id}:`, err);
+            console.error(`[LeadsPage] Error loading leads for ${client.business_name}:`, err);
           }
         }
+        
+        console.log('[LeadsPage] Total leads loaded:', allClientLeads.length);
         setAllLeads(allClientLeads);
         setFilteredLeads(allClientLeads);
       } else {
         // Load leads for single client
-        const res = await (window as any).authFetch(`/api/leads?clientId=${encodeURIComponent(clientId)}`);
+        const path = `/api/leads?clientId=${encodeURIComponent(clientId)}`;
+        console.log('[LeadsPage] Fetching leads from path:', path);
+        
+        const res = await (window as any).authFetch(path);
+        console.log('[LeadsPage] Response status:', res.status);
+        
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('[LeadsPage] Error response:', text);
+          throw new Error(`Failed to load leads: ${res.status} ${res.statusText}`);
+        }
+        
         const data = await res.json();
+        console.log('[LeadsPage] Leads data:', data);
+        
         const client = clients.find(c => c.id === clientId);
         const leads = (data.leads || []).map((lead: Lead) => ({
           ...lead,
           client_name: client?.business_name || 'Unknown',
           client_id: clientId
         }));
+        
+        console.log('[LeadsPage] Processed leads:', leads.length);
         setAllLeads(leads);
         setFilteredLeads(leads);
       }
     } catch (err) {
-      console.error('Error loading leads:', err);
+      console.error('[LeadsPage] Error loading leads:', err);
       setError(err instanceof Error ? err.message : 'Failed to load leads');
     } finally {
       setLoading(false);
@@ -131,6 +210,25 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
   };
+
+  if (initialLoading) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight text-foreground">
+            Leads
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Track and manage incoming leads from all clients
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <span className="ml-3 text-muted-foreground">Loading clients...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -224,6 +322,9 @@ export default function LeadsPage({ clients }: LeadsPageProps) {
         <Card className="border-destructive/50 bg-destructive/10">
           <CardContent className="pt-6">
             <p className="text-destructive font-medium">{error}</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Check the browser console for more details.
+            </p>
           </CardContent>
         </Card>
       )}

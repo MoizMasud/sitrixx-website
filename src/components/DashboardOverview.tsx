@@ -20,13 +20,6 @@ type Review = {
   created_at: string;
 };
 
-type DashboardData = {
-  clients: Client[];
-  leads: Lead[];
-  reviews: Review[];
-  error: string | null;
-};
-
 type DashboardStats = {
   totalClients: number;
   totalLeads: number;
@@ -42,11 +35,9 @@ type RecentActivity = {
   timestamp: string;
 };
 
-interface DashboardOverviewProps {
-  initialData: DashboardData;
-}
-
-export default function DashboardOverview({ initialData }: DashboardOverviewProps) {
+export default function DashboardOverview() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<DashboardStats>({
     totalClients: 0,
     totalLeads: 0,
@@ -57,58 +48,140 @@ export default function DashboardOverview({ initialData }: DashboardOverviewProp
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
 
   useEffect(() => {
-    if (initialData.error) {
-      return; // Show error state
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const supabase = (window as any).supabaseClient;
+      if (!supabase) {
+        throw new Error('Supabase client not initialized');
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      console.log('Fetching dashboard data...');
+
+      // Fetch clients, leads, and reviews in parallel
+      // Use Promise.allSettled to handle failures gracefully
+      const results = await Promise.allSettled([
+        fetch('https://sitrixx-website-backend.vercel.app/api/admin/clients', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` },
+        }),
+        fetch('https://sitrixx-website-backend.vercel.app/api/admin/leads', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` },
+        }),
+        fetch('https://sitrixx-website-backend.vercel.app/api/admin/reviews', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` },
+        }),
+      ]);
+
+      console.log('Fetch results:', results);
+
+      // Process clients
+      let clients: Client[] = [];
+      if (results[0].status === 'fulfilled' && results[0].value.ok) {
+        try {
+          const data = await results[0].value.json();
+          clients = data.ok ? data.clients : [];
+          console.log('✅ Clients loaded:', clients.length);
+        } catch (e) {
+          console.warn('⚠️ Could not parse clients response');
+        }
+      } else {
+        console.warn('⚠️ Clients API not available');
+      }
+
+      // Process leads
+      let leads: Lead[] = [];
+      if (results[1].status === 'fulfilled' && results[1].value.ok) {
+        try {
+          const data = await results[1].value.json();
+          leads = data.ok ? data.leads : [];
+          console.log('✅ Leads loaded:', leads.length);
+        } catch (e) {
+          console.warn('⚠️ Could not parse leads response');
+        }
+      } else {
+        console.warn('⚠️ Leads API not available (endpoint may not exist yet)');
+      }
+
+      // Process reviews
+      let reviews: Review[] = [];
+      if (results[2].status === 'fulfilled' && results[2].value.ok) {
+        try {
+          const data = await results[2].value.json();
+          reviews = data.ok ? data.reviews : [];
+          console.log('✅ Reviews loaded:', reviews.length);
+        } catch (e) {
+          console.warn('⚠️ Could not parse reviews response');
+        }
+      } else {
+        console.warn('⚠️ Reviews API not available (endpoint may not exist yet)');
+      }
+
+      // Calculate stats
+      const fiveStarCount = reviews.filter(r => r.rating === 5).length;
+      const avgRating = reviews.length > 0
+        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+        : '0.0';
+
+      setStats({
+        totalClients: clients.length,
+        totalLeads: leads.length,
+        totalReviews: reviews.length,
+        fiveStarReviews: fiveStarCount,
+        averageRating: avgRating,
+      });
+
+      // Build recent activity
+      const activity: RecentActivity[] = [];
+
+      // Add recent leads (last 5)
+      leads
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5)
+        .forEach(lead => {
+          activity.push({
+            type: 'lead',
+            clientName: 'Client',
+            details: `${lead.name || 'Someone'} submitted a ${lead.source === 'website_form' ? 'contact form' : 'missed call'}`,
+            timestamp: lead.created_at,
+          });
+        });
+
+      // Add recent reviews (last 5)
+      reviews
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5)
+        .forEach(review => {
+          activity.push({
+            type: 'review',
+            clientName: 'Client',
+            details: `${review.rating}-star review: "${review.comments.slice(0, 50)}${review.comments.length > 50 ? '...' : ''}"`,
+            timestamp: review.created_at,
+          });
+        });
+
+      // Sort all activity by timestamp
+      activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      setRecentActivity(activity.slice(0, 10));
+
+      console.log('✅ Dashboard data loaded successfully');
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
+    } finally {
+      setIsLoading(false);
     }
-
-    // Calculate stats from initial data
-    const fiveStarCount = initialData.reviews.filter(r => r.rating === 5).length;
-    const avgRating = initialData.reviews.length > 0
-      ? (initialData.reviews.reduce((sum, r) => sum + r.rating, 0) / initialData.reviews.length).toFixed(1)
-      : '0.0';
-
-    setStats({
-      totalClients: initialData.clients.length,
-      totalLeads: initialData.leads.length,
-      totalReviews: initialData.reviews.length,
-      fiveStarReviews: fiveStarCount,
-      averageRating: avgRating,
-    });
-
-    // Build recent activity
-    const activity: RecentActivity[] = [];
-
-    // Add recent leads (last 5)
-    initialData.leads
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 5)
-      .forEach(lead => {
-        activity.push({
-          type: 'lead',
-          clientName: 'Client', // We'll need to match this if needed
-          details: `${lead.name || 'Someone'} submitted a ${lead.source === 'website_form' ? 'contact form' : 'missed call'}`,
-          timestamp: lead.created_at,
-        });
-      });
-
-    // Add recent reviews (last 5)
-    initialData.reviews
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 5)
-      .forEach(review => {
-        activity.push({
-          type: 'review',
-          clientName: 'Client',
-          details: `${review.rating}-star review: "${review.comments.slice(0, 50)}${review.comments.length > 50 ? '...' : ''}"`,
-          timestamp: review.created_at,
-        });
-      });
-
-    // Sort all activity by timestamp
-    activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-    setRecentActivity(activity.slice(0, 10));
-  }, [initialData]);
+  };
 
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
@@ -147,7 +220,23 @@ export default function DashboardOverview({ initialData }: DashboardOverviewProp
     }
   };
 
-  if (initialData.error) {
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-5xl md:text-6xl font-black mb-3 tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            Overview
+          </h1>
+          <p className="text-lg text-muted-foreground">Welcome to your Sitrixx admin dashboard</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
@@ -158,9 +247,10 @@ export default function DashboardOverview({ initialData }: DashboardOverviewProp
         </div>
         <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
           <p className="text-destructive font-medium">Error loading dashboard:</p>
-          <p className="text-sm text-muted-foreground mt-2">{initialData.error}</p>
+          <p className="text-sm text-muted-foreground mt-2">{error}</p>
+          <p className="text-xs text-muted-foreground mt-2">Check the browser console for more details</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={fetchDashboardData}
             className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
           >
             Retry

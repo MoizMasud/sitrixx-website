@@ -9,14 +9,8 @@ import { baseUrl } from '../../lib/base-url';
 >
   <div class="min-h-screen bg-background flex items-center justify-center px-4 py-12">
     <div class="w-full max-w-md">
-      <!-- Loading state shown initially -->
-      <div id="auth-checking" class="text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-        <p class="text-muted-foreground">Checking authentication...</p>
-      </div>
-
-      <!-- Login form hidden initially -->
-      <div id="login-content" class="hidden">
+      <!-- Login form (show immediately) -->
+      <div id="login-content">
         <div class="text-center mb-8">
           <a href={`${baseUrl}/`} class="inline-block">
             <h1 class="text-4xl font-black mb-2 tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
@@ -113,10 +107,14 @@ import { baseUrl } from '../../lib/base-url';
             <button
               type="submit"
               id="login-button"
-              class="w-full bg-gradient-to-r from-primary to-purple-600 !text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full bg-gradient-to-r from-primary to-purple-600 text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <span id="button-text" class="!text-white">Log In</span>
-              <span id="button-loading" class="hidden !text-white">Logging in...</span>
+              <svg id="button-spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span id="button-text" class="text-white">Log In</span>
+              <span id="button-loading" class="hidden text-white">Logging in...</span>
             </button>
           </form>
         </div>
@@ -124,17 +122,22 @@ import { baseUrl } from '../../lib/base-url';
     </div>
   </div>
 
-  <!-- Supabase JS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    import { createClient } from '@supabase/supabase-js';
 
-  <script define:vars={{ baseUrl }}>
+    console.log('=== LOGIN PAGE SCRIPT LOADED ===');
+
+    // Get baseUrl from data attribute
+    const baseUrl = document.querySelector('html')?.dataset?.baseUrl || '';
+    console.log('Base URL:', baseUrl);
+
     // Theme Toggle Logic
     const themeToggle = document.getElementById('theme-toggle');
     const sunIcon = document.getElementById('theme-icon-sun');
     const moonIcon = document.getElementById('theme-icon-moon');
     const html = document.documentElement;
 
-    function updateThemeIcon(theme) {
+    function updateThemeIcon(theme: string) {
       if (theme === 'dark') {
         sunIcon?.classList.remove('hidden');
         moonIcon?.classList.add('hidden');
@@ -168,137 +171,168 @@ import { baseUrl } from '../../lib/base-url';
     // Prevent redirect loops
     let isRedirecting = false;
 
-    document.addEventListener('DOMContentLoaded', async function () {
-      const authCheckingEl = document.getElementById('auth-checking');
-      const loginContentEl = document.getElementById('login-content');
-      
-      const { createClient } = window.supabase;
+    // 🔑 Supabase Configuration
+    const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
 
-      // 🔑 Supabase Configuration
-      const SUPABASE_URL = 'https://lmvymcncmmxtgfhkosmc.supabase.co';
-      const SUPABASE_ANON_KEY = 'sb_publishable_yeiYWuyhjZBBoSPcFRRKow__58efMlK';
+    console.log('Creating Supabase client...');
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase client created');
+    
+    // Expose Supabase client globally for authFetch
+    (window as any).supabaseClient = supabase;
 
-      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      
-      // Expose Supabase client globally for authFetch
-      window.supabaseClient = supabase;
-
-      // Check if user is already logged in
+    // Check for existing session in background (non-blocking)
+    async function checkExistingSession() {
       try {
+        console.log('Checking for existing session...');
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session && localStorage.getItem('sitrixx_token')) {
-          // Already logged in, redirect immediately
+          // User is already logged in, redirect to admin
+          console.log('✅ Existing session found, redirecting to admin...');
           isRedirecting = true;
           window.location.replace(baseUrl + '/admin');
-          return;
+        } else {
+          console.log('No existing session found');
         }
       } catch (error) {
-        console.error('Session check error:', error);
+        // Silent fail - user can still log in manually
+        console.log('Session check failed:', error);
       }
+    }
 
-      // Not logged in, show the login form
-      authCheckingEl.classList.add('hidden');
-      loginContentEl.classList.remove('hidden');
+    checkExistingSession();
 
-      const form = document.getElementById('login-form');
-      const emailInput = document.getElementById('login-email');
-      const passwordInput = document.getElementById('login-password');
-      const loginButton = document.getElementById('login-button');
-      const buttonText = document.getElementById('button-text');
-      const buttonLoading = document.getElementById('button-loading');
-      const errorMessage = document.getElementById('error-message');
-      const successMessage = document.getElementById('success-message');
+    const form = document.getElementById('login-form') as HTMLFormElement;
+    const emailInput = document.getElementById('login-email') as HTMLInputElement;
+    const passwordInput = document.getElementById('login-password') as HTMLInputElement;
+    const loginButton = document.getElementById('login-button') as HTMLButtonElement;
+    const buttonText = document.getElementById('button-text');
+    const buttonLoading = document.getElementById('button-loading');
+    const buttonSpinner = document.getElementById('button-spinner');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
 
-      if (!form || !emailInput || !passwordInput) {
-        console.warn('Login form elements not found');
+    console.log('Form elements:', {
+      form: !!form,
+      emailInput: !!emailInput,
+      passwordInput: !!passwordInput,
+      loginButton: !!loginButton
+    });
+
+    if (!form || !emailInput || !passwordInput) {
+      console.error('❌ Login form elements not found');
+      throw new Error('Login form elements not found');
+    }
+
+    // Helper functions
+    function showError(message: string) {
+      console.log('Showing error:', message);
+      errorMessage?.classList.remove('hidden');
+      const errorPara = errorMessage?.querySelector('p');
+      if (errorPara) errorPara.textContent = message;
+      successMessage?.classList.add('hidden');
+    }
+
+    function showSuccess(message: string) {
+      console.log('Showing success:', message);
+      successMessage?.classList.remove('hidden');
+      const successPara = successMessage?.querySelector('p');
+      if (successPara) successPara.textContent = message;
+      errorMessage?.classList.add('hidden');
+    }
+
+    function hideMessages() {
+      errorMessage?.classList.add('hidden');
+      successMessage?.classList.add('hidden');
+    }
+
+    function setLoading(isLoading: boolean) {
+      console.log('Setting loading state:', isLoading);
+      loginButton.disabled = isLoading;
+      if (isLoading) {
+        buttonText?.classList.add('hidden');
+        buttonLoading?.classList.remove('hidden');
+        buttonSpinner?.classList.remove('hidden');
+      } else {
+        buttonText?.classList.remove('hidden');
+        buttonLoading?.classList.add('hidden');
+        buttonSpinner?.classList.add('hidden');
+      }
+    }
+
+    console.log('Adding form submit listener...');
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      
+      console.log('🔥 FORM SUBMITTED 🔥');
+      
+      // Prevent double submission
+      if (isRedirecting || loginButton.disabled) {
+        console.log('⚠️ Preventing double submission');
         return;
       }
 
-      // Helper functions
-      function showError(message) {
-        errorMessage.classList.remove('hidden');
-        errorMessage.querySelector('p').textContent = message;
-        successMessage.classList.add('hidden');
+      hideMessages();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      console.log('Email:', email);
+      console.log('Password length:', password.length);
+
+      if (!email || !password) {
+        showError('Please enter your email and password.');
+        return;
       }
 
-      function showSuccess(message) {
-        successMessage.classList.remove('hidden');
-        successMessage.querySelector('p').textContent = message;
-        errorMessage.classList.add('hidden');
-      }
+      console.log('🚀 Attempting login for:', email);
+      setLoading(true);
 
-      function hideMessages() {
-        errorMessage.classList.add('hidden');
-        successMessage.classList.add('hidden');
-      }
+      try {
+        console.log('Calling Supabase signInWithPassword...');
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      function setLoading(isLoading) {
-        loginButton.disabled = isLoading;
-        if (isLoading) {
-          buttonText.classList.add('hidden');
-          buttonLoading.classList.remove('hidden');
-        } else {
-          buttonText.classList.remove('hidden');
-          buttonLoading.classList.add('hidden');
-        }
-      }
+        console.log('Supabase response:', { data, error });
 
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        
-        // Prevent double submission
-        if (isRedirecting || loginButton.disabled) {
-          return;
-        }
-
-        hideMessages();
-
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
-
-        if (!email || !password) {
-          showError('Please enter your email and password.');
-          return;
-        }
-
-        setLoading(true);
-
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
-          if (error) {
-            console.error('Login error:', error);
-            showError('Login failed: ' + error.message);
-            setLoading(false);
-            return;
-          }
-
-          // Store session token for later API calls
-          const accessToken = data.session?.access_token;
-          if (accessToken) {
-            localStorage.setItem('sitrixx_token', accessToken);
-            localStorage.setItem('sitrixx_user', JSON.stringify(data.user));
-          }
-
-          showSuccess('Login successful! Redirecting...');
-          isRedirecting = true;
-          
-          // Redirect to admin dashboard
-          setTimeout(() => {
-            window.location.replace(baseUrl + '/admin');
-          }, 500);
-
-        } catch (err) {
-          console.error('Unexpected error:', err);
-          showError('An unexpected error occurred. Please try again.');
+        if (error) {
+          console.error('❌ Login error:', error);
+          showError('Login failed: ' + error.message);
           setLoading(false);
+          return;
         }
-      });
+
+        console.log('✅ Login successful:', data);
+
+        // Store session token for later API calls
+        const accessToken = data.session?.access_token;
+        if (accessToken) {
+          console.log('Storing token in localStorage');
+          localStorage.setItem('sitrixx_token', accessToken);
+          localStorage.setItem('sitrixx_user', JSON.stringify(data.user));
+        }
+
+        showSuccess('Login successful! Redirecting...');
+        isRedirecting = true;
+        
+        // Redirect to admin dashboard
+        console.log('Redirecting to:', baseUrl + '/admin');
+        setTimeout(() => {
+          window.location.replace(baseUrl + '/admin');
+        }, 500);
+
+      } catch (err) {
+        console.error('❌ Unexpected error:', err);
+        showError('An unexpected error occurred. Please try again.');
+        setLoading(false);
+      }
     });
+
+    console.log('✅ Login form initialized successfully');
   </script>
 
   <!-- authFetch Helper (available globally after login) -->
@@ -309,8 +343,8 @@ import { baseUrl } from '../../lib/base-url';
      * Wrap fetch to always send the Supabase JWT.
      * If there is no logged-in user, redirect to login.
      */
-    async function authFetch(path, options = {}) {
-      const supabase = window.supabaseClient;
+    async function authFetch(path: string, options: RequestInit = {}) {
+      const supabase = (window as any).supabaseClient;
       if (!supabase) {
         console.error('Supabase client not found');
         throw new Error('Supabase not initialized');
@@ -345,7 +379,7 @@ import { baseUrl } from '../../lib/base-url';
     }
 
     // Expose globally so admin pages / custom code can call it
-    window.authFetch = authFetch;
+    (window as any).authFetch = authFetch;
   </script>
 
   <style>
@@ -364,3 +398,8 @@ import { baseUrl } from '../../lib/base-url';
     }
   </style>
 </MainLayout>
+
+<script define:vars={{ baseUrl }}>
+  // Store baseUrl in data attribute for the client script to access
+  document.documentElement.dataset.baseUrl = baseUrl;
+</script>
