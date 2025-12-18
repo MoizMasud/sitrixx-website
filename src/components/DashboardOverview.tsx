@@ -11,6 +11,7 @@ type Lead = {
   name: string;
   source: string;
   created_at: string;
+  client_id?: string;
 };
 
 type Review = {
@@ -18,6 +19,7 @@ type Review = {
   rating: number;
   comments: string;
   created_at: string;
+  client_id?: string;
 };
 
 type DashboardStats = {
@@ -54,88 +56,84 @@ export default function DashboardOverview() {
   const fetchDashboardData = async () => {
     setIsLoading(true);
     setError(null);
+    console.log('[Dashboard] Starting to fetch dashboard data...');
 
     try {
-      const supabase = (window as any).supabaseClient;
-      if (!supabase) {
-        throw new Error('Supabase client not initialized');
+      // Check if authFetch exists
+      if (!(window as any).authFetch) {
+        throw new Error('authFetch not initialized. Please refresh the page.');
       }
 
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error('No active session');
+      // Fetch clients first
+      console.log('[Dashboard] Fetching clients...');
+      const clientsRes = await (window as any).authFetch('/api/admin/clients');
+      
+      if (!clientsRes.ok) {
+        throw new Error(`Failed to load clients: ${clientsRes.status}`);
       }
 
-      console.log('Fetching dashboard data...');
+      const clientsData = await clientsRes.json();
+      const clients: Client[] = clientsData.ok ? clientsData.clients : [];
+      console.log('[Dashboard] ✅ Clients loaded:', clients.length);
 
-      // Fetch clients, leads, and reviews in parallel
-      // Use Promise.allSettled to handle failures gracefully
-      const results = await Promise.allSettled([
-        fetch('https://sitrixx-website-backend.vercel.app/api/admin/clients', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` },
-        }),
-        fetch('https://sitrixx-website-backend.vercel.app/api/admin/leads', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` },
-        }),
-        fetch('https://sitrixx-website-backend.vercel.app/api/admin/reviews', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` },
-        }),
-      ]);
-
-      console.log('Fetch results:', results);
-
-      // Process clients
-      let clients: Client[] = [];
-      if (results[0].status === 'fulfilled' && results[0].value.ok) {
+      // Fetch all leads for all clients
+      console.log('[Dashboard] Fetching leads for all clients...');
+      const allLeads: Lead[] = [];
+      
+      for (const client of clients) {
         try {
-          const data = await results[0].value.json();
-          clients = data.ok ? data.clients : [];
-          console.log('✅ Clients loaded:', clients.length);
-        } catch (e) {
-          console.warn('⚠️ Could not parse clients response');
+          const leadsRes = await (window as any).authFetch(`/api/leads?clientId=${encodeURIComponent(client.id)}`);
+          
+          if (leadsRes.ok) {
+            const leadsData = await leadsRes.json();
+            const clientLeads = (leadsData.leads || []).map((lead: Lead) => ({
+              ...lead,
+              client_id: client.id,
+              client_name: client.business_name,
+            }));
+            allLeads.push(...clientLeads);
+          }
+        } catch (err) {
+          console.warn(`[Dashboard] Could not fetch leads for ${client.business_name}:`, err);
         }
-      } else {
-        console.warn('⚠️ Clients API not available');
       }
+      
+      console.log('[Dashboard] ✅ Total leads loaded:', allLeads.length);
 
-      // Process leads
-      let leads: Lead[] = [];
-      if (results[1].status === 'fulfilled' && results[1].value.ok) {
+      // Fetch all reviews for all clients
+      console.log('[Dashboard] Fetching reviews for all clients...');
+      const allReviews: Review[] = [];
+      
+      for (const client of clients) {
         try {
-          const data = await results[1].value.json();
-          leads = data.ok ? data.leads : [];
-          console.log('✅ Leads loaded:', leads.length);
-        } catch (e) {
-          console.warn('⚠️ Could not parse leads response');
+          const reviewsRes = await (window as any).authFetch(`/api/reviews?clientId=${encodeURIComponent(client.id)}`);
+          
+          if (reviewsRes.ok) {
+            const reviewsData = await reviewsRes.json();
+            const clientReviews = (reviewsData.reviews || []).map((review: Review) => ({
+              ...review,
+              client_id: client.id,
+              client_name: client.business_name,
+            }));
+            allReviews.push(...clientReviews);
+          }
+        } catch (err) {
+          console.warn(`[Dashboard] Could not fetch reviews for ${client.business_name}:`, err);
         }
-      } else {
-        console.warn('⚠️ Leads API not available (endpoint may not exist yet)');
       }
-
-      // Process reviews
-      let reviews: Review[] = [];
-      if (results[2].status === 'fulfilled' && results[2].value.ok) {
-        try {
-          const data = await results[2].value.json();
-          reviews = data.ok ? data.reviews : [];
-          console.log('✅ Reviews loaded:', reviews.length);
-        } catch (e) {
-          console.warn('⚠️ Could not parse reviews response');
-        }
-      } else {
-        console.warn('⚠️ Reviews API not available (endpoint may not exist yet)');
-      }
+      
+      console.log('[Dashboard] ✅ Total reviews loaded:', allReviews.length);
 
       // Calculate stats
-      const fiveStarCount = reviews.filter(r => r.rating === 5).length;
-      const avgRating = reviews.length > 0
-        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+      const fiveStarCount = allReviews.filter(r => r.rating === 5).length;
+      const avgRating = allReviews.length > 0
+        ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length).toFixed(1)
         : '0.0';
 
       setStats({
         totalClients: clients.length,
-        totalLeads: leads.length,
-        totalReviews: reviews.length,
+        totalLeads: allLeads.length,
+        totalReviews: allReviews.length,
         fiveStarReviews: fiveStarCount,
         averageRating: avgRating,
       });
@@ -143,28 +141,30 @@ export default function DashboardOverview() {
       // Build recent activity
       const activity: RecentActivity[] = [];
 
-      // Add recent leads (last 5)
-      leads
+      // Add recent leads (last 10)
+      allLeads
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5)
+        .slice(0, 10)
         .forEach(lead => {
+          const client = clients.find(c => c.id === (lead as any).client_id);
           activity.push({
             type: 'lead',
-            clientName: 'Client',
+            clientName: client?.business_name || 'Unknown Client',
             details: `${lead.name || 'Someone'} submitted a ${lead.source === 'website_form' ? 'contact form' : 'missed call'}`,
             timestamp: lead.created_at,
           });
         });
 
-      // Add recent reviews (last 5)
-      reviews
+      // Add recent reviews (last 10)
+      allReviews
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5)
+        .slice(0, 10)
         .forEach(review => {
+          const client = clients.find(c => c.id === (review as any).client_id);
           activity.push({
             type: 'review',
-            clientName: 'Client',
-            details: `${review.rating}-star review: "${review.comments.slice(0, 50)}${review.comments.length > 50 ? '...' : ''}"`,
+            clientName: client?.business_name || 'Unknown Client',
+            details: `${review.rating}-star review${review.comments ? `: "${review.comments.slice(0, 50)}${review.comments.length > 50 ? '...' : ''}"` : ''}`,
             timestamp: review.created_at,
           });
         });
@@ -174,9 +174,9 @@ export default function DashboardOverview() {
 
       setRecentActivity(activity.slice(0, 10));
 
-      console.log('✅ Dashboard data loaded successfully');
+      console.log('[Dashboard] ✅ Dashboard data loaded successfully');
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
+      console.error('[Dashboard] Error fetching dashboard data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
     } finally {
       setIsLoading(false);
@@ -231,6 +231,7 @@ export default function DashboardOverview() {
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <span className="ml-3 text-muted-foreground">Loading dashboard data...</span>
         </div>
       </div>
     );
@@ -318,7 +319,7 @@ export default function DashboardOverview() {
         
         {recentActivity.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            No recent activity to display. Start by adding clients!
+            No recent activity to display. Activity will appear here when clients receive leads or reviews.
           </div>
         ) : (
           <div className="space-y-4">
@@ -327,7 +328,7 @@ export default function DashboardOverview() {
                 {getActivityIcon(activity.type)}
                 <div className="flex-1">
                   <p className="font-semibold text-foreground text-[15px]">
-                    {activity.type === 'lead' ? 'New lead from' : 
+                    {activity.type === 'lead' ? 'New lead for' : 
                      activity.type === 'review' ? 'Review posted for' : 
                      'New client registered:'} <strong>{activity.clientName}</strong>
                   </p>
